@@ -41,6 +41,9 @@ class PilotSourceTests(unittest.TestCase):
             {entry["dimension"] for entry in self.series},
             {"salud", "educacion", "seguridad_justicia", "administracion"},
         )
+        self.assertTrue(
+            {entry["direction"] for entry in self.series} <= {"higher", "lower", "input"}
+        )
 
     def test_each_indicator_keeps_its_expected_role(self) -> None:
         expected_roles = {

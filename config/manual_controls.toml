@@ -1,0 +1,56 @@
+version = "0.1"
+validation_date = "2026-08-23"
+countries = ["COL", "USA"]
+
+# Puntos de control transcritos de fuentes oficiales sin una API estable. Cada
+# observación conserva el estado de calidad publicado y un localizador verificable.
+
+[[series]]
+resource_id = "edu-eq-01-control"
+indicator_id = "EDU-EQ-01"
+source_id = "OECD-PISA"
+source_status = "validated"
+score_eligible = true
+series_code = "Diferencia en matemáticas entre cuartiles superior e inferior de ESCS"
+source_url = "https://www.oecd.org/en/publications/pisa-2022-results-volume-i_53f23881-en/full-report/results-for-countries-and-economies_360c8f67.html"
+release = "PISA 2022 Results, Volume I"
+locator = "Table I.B1.4.3"
+direction = "lower"
+unit = "Puntos PISA"
+
+[[series.observations]]
+entity = "COL"
+period = 2022
+value = 79.0
+observation_status = "observed"
+
+[[series.observations]]
+entity = "USA"
+period = 2022
+value = 102.0
+observation_status = "source:sampling_caution"
+
+[[series]]
+resource_id = "adm-res-01-control"
+indicator_id = "ADM-RES-01"
+source_id = "UN-EGDI"
+source_status = "validated"
+score_eligible = true
+series_code = "OSI | Technical Appendix Table 7"
+source_url = "https://desapublications.un.org/file/20866/download"
+release = "UN E-Government Survey 2024"
+locator = "Technical Appendix, Table 7"
+direction = "higher"
+unit = "Índice de 0 a 1"
+
+[[series.observations]]
+entity = "COL"
+period = 2024
+value = 0.7521
+observation_status = "observed"
+
+[[series.observations]]
+entity = "USA"
+period = 2024
+value = 0.9136
+observation_status = "observed"

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from decimal import Decimal
+import json
+import os
 from pathlib import Path
 import socket
 from tempfile import TemporaryDirectory
@@ -9,6 +11,7 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 
 from iee.ingestion import (
+    _atomic_write_publication,
     DownloadSpec,
     FetchedPayload,
     IngestionError,
@@ -262,6 +265,29 @@ class IngestionParsingTests(unittest.TestCase):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_publication_rolls_back_if_second_replace_fails(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            processed = root / "processed.csv"
+            provenance = root / "provenance.json"
+            processed.write_bytes(b"old processed")
+            provenance.write_bytes(b"old provenance")
+            real_replace = os.replace
+
+            def fail_provenance(source: object, destination: object) -> None:
+                if Path(destination) == provenance:
+                    raise OSError("simulated publication failure")
+                real_replace(source, destination)
+
+            with patch("iee.ingestion.os.replace", side_effect=fail_provenance):
+                with self.assertRaisesRegex(IngestionError, "publicación conjunta"):
+                    _atomic_write_publication(
+                        ((processed, b"new processed"), (provenance, b"new provenance"))
+                    )
+
+            self.assertEqual(processed.read_bytes(), b"old processed")
+            self.assertEqual(provenance.read_bytes(), b"old provenance")
+
     def test_repository_manifest_covers_the_full_catalog(self) -> None:
         project_root = Path(__file__).parents[1]
         manifest = load_download_manifest(project_root / "config" / "downloads.toml")
@@ -269,22 +295,83 @@ class PipelineTests(unittest.TestCase):
         covered = automatic | set(manifest.manual_control_ids) | set(manifest.deferred_ids)
 
         self.assertEqual(len(automatic), 7)
+        self.assertEqual(len(manifest.manual_controls), 2)
         self.assertEqual(len(covered), 12)
+        controls = {spec.indicator_id: spec for spec in manifest.manual_controls}
+        pisa_usa = next(
+            value for value in controls["EDU-EQ-01"].observations if value.entity == "USA"
+        )
+        self.assertEqual(pisa_usa.value, Decimal("102.0"))
+        self.assertEqual(pisa_usa.observation_status, "source:sampling_caution")
 
     def test_pipeline_uses_fake_network_and_writes_provenance(self) -> None:
         with TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
             catalog = root / "pilot_sources.toml"
             manifest = root / "downloads.toml"
+            manual_controls = root / "manual_controls.toml"
             catalog.write_text(
                 """
 [[series]]
 indicator_id = "SEG-RES-01"
 source_id = "UNODC-WDI"
 status = "validated"
+direction = "lower"
+official_code = "VC.IHR.PSRC.P5"
 unit = "Víctimas por 100.000 habitantes"
+latest_col_year = 2023
 latest_col_value = 24.913442
+latest_usa_year = 2023
 latest_usa_value = 5.76340794
+
+[[series]]
+indicator_id = "ADM-RES-01"
+source_id = "UN-EGDI"
+status = "validated"
+direction = "higher"
+official_code = "OSI | Technical Appendix Table 7"
+unit = "Índice de 0 a 1"
+exact_url = "https://example.test/osi"
+latest_col_year = 2024
+latest_col_value = 0.7521
+latest_col_status = "observed"
+latest_usa_year = 2024
+latest_usa_value = 0.9136
+latest_usa_status = "observed"
+""".strip()
+                + "\n",
+                encoding="utf-8",
+            )
+            manual_controls.write_text(
+                """
+version = "test"
+validation_date = "2026-08-23"
+countries = ["COL", "USA"]
+
+[[series]]
+resource_id = "adm-res-01-control"
+indicator_id = "ADM-RES-01"
+source_id = "UN-EGDI"
+source_status = "validated"
+score_eligible = true
+series_code = "OSI | Technical Appendix Table 7"
+source_url = "https://example.test/osi"
+release = "UN E-Government Survey 2024"
+locator = "Table 7"
+direction = "higher"
+unit = "Índice de 0 a 1"
+
+[[series.observations]]
+entity = "COL"
+period = 2024
+value = 0.7521
+observation_status = "observed"
+
+[[series.observations]]
+entity = "USA"
+period = 2024
+value = 0.9136
+observation_status = "observed"
 """.strip()
                 + "\n",
                 encoding="utf-8",
@@ -295,7 +382,7 @@ version = "test"
 schema_version = "iee-observations-v1"
 catalog = "pilot_sources.toml"
 countries = ["COL", "USA"]
-manual_control_ids = []
+manual_controls = "manual_controls.toml"
 deferred_ids = []
 
 [[series]]
@@ -319,7 +406,12 @@ minimum_observations_per_entity = 2
                 encoding="utf-8",
             )
 
+            original_manual_bytes = manual_controls.read_bytes()
+
             def fetcher(url: str, **_kwargs: object) -> FetchedPayload:
+                manual_controls.write_bytes(
+                    original_manual_bytes + b"\n# cambio concurrente posterior a la carga\n"
+                )
                 return FetchedPayload(url, url, WB_JSON, "application/json")
 
             processed = root / "processed" / "observations.csv"
@@ -338,10 +430,32 @@ minimum_observations_per_entity = 2
                     retrieved_at="2026-08-23T12:00:00+00:00",
                 )
 
-            self.assertEqual(result.observation_count, 4)
+            self.assertEqual(result.observation_count, 6)
+            self.assertEqual(result.series_count, 2)
+            self.assertEqual(result.raw_resource_count, 1)
             self.assertTrue(processed.exists())
             self.assertTrue(provenance.exists())
             self.assertEqual(len(list((root / "raw").glob("*.json"))), 1)
+            self.assertIn("manual_control", processed.read_text(encoding="utf-8"))
+            receipt = json.loads(provenance.read_text(encoding="utf-8"))
+            self.assertEqual(receipt["series_counts"]["manual_control"], 1)
+            self.assertEqual(receipt["manual_controls"]["indicator_ids"], ["ADM-RES-01"])
+            self.assertEqual(receipt["manual_controls"]["validation_date"], "2026-08-23")
+            self.assertEqual(
+                receipt["manual_controls"]["sha256"], sha256_hex(original_manual_bytes)
+            )
+            self.assertNotEqual(
+                receipt["manual_controls"]["sha256"],
+                sha256_hex(manual_controls.read_bytes()),
+            )
+
+            manual_controls.write_bytes(
+                original_manual_bytes.replace(
+                    b'direction = "higher"', b'direction = "lower"'
+                )
+            )
+            with self.assertRaisesRegex(IngestionError, "direction difiere"):
+                load_download_manifest(manifest)
 
 
 if __name__ == "__main__":

@@ -51,14 +51,48 @@ class DownloadSpec:
 
 
 @dataclass(frozen=True)
+class ManualControlValue:
+    entity: str
+    period: int
+    value: Decimal
+    observation_status: str
+
+
+@dataclass(frozen=True)
+class ManualControlSpec:
+    resource_id: str
+    indicator_id: str
+    source_id: str
+    source_status: str
+    score_eligible: bool
+    series_code: str
+    source_url: str
+    release: str
+    locator: str
+    direction: str
+    unit: str
+    observations: tuple[ManualControlValue, ...]
+
+
+@dataclass(frozen=True)
 class DownloadManifest:
     version: str
     schema_version: str
     countries: tuple[str, ...]
     catalog_path: Path
-    manual_control_ids: tuple[str, ...]
+    manifest_sha256: str
+    catalog_sha256: str
+    manual_controls_path: Path | None
+    manual_controls_version: str | None
+    manual_controls_validation_date: str | None
+    manual_controls_sha256: str | None
+    manual_controls: tuple[ManualControlSpec, ...]
     deferred_ids: tuple[str, ...]
     series: tuple[DownloadSpec, ...]
+
+    @property
+    def manual_control_ids(self) -> tuple[str, ...]:
+        return tuple(spec.indicator_id for spec in self.manual_controls)
 
 
 @dataclass(frozen=True)
@@ -108,6 +142,7 @@ _ADAPTERS = {
 }
 _STATUSES = {"validated", "conditional", "reserve"}
 _DIRECTIONS = {"higher", "lower", "input"}
+_MANUAL_OBSERVATION_STATUSES = {"observed", "source:sampling_caution"}
 _CSV_ACCEPT = "application/vnd.sdmx.data+csv;version=1.0.0"
 _JSON_ACCEPT = "application/json"
 
@@ -117,8 +152,8 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
 
     manifest_path = Path(path)
     try:
-        with manifest_path.open("rb") as manifest_file:
-            raw = tomllib.load(manifest_file)
+        manifest_bytes = manifest_path.read_bytes()
+        raw = tomllib.load(io.BytesIO(manifest_bytes))
     except (OSError, tomllib.TOMLDecodeError) as error:
         raise IngestionError(f"no se pudo leer el manifiesto {manifest_path}: {error}") from error
 
@@ -127,7 +162,12 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
         schema_version = str(raw["schema_version"])
         countries = tuple(str(value) for value in raw["countries"])
         catalog_path = manifest_path.parent / str(raw["catalog"])
-        manual_ids = tuple(str(value) for value in raw.get("manual_control_ids", []))
+        manual_filename = raw.get("manual_controls")
+        manual_path = (
+            manifest_path.parent / str(manual_filename)
+            if manual_filename is not None
+            else None
+        )
         deferred_ids = tuple(str(value) for value in raw.get("deferred_ids", []))
         raw_series = raw["series"]
     except (KeyError, TypeError) as error:
@@ -139,12 +179,25 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
         raise IngestionError("el manifiesto debe incluir al menos una serie automática")
 
     specs = tuple(_parse_download_spec(item, countries) for item in raw_series)
-    resource_ids = [spec.resource_id for spec in specs]
+    try:
+        catalog_bytes = catalog_path.read_bytes()
+    except OSError as error:
+        raise IngestionError(f"no se pudo leer el catálogo {catalog_path}: {error}") from error
+    (
+        manual_version,
+        manual_validation_date,
+        manual_sha256,
+        manual_specs,
+    ) = _load_manual_controls(manual_path, countries)
+    resource_ids = [spec.resource_id for spec in (*specs, *manual_specs)]
     indicator_ids = [spec.indicator_id for spec in specs]
+    manual_ids = [spec.indicator_id for spec in manual_specs]
     if len(resource_ids) != len(set(resource_ids)):
         raise IngestionError("resource_id debe ser único")
     if len(indicator_ids) != len(set(indicator_ids)):
         raise IngestionError("cada indicador solo puede tener una adquisición automática")
+    if len(manual_ids) != len(set(manual_ids)):
+        raise IngestionError("cada control manual debe tener un indicador único")
 
     acquisition_ids = set(indicator_ids)
     manual_set = set(manual_ids)
@@ -157,12 +210,125 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
         schema_version=schema_version,
         countries=countries,
         catalog_path=catalog_path,
-        manual_control_ids=manual_ids,
+        manifest_sha256=sha256_hex(manifest_bytes),
+        catalog_sha256=sha256_hex(catalog_bytes),
+        manual_controls_path=manual_path,
+        manual_controls_version=manual_version,
+        manual_controls_validation_date=manual_validation_date,
+        manual_controls_sha256=manual_sha256,
+        manual_controls=manual_specs,
         deferred_ids=deferred_ids,
         series=specs,
     )
-    _validate_against_catalog(manifest)
+    _validate_against_catalog(manifest, catalog_bytes)
     return manifest
+
+
+def _load_manual_controls(
+    path: Path | None,
+    countries: tuple[str, ...],
+) -> tuple[str | None, str | None, str | None, tuple[ManualControlSpec, ...]]:
+    if path is None:
+        return None, None, None, ()
+    try:
+        controls_bytes = path.read_bytes()
+        raw = tomllib.load(io.BytesIO(controls_bytes))
+    except (OSError, tomllib.TOMLDecodeError) as error:
+        raise IngestionError(f"no se pudieron leer los controles manuales {path}: {error}") from error
+
+    try:
+        version = str(raw["version"])
+        validation_date = str(raw["validation_date"])
+        control_countries = tuple(str(value) for value in raw["countries"])
+        raw_series = raw["series"]
+    except (KeyError, TypeError) as error:
+        raise IngestionError(f"estructura incompleta en {path}: {error}") from error
+    if set(control_countries) != set(countries) or len(control_countries) != len(countries):
+        raise IngestionError("los países de controles manuales difieren del manifiesto")
+    if not isinstance(raw_series, list) or not raw_series:
+        raise IngestionError("el archivo de controles manuales debe incluir series")
+    try:
+        datetime.strptime(validation_date, "%Y-%m-%d")
+    except ValueError as error:
+        raise IngestionError("validation_date inválida en controles manuales") from error
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", validation_date):
+        raise IngestionError("validation_date inválida en controles manuales")
+    return (
+        version,
+        validation_date,
+        sha256_hex(controls_bytes),
+        tuple(_parse_manual_control_spec(item, countries) for item in raw_series),
+    )
+
+
+def _parse_manual_control_spec(
+    raw: Mapping[str, Any],
+    countries: tuple[str, ...],
+) -> ManualControlSpec:
+    try:
+        raw_observations = raw["observations"]
+        if not isinstance(raw_observations, list):
+            raise TypeError("observations debe ser una lista")
+        values = tuple(
+            ManualControlValue(
+                entity=str(item["entity"]),
+                period=_parse_year(item["period"]),
+                value=_parse_decimal(item["value"], "control manual"),
+                observation_status=str(item["observation_status"]),
+            )
+            for item in raw_observations
+        )
+        spec = ManualControlSpec(
+            resource_id=str(raw["resource_id"]),
+            indicator_id=str(raw["indicator_id"]),
+            source_id=str(raw["source_id"]),
+            source_status=str(raw["source_status"]),
+            score_eligible=raw["score_eligible"],
+            series_code=str(raw["series_code"]),
+            source_url=str(raw["source_url"]),
+            release=str(raw["release"]),
+            locator=str(raw["locator"]),
+            direction=str(raw["direction"]),
+            unit=str(raw["unit"]),
+            observations=values,
+        )
+    except (KeyError, TypeError, ValueError, AttributeError) as error:
+        raise IngestionError(f"control manual incompleto: {error}") from error
+
+    if not _RESOURCE_ID.fullmatch(spec.resource_id):
+        raise IngestionError(f"resource_id inválido: {spec.resource_id}")
+    if spec.source_status not in _STATUSES:
+        raise IngestionError(f"estado no permitido para {spec.indicator_id}")
+    if not isinstance(spec.score_eligible, bool):
+        raise IngestionError(f"score_eligible debe ser booleano para {spec.indicator_id}")
+    if spec.score_eligible and spec.source_status != "validated":
+        raise IngestionError(f"solo una fuente validada puede puntuar: {spec.indicator_id}")
+    if spec.direction not in _DIRECTIONS or spec.direction == "input":
+        raise IngestionError(f"dirección no permitida para {spec.indicator_id}")
+    if not spec.series_code or not spec.release or not spec.locator:
+        raise IngestionError(f"falta procedencia documental en {spec.indicator_id}")
+    _validate_https(spec.source_url, spec.indicator_id)
+    if not spec.observations:
+        raise IngestionError(f"{spec.indicator_id} no tiene controles manuales")
+
+    keys: set[tuple[str, int]] = set()
+    represented_entities: set[str] = set()
+    for value in spec.observations:
+        if value.entity not in countries:
+            raise IngestionError(f"entidad inesperada en {spec.indicator_id}: {value.entity}")
+        key = (value.entity, value.period)
+        if key in keys:
+            raise IngestionError(f"control manual duplicado en {spec.indicator_id}: {key}")
+        if value.observation_status not in _MANUAL_OBSERVATION_STATUSES:
+            raise IngestionError(
+                f"estado de observación no permitido en {spec.indicator_id}: "
+                f"{value.observation_status!r}"
+            )
+        keys.add(key)
+        represented_entities.add(value.entity)
+    if represented_entities != set(countries):
+        raise IngestionError(f"{spec.indicator_id} debe cubrir exactamente {countries}")
+    return spec
 
 
 def _parse_download_spec(raw: Mapping[str, Any], countries: tuple[str, ...]) -> DownloadSpec:
@@ -252,16 +418,21 @@ def _validate_https(url: str, indicator_id: str) -> None:
         raise IngestionError(f"URL no segura en {indicator_id}: {url}")
 
 
-def _validate_against_catalog(manifest: DownloadManifest) -> None:
+def _validate_against_catalog(
+    manifest: DownloadManifest,
+    catalog_bytes: bytes,
+) -> None:
     try:
-        with manifest.catalog_path.open("rb") as catalog_file:
-            catalog = tomllib.load(catalog_file)
-    except (OSError, tomllib.TOMLDecodeError) as error:
+        catalog = tomllib.load(io.BytesIO(catalog_bytes))
+    except tomllib.TOMLDecodeError as error:
         raise IngestionError(
             f"no se pudo leer el catálogo {manifest.catalog_path}: {error}"
         ) from error
 
-    catalog_entries = {entry["indicator_id"]: entry for entry in catalog.get("series", [])}
+    raw_catalog_entries = catalog.get("series", [])
+    catalog_entries = {entry["indicator_id"]: entry for entry in raw_catalog_entries}
+    if len(catalog_entries) != len(raw_catalog_entries):
+        raise IngestionError("el catálogo contiene indicator_id duplicados")
     acquisition_ids = {spec.indicator_id for spec in manifest.series}
     covered_ids = acquisition_ids | set(manifest.manual_control_ids) | set(manifest.deferred_ids)
     if covered_ids != set(catalog_entries):
@@ -273,35 +444,102 @@ def _validate_against_catalog(manifest: DownloadManifest) -> None:
 
     for spec in manifest.series:
         catalog_entry = catalog_entries[spec.indicator_id]
-        comparisons = {
-            "source_id": spec.source_id,
-            "status": spec.source_status,
-            "unit": spec.unit,
-        }
-        for field, actual in comparisons.items():
-            expected = catalog_entry[field]
-            if actual != expected:
-                raise IngestionError(
-                    f"{spec.indicator_id}: {field} difiere del catálogo "
-                    f"({actual!r} != {expected!r})"
-                )
-        try:
-            expected_catalog_values = {
-                "COL": _parse_decimal(
-                    catalog_entry["latest_col_value"], "latest_col_value"
-                ),
-                "USA": _parse_decimal(
-                    catalog_entry["latest_usa_value"], "latest_usa_value"
-                ),
-            }
-        except KeyError as error:
+        _validate_catalog_identity(spec, catalog_entry)
+        expected_catalog_years, expected_catalog_values = _catalog_checkpoints(
+            spec.indicator_id, catalog_entry
+        )
+        if dict(spec.expected_latest_year) != expected_catalog_years:
             raise IngestionError(
-                f"{spec.indicator_id}: falta un valor de control en el catálogo"
-            ) from error
+                f"{spec.indicator_id}: los años de control difieren del catálogo"
+            )
         if dict(spec.expected_latest_value) != expected_catalog_values:
             raise IngestionError(
                 f"{spec.indicator_id}: los valores de control difieren del catálogo"
             )
+
+    for spec in manifest.manual_controls:
+        catalog_entry = catalog_entries[spec.indicator_id]
+        _validate_catalog_identity(spec, catalog_entry)
+        if spec.source_url != catalog_entry.get("exact_url"):
+            raise IngestionError(
+                f"{spec.indicator_id}: la URL del control manual difiere del catálogo"
+            )
+        expected_years, expected_values = _catalog_checkpoints(
+            spec.indicator_id, catalog_entry
+        )
+        latest = {
+            entity: max(
+                (value for value in spec.observations if value.entity == entity),
+                key=lambda value: value.period,
+            )
+            for entity in manifest.countries
+        }
+        actual_years = {entity: value.period for entity, value in latest.items()}
+        actual_values = {entity: value.value for entity, value in latest.items()}
+        try:
+            expected_statuses = {
+                "COL": str(catalog_entry["latest_col_status"]),
+                "USA": str(catalog_entry["latest_usa_status"]),
+            }
+        except KeyError as error:
+            raise IngestionError(
+                f"{spec.indicator_id}: faltan estados manuales en el catálogo"
+            ) from error
+        actual_statuses = {
+            entity: value.observation_status for entity, value in latest.items()
+        }
+        if actual_years != expected_years:
+            raise IngestionError(
+                f"{spec.indicator_id}: los años manuales difieren del catálogo"
+            )
+        if actual_values != expected_values:
+            raise IngestionError(
+                f"{spec.indicator_id}: los valores manuales difieren del catálogo"
+            )
+        if actual_statuses != expected_statuses:
+            raise IngestionError(
+                f"{spec.indicator_id}: los estados manuales difieren del catálogo"
+            )
+
+
+def _validate_catalog_identity(
+    spec: DownloadSpec | ManualControlSpec,
+    catalog_entry: Mapping[str, Any],
+) -> None:
+    comparisons = {
+        "source_id": spec.source_id,
+        "status": spec.source_status,
+        "unit": spec.unit,
+        "direction": spec.direction,
+        "official_code": spec.series_code,
+    }
+    for field, actual in comparisons.items():
+        expected = catalog_entry.get(field)
+        if actual != expected:
+            raise IngestionError(
+                f"{spec.indicator_id}: {field} difiere del catálogo "
+                f"({actual!r} != {expected!r})"
+            )
+
+
+def _catalog_checkpoints(
+    indicator_id: str,
+    catalog_entry: Mapping[str, Any],
+) -> tuple[dict[str, int], dict[str, Decimal]]:
+    try:
+        years = {
+            "COL": int(catalog_entry["latest_col_year"]),
+            "USA": int(catalog_entry["latest_usa_year"]),
+        }
+        values = {
+            "COL": _parse_decimal(catalog_entry["latest_col_value"], "latest_col_value"),
+            "USA": _parse_decimal(catalog_entry["latest_usa_value"], "latest_usa_value"),
+        }
+    except (KeyError, TypeError, ValueError) as error:
+        raise IngestionError(
+            f"{indicator_id}: falta un punto de control en el catálogo"
+        ) from error
+    return years, values
 
 
 def download_url(
@@ -646,6 +884,32 @@ def _make_observation(
     )
 
 
+def manual_control_observations(spec: ManualControlSpec) -> list[Observation]:
+    """Materializa puntos oficiales transcritos sin presentarlos como una descarga."""
+
+    return sorted(
+        [
+            Observation(
+                entity=value.entity,
+                period=value.period,
+                indicator_id=spec.indicator_id,
+                value=value.value,
+                direction=spec.direction,
+                unit=spec.unit,
+                source_id=spec.source_id,
+                series_code=spec.series_code,
+                source_status=spec.source_status,
+                score_eligible=spec.score_eligible,
+                observation_status=value.observation_status,
+                observation_kind="manual_control",
+                resource_id=spec.resource_id,
+            )
+            for value in spec.observations
+        ],
+        key=lambda row: (row.entity, row.period, row.indicator_id),
+    )
+
+
 def validate_observations(
     observations: Sequence[Observation],
     spec: DownloadSpec,
@@ -734,6 +998,37 @@ def run_pipeline(
             {
                 "indicator_id": spec.indicator_id,
                 "resource_id": spec.resource_id,
+                "acquisition_mode": "automatic",
+                "records": len(series_observations),
+                "latest_year": {
+                    entity: row.period for entity, row in latest_rows.items()
+                },
+                "latest_value": {
+                    entity: _decimal_text(row.value) for entity, row in latest_rows.items()
+                },
+                "score_eligible": spec.score_eligible,
+                "source_status": spec.source_status,
+            }
+        )
+
+    for spec in manifest.manual_controls:
+        series_observations = manual_control_observations(spec)
+        observations.extend(series_observations)
+        latest_rows = {
+            entity: max(
+                (row for row in series_observations if row.entity == entity),
+                key=lambda row: row.period,
+            )
+            for entity in manifest.countries
+        }
+        series_summaries.append(
+            {
+                "indicator_id": spec.indicator_id,
+                "resource_id": spec.resource_id,
+                "acquisition_mode": "manual_control",
+                "source_url": spec.source_url,
+                "release": spec.release,
+                "locator": spec.locator,
                 "records": len(series_observations),
                 "latest_year": {
                     entity: row.period for entity, row in latest_rows.items()
@@ -774,23 +1069,36 @@ def run_pipeline(
         )
 
     timestamp = retrieved_at or datetime.now(UTC).replace(microsecond=0).isoformat()
-    manifest_bytes = manifest_file.read_bytes()
-    catalog_bytes = manifest.catalog_path.read_bytes()
+    manual_controls_metadata = None
+    if manifest.manual_controls_path is not None:
+        manual_controls_metadata = {
+            "path": manifest.manual_controls_path.as_posix(),
+            "sha256": manifest.manual_controls_sha256,
+            "version": manifest.manual_controls_version,
+            "validation_date": manifest.manual_controls_validation_date,
+            "indicator_ids": list(manifest.manual_control_ids),
+        }
     provenance = {
         "schema_version": manifest.schema_version,
         "manifest_version": manifest.version,
         "retrieved_at": timestamp,
         "manifest": {
             "path": manifest_file.as_posix(),
-            "sha256": sha256_hex(manifest_bytes),
+            "sha256": manifest.manifest_sha256,
         },
         "catalog": {
             "path": manifest.catalog_path.as_posix(),
-            "sha256": sha256_hex(catalog_bytes),
+            "sha256": manifest.catalog_sha256,
         },
+        "manual_controls": manual_controls_metadata,
         "countries": list(manifest.countries),
         "resources": raw_entries,
         "series": series_summaries,
+        "series_counts": {
+            "automatic": len(manifest.series),
+            "manual_control": len(manifest.manual_controls),
+            "materialized": len(manifest.series) + len(manifest.manual_controls),
+        },
         "manual_control_ids": list(manifest.manual_control_ids),
         "deferred_ids": list(manifest.deferred_ids),
         "processed": {
@@ -805,12 +1113,16 @@ def run_pipeline(
 
     for path, content in raw_writes.items():
         _atomic_write_bytes(path, content)
-    _atomic_write_bytes(Path(processed_path), processed_bytes)
-    _atomic_write_bytes(Path(provenance_path), provenance_bytes)
+    _atomic_write_publication(
+        (
+            (Path(processed_path), processed_bytes),
+            (Path(provenance_path), provenance_bytes),
+        )
+    )
 
     return PipelineResult(
         observation_count=len(observations),
-        series_count=len(manifest.series),
+        series_count=len(manifest.series) + len(manifest.manual_controls),
         raw_resource_count=len(raw_entries),
         processed_path=Path(processed_path),
         provenance_path=Path(provenance_path),
@@ -947,16 +1259,72 @@ def _decimal_text(value: Decimal) -> str:
 
 
 def _atomic_write_bytes(path: Path, content: bytes) -> None:
+    temporary_path = _stage_bytes(path, content)
+    try:
+        os.replace(temporary_path, path)
+    except OSError as error:
+        if temporary_path.exists():
+            temporary_path.unlink()
+        raise IngestionError(f"no se pudo escribir {path}: {error}") from error
+
+
+def _atomic_write_publication(outputs: Sequence[tuple[Path, bytes]]) -> None:
+    """Publica salidas relacionadas y restaura la versión anterior ante un fallo."""
+
+    targets = [path for path, _content in outputs]
+    if not targets or len(targets) != len(set(targets)):
+        raise IngestionError("la publicación debe incluir rutas únicas")
+
+    staged: dict[Path, Path] = {}
+    backups: dict[Path, Path] = {}
+    replaced: list[Path] = []
+    try:
+        for path, content in outputs:
+            staged[path] = _stage_bytes(path, content)
+            if path.exists():
+                backups[path] = _stage_bytes(path, path.read_bytes())
+
+        try:
+            for path in targets:
+                os.replace(staged[path], path)
+                replaced.append(path)
+        except OSError as error:
+            rollback_errors: list[str] = []
+            for path in reversed(replaced):
+                try:
+                    backup = backups.get(path)
+                    if backup is None:
+                        path.unlink(missing_ok=True)
+                    else:
+                        os.replace(backup, path)
+                except OSError as rollback_error:
+                    rollback_errors.append(f"{path}: {rollback_error}")
+            detail = (
+                f"; rollback incompleto: {'; '.join(rollback_errors)}"
+                if rollback_errors
+                else ""
+            )
+            raise IngestionError(f"falló la publicación conjunta{detail}") from error
+    finally:
+        for temporary_path in (*staged.values(), *backups.values()):
+            try:
+                temporary_path.unlink(missing_ok=True)
+            except OSError:
+                pass
+
+
+def _stage_bytes(path: Path, content: bytes) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_path: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as temporary:
+            temporary_path = Path(temporary.name)
             temporary.write(content)
             temporary.flush()
             os.fsync(temporary.fileno())
-            temporary_path = Path(temporary.name)
-        os.replace(temporary_path, path)
     except OSError as error:
-        if temporary_path and temporary_path.exists():
-            temporary_path.unlink()
-        raise IngestionError(f"no se pudo escribir {path}: {error}") from error
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+        raise IngestionError(f"no se pudo preparar {path}: {error}") from error
+    assert temporary_path is not None
+    return temporary_path

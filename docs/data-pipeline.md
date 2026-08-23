@@ -12,9 +12,10 @@ adquisición a los 12 indicadores propuestos:
 - **7 automáticos:** mortalidad evitable, cobertura sanitaria universal, gasto
   público en salud, aprendizaje armonizado, homicidios, gasto en seguridad por
   habitante en PPA y recursos operativos administrativos.
-- **2 controles manuales:** brecha PISA por nivel socioeconómico y Online Service
-  Index. Sus fuentes oficiales publican la observación validada en HTML o PDF y aún
-  no tienen un adaptador estable en el proyecto.
+- **2 controles manuales versionados:** brecha PISA por nivel socioeconómico y
+  Online Service Index. Sus cuatro valores se incorporan a la salida normalizada
+  desde [`config/manual_controls.toml`](../config/manual_controls.toml), con fuente,
+  edición, localizador y estado de calidad. No se presentan como descargas de API.
 - **3 diferidos:** gasto educativo por estudiante, disparidad territorial de
   violencia y finalización de trámites. El primero está en reserva por cobertura; los
   otros dos requieren diseño.
@@ -59,7 +60,14 @@ hash diferente.
 ### Observaciones normalizadas
 
 `data/processed/pilot_observations.csv` usa UTF-8, terminador LF y orden estable por
-país, año e indicador. Los valores se calculan con `Decimal`, sin redondeo intermedio.
+país, año e indicador. Reúne 7 series automáticas y 2 controles manuales. Los valores
+se calculan con `Decimal`, sin redondeo intermedio, y `observation_kind` conserva la
+diferencia entre `reported`, `derived` y `manual_control`.
+
+El CSV y su recibo de procedencia se preparan juntos. Si falla la publicación de
+cualquiera de los dos, la canalización restaura la pareja anterior; los recursos
+crudos ya verificados pueden permanecer en la caché por ser inmutables y direccionados
+por contenido.
 
 ### Procedencia
 
@@ -69,6 +77,8 @@ país, año e indicador. Los valores se calculan con `Decimal`, sin redondeo int
 - tipo de contenido, tamaño, ETag y Last-Modified cuando existen;
 - SHA-256 y ruta de cada respuesta cruda;
 - hashes del catálogo y del manifiesto;
+- hash, versión, fecha de validación e identificadores del manifiesto de controles
+  manuales;
 - número de observaciones y último año/valor por país;
 - SHA-256 de la salida normalizada;
 - fecha UTC de la ejecución.
@@ -82,6 +92,7 @@ proyecto.
 La canalización falla antes de publicar las salidas cuando encuentra:
 
 - un indicador, fuente, estado o unidad que difiere del catálogo metodológico;
+- un país, año, valor o URL manual que difiere del catálogo metodológico;
 - una respuesta paginada incompleta, vacía, XML en lugar de CSV o con columnas
   faltantes;
 - un país inesperado, una clave país-año duplicada o cobertura insuficiente;

@@ -3,9 +3,9 @@ schema_version = "iee-observations-v1"
 catalog = "pilot_sources.toml"
 countries = ["COL", "USA"]
 
-# Estos indicadores tienen valores oficiales validados, pero su publicación actual
-# exige extraer una tabla HTML o PDF. No se simulan como descargas automáticas.
-manual_control_ids = ["EDU-EQ-01", "ADM-RES-01"]
+# Valores oficiales validados cuya publicación actual exige extraer una tabla HTML
+# o PDF. Se versionan por separado y nunca se simulan como descargas automáticas.
+manual_controls = "manual_controls.toml"
 
 # Reservas metodológicas o indicadores que todavía requieren diseño.
 deferred_ids = ["EDU-IN-01", "SEG-EQ-01", "ADM-ACC-01"]
@@ -17,7 +17,7 @@ source_id = "OECD-HEALTH"
 source_status = "validated"
 score_eligible = true
 adapter = "oecd_sdmx_csv"
-series_code = "DSD_HEALTH_STAT@DF_AM | AVM | DT_10P5HB | STANDARD"
+series_code = "DSD_HEALTH_STAT@DF_AM | AVM | DT_10P5HB | _T | STANDARD"
 url = "https://sdmx.oecd.org/public/rest/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_AM,1.0/COL+USA.A.AVM.DT_10P5HB._T._T._Z._Z.STANDARD._Z._Z._Z._Z?startPeriod=2010&endPeriod=2022&dimensionAtObservation=AllDimensions&format=csvfile"
 direction = "lower"
 unit = "Muertes evitables estandarizadas por edad por 100.000 habitantes"
@@ -102,7 +102,7 @@ source_id = "OECD-COFOG"
 source_status = "reserve"
 score_eligible = false
 adapter = "oecd_ppp_per_capita"
-series_code = "GF03 OTE / PA.NUS.PPP / SP.POP.TOTL"
+series_code = "DSD_NASEC10@DF_TABLE11 | S13 | OTE | GF03 | V"
 url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13._Z.D.OTE._Z.GF03.XDC.S.V.N.T1100?startPeriod=2009&endPeriod=2024&dimensionAtObservation=AllDimensions&format=csvfile"
 ppp_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/PA.NUS.PPP?format=json&date=2009%3A2024&per_page=200"
 population_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SP.POP.TOTL?format=json&date=2009%3A2024&per_page=200"

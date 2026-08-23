@@ -10,7 +10,7 @@ from .ingestion import IngestionError, run_pipeline
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Descarga y normaliza las APIs oficiales del piloto IEE."
+        description="Adquiere y normaliza las fuentes oficiales del piloto IEE."
     )
     parser.add_argument("--manifest", default="config/downloads.toml")
     parser.add_argument("--raw-dir", default="data/raw/official")

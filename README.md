@@ -36,8 +36,8 @@ Versión metodológica `0.1-draft`. La estructura es funcional y ya cuenta con u
 Todavía no se ha calculado ni publicado un puntaje IEE.
 
 La [canalización reproducible de datos](docs/data-pipeline.md) ya descarga y valida
-7 series oficiales, conserva 2 controles manuales y deja 3 indicadores explícitamente
-diferidos. Los datos reales y sus recibos permanecen fuera de Git.
+7 series oficiales, incorpora 2 controles manuales versionados y deja 3 indicadores
+explícitamente diferidos. Los datos reales y sus recibos permanecen fuera de Git.
 
 ## Principios
 
