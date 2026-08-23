@@ -1,0 +1,7 @@
+entity,period,indicator_id,value,direction
+PAIS_A,2024,resultado_salud_sintetico,72.0,higher
+PAIS_B,2024,resultado_salud_sintetico,64.0,higher
+PAIS_C,2024,resultado_salud_sintetico,81.0,higher
+PAIS_A,2024,costo_unitario_sintetico,40.0,lower
+PAIS_B,2024,costo_unitario_sintetico,55.0,lower
+PAIS_C,2024,costo_unitario_sintetico,48.0,lower

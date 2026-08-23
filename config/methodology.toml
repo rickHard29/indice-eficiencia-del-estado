@@ -1,0 +1,32 @@
+version = "0.1-draft"
+unit_of_analysis = "country-year"
+score_min = 0.0
+score_max = 100.0
+normalization = "fixed-bounds-linear"
+aggregation = "weighted-geometric-mean"
+minimum_indicator_coverage = 0.75
+minimum_dimension_coverage = 0.75
+
+[interpretation]
+measures = "Resultados públicos ajustados por recursos, cobertura y calidad de datos"
+does_not_measure = "Tamaño ideal del Estado, ideología, bienestar total o calidad absoluta del país"
+
+[[dimensions]]
+id = "salud"
+label = "Salud"
+weight = 0.25
+
+[[dimensions]]
+id = "educacion"
+label = "Educación"
+weight = 0.25
+
+[[dimensions]]
+id = "seguridad_justicia"
+label = "Seguridad y justicia"
+weight = 0.25
+
+[[dimensions]]
+id = "administracion"
+label = "Administración, recaudo y compras públicas"
+weight = 0.25

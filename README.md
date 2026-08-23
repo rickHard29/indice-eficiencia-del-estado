@@ -1,19 +1,40 @@
 # Índice de Eficiencia del Estado (IEE)
 
-Proyecto para construir un índice comparable y reproducible sobre la eficiencia del Estado, con una metodología transparente y datos verificables.
+Proyecto para construir un índice internacional comparable y reproducible sobre la capacidad del Estado para transformar recursos públicos en resultados sociales e institucionales.
 
-## Organización del proyecto
+El IEE no premia automáticamente un Estado pequeño ni castiga uno grande: compara resultados con recursos, cobertura, calidad y contexto.
 
-- Google Drive y Google Sheets: fuentes, datos de trabajo y metodología.
-- GitHub: código, documentación técnica y control de versiones.
+## Componentes
+
+- Google Drive y Google Sheets: fuentes, datos de trabajo e inventario de indicadores.
+- Google Docs: metodología viva y decisiones pendientes.
+- GitHub: código, configuraciones, pruebas y control de versiones.
+
+## Estructura
+
+```text
+config/          Parámetros metodológicos versionados
+data/            Esquemas y muestras sintéticas; nunca datos restringidos
+docs/            Metodología técnica y decisiones
+src/iee/         Código del índice
+tests/           Pruebas automatizadas
+```
+
+## Inicio rápido
+
+```bash
+python -m pip install -e ".[dev]"
+python -m unittest discover -s tests -v
+```
 
 ## Estado
 
-Repositorio inicial. La metodología, las fuentes y la estructura de procesamiento se definirán en las siguientes etapas.
+Versión metodológica `0.1-draft`. La estructura es funcional, pero los indicadores, fuentes, pesos y reglas de comparabilidad siguen sujetos a validación.
 
 ## Principios
 
-- Trazabilidad de las fuentes.
+- Trazabilidad de las fuentes y transformaciones.
 - Reproducibilidad de los cálculos.
-- Separación entre datos originales, datos procesados y resultados.
-- Documentación de supuestos y decisiones metodológicas.
+- Separación entre datos originales, procesados y resultados.
+- Comparación de resultados frente a recursos, no de resultados aislados.
+- Análisis de sensibilidad antes de publicar rankings.

@@ -1,0 +1,19 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Los datos reales permanecen fuera de Git.
+data/raw/
+data/interim/
+data/processed/
+
+# Resultados regenerables.
+outputs/
+work/
