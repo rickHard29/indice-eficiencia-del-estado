@@ -29,7 +29,10 @@ python -m unittest discover -s tests -v
 
 ## Estado
 
-Versión metodológica `0.1-draft`. La estructura es funcional, pero los indicadores, fuentes, pesos y reglas de comparabilidad siguen sujetos a validación.
+Versión metodológica `0.1-draft`. La estructura es funcional y ya cuenta con una
+[evaluación reproducible de los 12 indicadores propuestos del piloto](docs/source-validation.md):
+6 indicadores validados, 2 condicionales, 2 en reserva y 2 que requieren diseño.
+Todavía no se ha calculado ni publicado un puntaje IEE.
 
 ## Principios
 

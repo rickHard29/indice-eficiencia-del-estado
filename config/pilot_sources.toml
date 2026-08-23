@@ -1,0 +1,231 @@
+version = "0.1"
+validation_date = "2026-08-23"
+countries = ["COL", "USA"]
+allowed_statuses = ["validated", "conditional", "reserve", "design_required"]
+
+[[series]]
+indicator_id = "SAL-RES-01"
+dimension = "salud"
+role = "resultado"
+status = "validated"
+source_id = "OECD-HEALTH"
+organization = "OECD"
+dataset = "Avoidable mortality"
+official_code = "DSD_HEALTH_STAT@DF_AM | AVM | DT_10P5HB | _T | STANDARD"
+unit = "Muertes evitables estandarizadas por edad por 100.000 habitantes"
+frequency = "anual"
+scope = "bilateral_oecd"
+exact_url = "https://sdmx.oecd.org/public/rest/v1/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_AM,1.0/COL+USA.A.AVM.DT_10P5HB._T._T.._Z.STANDARD....?startPeriod=2010"
+latest_col_year = 2021
+latest_col_value = 419.0
+latest_usa_year = 2022
+latest_usa_value = 312.0
+decision_reason = "Serie bilateral comparable; usar promedio móvil y controlar el efecto excepcional de la pandemia."
+
+[[series]]
+indicator_id = "SAL-ACC-01"
+dimension = "salud"
+role = "acceso"
+status = "validated"
+source_id = "WHO-UHC"
+organization = "World Health Organization / World Bank"
+dataset = "UHC service coverage index"
+official_code = "SH_UHC_SCI"
+unit = "Índice de cobertura de servicios esenciales, 0 a 100"
+frequency = "anual"
+scope = "global"
+exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SH_UHC_SCI?format=json&per_page=200"
+latest_col_year = 2023
+latest_col_value = 82.0
+latest_usa_year = 2023
+latest_usa_value = 88.0
+decision_reason = "Cobertura bilateral completa entre 2000 y 2023; indicador compuesto de 14 trazadores."
+
+[[series]]
+indicator_id = "SAL-IN-01"
+dimension = "salud"
+role = "insumo"
+status = "conditional"
+source_id = "WHO-GHED"
+organization = "World Health Organization / World Bank"
+dataset = "Global Health Expenditure Database"
+official_code = "SH.XPD.GHED.PP.CD"
+unit = "Dólares internacionales corrientes por habitante"
+frequency = "anual"
+scope = "global"
+exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SH.XPD.GHED.PP.CD?format=json&per_page=200"
+latest_col_year = 2024
+latest_col_value = 1226.4157595
+latest_usa_year = 2023
+latest_usa_value = 7269.2911847
+decision_reason = "Fuente y cobertura validadas; falta fijar una conversión a PPA constante antes de estimar la frontera."
+
+[[series]]
+indicator_id = "EDU-RES-01"
+dimension = "educacion"
+role = "resultado"
+status = "validated"
+source_id = "WB-HCI"
+organization = "World Bank"
+dataset = "Human Capital Index"
+official_code = "HD.HCI.HLOS | source=63"
+unit = "Puntaje armonizado en unidades equivalentes a TIMSS"
+frequency = "periódica"
+scope = "global"
+exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/HD.HCI.HLOS?format=json&per_page=100&source=63"
+latest_col_year = 2020
+latest_col_value = 419.02753
+latest_usa_year = 2020
+latest_usa_value = 511.79868
+decision_reason = "Comparable entre países, pero no anual; la metodología debe respetar los años observados."
+
+[[series]]
+indicator_id = "EDU-EQ-01"
+dimension = "educacion"
+role = "equidad"
+status = "validated"
+source_id = "OECD-PISA"
+organization = "OECD"
+dataset = "PISA 2022 Results, Volume I, Table I.B1.4.3"
+official_code = "Diferencia en matemáticas entre cuartiles superior e inferior de ESCS"
+unit = "Puntos PISA"
+frequency = "trienal"
+scope = "pisa_participants"
+exact_url = "https://www.oecd.org/en/publications/pisa-2022-results-volume-i_53f23881-en/full-report/results-for-countries-and-economies_360c8f67.html"
+latest_col_year = 2022
+latest_col_value = 79.0
+latest_usa_year = 2022
+latest_usa_value = 102.0
+decision_reason = "Brecha socioeconómica comparable; Estados Unidos conserva la advertencia de muestreo publicada por PISA."
+
+[[series]]
+indicator_id = "EDU-IN-01"
+dimension = "educacion"
+role = "insumo"
+status = "reserve"
+source_id = "UNESCO-UIS"
+organization = "UNESCO Institute for Statistics"
+dataset = "SDG 4 February 2026 bulk release"
+official_code = "XUNIT.PPPCONST.1.FSGOV.FFNTR"
+unit = "PPA constante por estudiante de primaria"
+frequency = "anual"
+scope = "global"
+exact_url = "https://download.uis.unesco.org/bdds/202602/SDG.zip"
+latest_col_year = 1999
+latest_col_value = 1817.85
+latest_usa_year = 2021
+latest_usa_value = 15989.62
+decision_reason = "La definición es adecuada, pero la observación más reciente de Colombia es de 1999; cobertura bilateral insuficiente."
+
+[[series]]
+indicator_id = "SEG-RES-01"
+dimension = "seguridad_justicia"
+role = "resultado"
+status = "validated"
+source_id = "UNODC-WDI"
+organization = "UNODC / World Bank"
+dataset = "Intentional homicides"
+official_code = "VC.IHR.PSRC.P5"
+unit = "Víctimas por 100.000 habitantes"
+frequency = "anual"
+scope = "global"
+exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/VC.IHR.PSRC.P5?format=json&date=1990%3A2025&per_page=2000"
+latest_col_year = 2023
+latest_col_value = 24.913442
+latest_usa_year = 2023
+latest_usa_value = 5.76340794
+decision_reason = "Serie larga y comparable; aplicar promedio móvil o log1p por volatilidad y asimetría."
+
+[[series]]
+indicator_id = "SEG-EQ-01"
+dimension = "seguridad_justicia"
+role = "equidad"
+status = "design_required"
+source_id = ""
+organization = ""
+dataset = ""
+official_code = ""
+unit = "Por definir"
+frequency = "por definir"
+scope = "bilateral"
+exact_url = ""
+decision_reason = "No se identificó una serie subnacional armonizada que mida disparidad territorial en ambos países."
+
+[[series]]
+indicator_id = "SEG-IN-01"
+dimension = "seguridad_justicia"
+role = "insumo"
+status = "reserve"
+source_id = "OECD-COFOG"
+organization = "OECD"
+dataset = "Annual government expenditure by function (COFOG)"
+official_code = "DSD_NASEC10@DF_TABLE11 | S13 | OTE | GF03 | V"
+unit = "Dólares internacionales corrientes por habitante, serie derivada"
+frequency = "anual"
+scope = "bilateral_oecd"
+exact_url = "https://sdmx.oecd.org/public/rest/v1/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13...OTE..GF03...V.."
+dependency_urls = [
+  "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/PA.NUS.PPP?format=json&date=2024&per_page=200",
+  "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SP.POP.TOTL?format=json&date=2024&per_page=200",
+]
+latest_col_year = 2024
+latest_col_value = 430.63
+latest_usa_year = 2024
+latest_usa_value = 1551.23
+decision_reason = "A diferencia del gasto sanitario directo, este valor exige combinar gasto nominal, PPA y población; además sigue a precios corrientes."
+
+[[series]]
+indicator_id = "ADM-RES-01"
+dimension = "administracion"
+role = "resultado"
+status = "validated"
+source_id = "UN-EGDI"
+organization = "United Nations DESA"
+dataset = "UN E-Government Survey 2024, Online Service Index"
+official_code = "OSI | Technical Appendix Table 7"
+unit = "Índice de 0 a 1"
+frequency = "bienal"
+scope = "global"
+exact_url = "https://desapublications.un.org/file/20866/download"
+latest_col_year = 2024
+latest_col_value = 0.7521
+latest_usa_year = 2024
+latest_usa_value = 0.9136
+decision_reason = "Comparable y documentado; mide disponibilidad y madurez del servicio digital, no su uso efectivo."
+
+[[series]]
+indicator_id = "ADM-ACC-01"
+dimension = "administracion"
+role = "acceso"
+status = "design_required"
+source_id = ""
+organization = ""
+dataset = ""
+official_code = ""
+unit = "Por definir"
+frequency = "por definir"
+scope = "bilateral"
+exact_url = ""
+decision_reason = "No se halló una serie bilateral armonizada de tiempo y finalización efectiva de transacciones públicas clave."
+
+[[series]]
+indicator_id = "ADM-IN-01"
+dimension = "administracion"
+role = "insumo"
+status = "conditional"
+source_id = "OECD-COFOG"
+organization = "OECD"
+dataset = "Annual government expenditure by function (COFOG)"
+official_code = "100 × (D1 + P2 in S13/GF01) / B1GQ"
+unit = "Porcentaje del PIB"
+frequency = "anual"
+scope = "bilateral_oecd"
+exact_url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13...D1+P2..GF01.XDC..V.N.T1100?startPeriod=2022&endPeriod=2024&dimensionAtObservation=AllDimensions"
+dependency_urls = [
+  "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN10@DF_TABLE1_EXPENDITURE,2.0/A.COL+USA.S1..B1GQ....XDC.V.N.T0102?startPeriod=2022&endPeriod=2024&dimensionAtObservation=AllDimensions",
+]
+latest_col_year = 2024
+latest_col_value = 1.843968
+latest_usa_year = 2024
+latest_usa_value = 1.511817
+decision_reason = "Proxy operativa comparable que excluye intereses y transferencias; falta conciliarla con el requisito metodológico de PPA por habitante."
