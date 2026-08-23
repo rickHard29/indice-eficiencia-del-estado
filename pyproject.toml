@@ -12,6 +12,9 @@ license = { text = "Proprietary" }
 authors = [{ name = "rickHard29" }]
 dependencies = []
 
+[project.scripts]
+iee-download = "iee.download:main"
+
 [project.optional-dependencies]
 dev = [
   "ruff>=0.6",

@@ -1,0 +1,348 @@
+from __future__ import annotations
+
+from decimal import Decimal
+from pathlib import Path
+import socket
+from tempfile import TemporaryDirectory
+import unittest
+from unittest.mock import patch
+from urllib.error import HTTPError
+
+from iee.ingestion import (
+    DownloadSpec,
+    FetchedPayload,
+    IngestionError,
+    Observation,
+    download_url,
+    load_download_manifest,
+    observations_to_csv,
+    parse_oecd_ppp_per_capita,
+    parse_oecd_ratio_csv,
+    parse_oecd_sdmx_csv,
+    parse_world_bank_json,
+    run_pipeline,
+    sha256_hex,
+    validate_observations,
+)
+
+
+WB_JSON = (
+    b'[{"page":1,"pages":1,"per_page":100,"total":4,'
+    b'"lastupdated":"2026-07-13"},['
+    b'{"countryiso3code":"COL","date":"2022","value":25.4},'
+    b'{"countryiso3code":"COL","date":"2023","value":24.913442},'
+    b'{"countryiso3code":"USA","date":"2022","value":6.383588},'
+    b'{"countryiso3code":"USA","date":"2023","value":5.76340794}]]'
+)
+
+
+def make_spec(**overrides: object) -> DownloadSpec:
+    values: dict[str, object] = {
+        "resource_id": "seg-res-01",
+        "indicator_id": "SEG-RES-01",
+        "source_id": "UNODC-WDI",
+        "source_status": "validated",
+        "score_eligible": True,
+        "adapter": "world_bank_json",
+        "series_code": "VC.IHR.PSRC.P5",
+        "url": "https://example.test/data",
+        "direction": "lower",
+        "unit": "Víctimas por 100.000 habitantes",
+        "expected_entities": ("COL", "USA"),
+        "expected_latest_year": {"COL": 2023, "USA": 2023},
+        "expected_latest_value": {
+            "COL": Decimal("24.913442"),
+            "USA": Decimal("5.76340794"),
+        },
+        "latest_value_tolerance": Decimal("0.000001"),
+        "minimum_observations_per_entity": 2,
+    }
+    values.update(overrides)
+    return DownloadSpec(**values)  # type: ignore[arg-type]
+
+
+class FakeResponse:
+    def __init__(self, content: bytes, *, content_type: str = "application/json") -> None:
+        self.content = content
+        self.headers = {
+            "Content-Type": content_type,
+            "Content-Length": str(len(content)),
+            "ETag": '"fixture"',
+        }
+
+    def __enter__(self) -> FakeResponse:
+        return self
+
+    def __exit__(self, *_args: object) -> None:
+        return None
+
+    def read(self, size: int = -1) -> bytes:
+        return self.content if size < 0 else self.content[:size]
+
+    def geturl(self) -> str:
+        return "https://example.test/final"
+
+
+class IngestionParsingTests(unittest.TestCase):
+    def test_sha256_uses_original_bytes(self) -> None:
+        self.assertEqual(
+            sha256_hex(b"abc"),
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+        )
+        self.assertNotEqual(sha256_hex(b"a\n"), sha256_hex(b"a\r\n"))
+
+    def test_download_returns_exact_bytes_and_metadata(self) -> None:
+        calls: list[tuple[object, float]] = []
+
+        def opener(request: object, *, timeout: float) -> FakeResponse:
+            calls.append((request, timeout))
+            return FakeResponse(WB_JSON)
+
+        fetched = download_url(
+            "https://example.test/data",
+            accept="application/json",
+            timeout=7.5,
+            opener=opener,
+        )
+
+        self.assertEqual(fetched.content, WB_JSON)
+        self.assertEqual(fetched.final_url, "https://example.test/final")
+        self.assertEqual(fetched.etag, '"fixture"')
+        self.assertEqual(calls[0][1], 7.5)
+
+    def test_http_errors_are_wrapped(self) -> None:
+        def opener(_request: object, *, timeout: float) -> FakeResponse:
+            del timeout
+            raise HTTPError("https://example.test", 429, "rate", {}, None)
+
+        with self.assertRaisesRegex(IngestionError, "HTTP 429") as context:
+            download_url(
+                "https://example.test/data",
+                accept="application/json",
+                opener=opener,
+            )
+        self.assertIsInstance(context.exception.__cause__, HTTPError)
+
+    def test_world_bank_json_is_typed_and_sorted(self) -> None:
+        observations = parse_world_bank_json(WB_JSON, make_spec())
+
+        self.assertEqual(len(observations), 4)
+        self.assertEqual(observations[0].entity, "COL")
+        self.assertEqual(observations[0].value, Decimal("25.4"))
+        self.assertEqual(observations[-1].value, Decimal("5.76340794"))
+
+    def test_world_bank_rejects_incomplete_pagination(self) -> None:
+        payload = WB_JSON.replace(b'"pages":1', b'"pages":2', 1)
+        with self.assertRaisesRegex(IngestionError, "paginada"):
+            parse_world_bank_json(payload, make_spec())
+
+    def test_oecd_csv_accepts_bom_and_has_deterministic_order(self) -> None:
+        payload = (
+            b"\xef\xbb\xbfREF_AREA,TIME_PERIOD,OBS_VALUE,UNIT_MULT,OBS_STATUS\n"
+            b"USA,2023,1.85,0,A\n"
+            b"COL,2023,2.23,0,A\n"
+        )
+        spec = make_spec(
+            adapter="oecd_sdmx_csv",
+            expected_latest_year={"COL": 2023, "USA": 2023},
+            expected_latest_value={"COL": Decimal("2.23"), "USA": Decimal("1.85")},
+            minimum_observations_per_entity=1,
+        )
+
+        observations = parse_oecd_sdmx_csv(payload, spec)
+
+        self.assertEqual([row.entity for row in observations], ["COL", "USA"])
+        self.assertEqual(observations[0].value, Decimal("2.23"))
+
+    def test_oecd_xml_response_is_rejected(self) -> None:
+        with self.assertRaisesRegex(IngestionError, "format=csvfile"):
+            parse_oecd_sdmx_csv(b"<?xml version='1.0'?><data/>", make_spec())
+
+    def test_oecd_ratio_requires_components_and_keeps_provisional_flag(self) -> None:
+        numerator = (
+            b"REF_AREA,TIME_PERIOD,OBS_VALUE,TRANSACTION,UNIT_MULT,CURRENCY,OBS_STATUS\n"
+            b"COL,2024,2,D1,6,COP,A\nCOL,2024,3,P2,6,COP,A\n"
+            b"USA,2024,4,D1,6,USD,A\nUSA,2024,2,P2,6,USD,A\n"
+        )
+        denominator = (
+            b"REF_AREA,TIME_PERIOD,OBS_VALUE,UNIT_MULT,CURRENCY,OBS_STATUS\n"
+            b"COL,2024,10,6,COP,P\nUSA,2024,12,6,USD,A\n"
+        )
+        spec = make_spec(
+            adapter="oecd_ratio_csv",
+            category_column="TRANSACTION",
+            expected_categories=("D1", "P2"),
+            scale=Decimal("100"),
+            direction="input",
+            score_eligible=False,
+            source_status="conditional",
+            expected_latest_year={"COL": 2024, "USA": 2024},
+            expected_latest_value={"COL": Decimal("50"), "USA": Decimal("50")},
+            minimum_observations_per_entity=1,
+        )
+
+        observations = parse_oecd_ratio_csv(numerator, denominator, spec)
+
+        self.assertEqual(observations[0].value, Decimal("50"))
+        self.assertEqual(observations[0].observation_status, "provisional")
+        self.assertEqual(observations[1].value, Decimal("50"))
+
+    def test_oecd_ppp_per_capita_uses_exact_country_year_join(self) -> None:
+        expenditure = (
+            b"REF_AREA,TIME_PERIOD,OBS_VALUE,UNIT_MULT,OBS_STATUS\n"
+            b"COL,2024,100,6,A\nUSA,2024,200,6,A\n"
+        )
+        ppp = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2024","value":2},'
+            b'{"countryiso3code":"USA","date":"2024","value":1}]]'
+        )
+        population = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2024","value":10000000},'
+            b'{"countryiso3code":"USA","date":"2024","value":20000000}]]'
+        )
+        spec = make_spec(
+            adapter="oecd_ppp_per_capita",
+            direction="input",
+            score_eligible=False,
+            source_status="reserve",
+            expected_latest_year={"COL": 2024, "USA": 2024},
+            expected_latest_value={"COL": Decimal("5"), "USA": Decimal("10")},
+            minimum_observations_per_entity=1,
+        )
+
+        observations = parse_oecd_ppp_per_capita(expenditure, ppp, population, spec)
+
+        self.assertEqual([row.value for row in observations], [Decimal("5"), Decimal("10")])
+        self.assertTrue(all(row.observation_kind == "derived" for row in observations))
+
+    def test_accepts_different_latest_year_per_country(self) -> None:
+        spec = make_spec(
+            expected_latest_year={"COL": 2024, "USA": 2023},
+            expected_latest_value={"COL": Decimal("1"), "USA": Decimal("1")},
+            minimum_observations_per_entity=1,
+        )
+        rows = [
+            Observation(
+                entity=entity,
+                period=period,
+                indicator_id=spec.indicator_id,
+                value=Decimal("1"),
+                direction=spec.direction,
+                unit=spec.unit,
+                source_id=spec.source_id,
+                series_code=spec.series_code,
+                source_status=spec.source_status,
+                score_eligible=spec.score_eligible,
+                observation_status="observed",
+                observation_kind="reported",
+                resource_id=spec.resource_id,
+            )
+            for entity, period in [("COL", 2024), ("USA", 2023)]
+        ]
+
+        self.assertEqual(len(validate_observations(rows, spec)), 2)
+
+    def test_rejects_latest_value_outside_tolerance(self) -> None:
+        observations = parse_world_bank_json(WB_JSON, make_spec())
+        revised = [
+            row
+            if not (row.entity == "COL" and row.period == 2023)
+            else Observation(**{**row.__dict__, "value": Decimal("99")})
+            for row in observations
+        ]
+
+        with self.assertRaisesRegex(IngestionError, "último valor revisado"):
+            validate_observations(revised, make_spec())
+
+    def test_csv_serialization_is_stable(self) -> None:
+        rows = parse_world_bank_json(WB_JSON, make_spec())
+        self.assertEqual(observations_to_csv(rows), observations_to_csv(list(reversed(rows))))
+
+
+class PipelineTests(unittest.TestCase):
+    def test_repository_manifest_covers_the_full_catalog(self) -> None:
+        project_root = Path(__file__).parents[1]
+        manifest = load_download_manifest(project_root / "config" / "downloads.toml")
+        automatic = {spec.indicator_id for spec in manifest.series}
+        covered = automatic | set(manifest.manual_control_ids) | set(manifest.deferred_ids)
+
+        self.assertEqual(len(automatic), 7)
+        self.assertEqual(len(covered), 12)
+
+    def test_pipeline_uses_fake_network_and_writes_provenance(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            catalog = root / "pilot_sources.toml"
+            manifest = root / "downloads.toml"
+            catalog.write_text(
+                """
+[[series]]
+indicator_id = "SEG-RES-01"
+source_id = "UNODC-WDI"
+status = "validated"
+unit = "Víctimas por 100.000 habitantes"
+latest_col_value = 24.913442
+latest_usa_value = 5.76340794
+""".strip()
+                + "\n",
+                encoding="utf-8",
+            )
+            manifest.write_text(
+                """
+version = "test"
+schema_version = "iee-observations-v1"
+catalog = "pilot_sources.toml"
+countries = ["COL", "USA"]
+manual_control_ids = []
+deferred_ids = []
+
+[[series]]
+resource_id = "seg-res-01"
+indicator_id = "SEG-RES-01"
+source_id = "UNODC-WDI"
+source_status = "validated"
+score_eligible = true
+adapter = "world_bank_json"
+series_code = "VC.IHR.PSRC.P5"
+url = "https://example.test/data"
+direction = "lower"
+unit = "Víctimas por 100.000 habitantes"
+expected_entities = ["COL", "USA"]
+expected_latest_year = { COL = 2023, USA = 2023 }
+expected_latest_value = { COL = 24.913442, USA = 5.76340794 }
+latest_value_tolerance = 0.000001
+minimum_observations_per_entity = 2
+""".strip()
+                + "\n",
+                encoding="utf-8",
+            )
+
+            def fetcher(url: str, **_kwargs: object) -> FetchedPayload:
+                return FetchedPayload(url, url, WB_JSON, "application/json")
+
+            processed = root / "processed" / "observations.csv"
+            provenance = root / "interim" / "provenance.json"
+            with patch.object(
+                socket,
+                "create_connection",
+                side_effect=AssertionError("network disabled in tests"),
+            ):
+                result = run_pipeline(
+                    manifest,
+                    raw_dir=root / "raw",
+                    processed_path=processed,
+                    provenance_path=provenance,
+                    fetcher=fetcher,
+                    retrieved_at="2026-08-23T12:00:00+00:00",
+                )
+
+            self.assertEqual(result.observation_count, 4)
+            self.assertTrue(processed.exists())
+            self.assertTrue(provenance.exists())
+            self.assertEqual(len(list((root / "raw").glob("*.json"))), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

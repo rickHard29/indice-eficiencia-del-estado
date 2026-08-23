@@ -33,7 +33,7 @@ cumple hoy la comparabilidad requerida.
 
 La serie bilateral de la OECD usa el código `AVM`, unidad `DT_10P5HB`, población
 total y estandarización `STANDARD`. La medida combina mortalidad prevenible y
-tratable según la lista OECD/Eurostat 2022. La [consulta SDMX exacta](https://sdmx.oecd.org/public/rest/v1/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_AM,1.0/COL+USA.A.AVM.DT_10P5HB._T._T.._Z.STANDARD....?startPeriod=2010)
+tratable según la lista OECD/Eurostat 2022. La [consulta SDMX exacta](https://sdmx.oecd.org/public/rest/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_AM,1.0/COL+USA.A.AVM.DT_10P5HB._T._T._Z._Z.STANDARD._Z._Z._Z._Z?startPeriod=2010&endPeriod=2022&dimensionAtObservation=AllDimensions&format=csvfile)
 devuelve 419 para Colombia en 2021 y 312 para Estados Unidos en 2022. Es válida para
 el piloto bilateral, no como cobertura mundial. Se aplicará promedio móvil y una
 prueba de sensibilidad que excluya los años más afectados por la pandemia.
@@ -101,7 +101,7 @@ por población. No entra al piloto hasta diseñar y probar ese protocolo.
 
 OECD COFOG `GF03` es comparable y cubre policía, bomberos, tribunales y prisiones,
 pero el valor por habitante en PPA es una serie derivada. La [consulta de gasto
-nominal](https://sdmx.oecd.org/public/rest/v1/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13...OTE..GF03...V..)
+nominal](https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13._Z.D.OTE._Z.GF03.XDC.S.V.N.T1100?startPeriod=2009&endPeriod=2024&dimensionAtObservation=AllDimensions&format=csvfile)
 se combina con las consultas WDI de [`PA.NUS.PPP`](https://api.worldbank.org/v2/country/COL%3BUSA/indicator/PA.NUS.PPP?format=json&date=2024&per_page=200)
 y [`SP.POP.TOTL`](https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SP.POP.TOTL?format=json&date=2024&per_page=200)
 así:
@@ -141,8 +141,8 @@ La proxy provisional usa únicamente series OECD y calcula:
 100 × (compensación de empleados D1 + consumo intermedio P2 en S13/GF01) / PIB B1GQ
 ```
 
-La [consulta funcional D1 y P2](https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13...D1+P2..GF01.XDC..V.N.T1100?startPeriod=2022&endPeriod=2024&dimensionAtObservation=AllDimensions)
-y la [consulta de PIB nominal](https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN10@DF_TABLE1_EXPENDITURE,2.0/A.COL+USA.S1..B1GQ....XDC.V.N.T0102?startPeriod=2022&endPeriod=2024&dimensionAtObservation=AllDimensions)
+La [consulta funcional D1 y P2](https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13._Z.D.D1+P2._Z.GF01.XDC.S.V.N.T1100?startPeriod=2009&endPeriod=2024&dimensionAtObservation=AllDimensions&format=csvfile)
+y la [consulta de PIB nominal](https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN10@DF_TABLE1_EXPENDITURE,2.0/A.COL+USA.S1.S1.B1GQ._Z._Z._Z.XDC.V.N.T0102?startPeriod=2009&endPeriod=2024&dimensionAtObservation=AllDimensions&format=csvfile)
 producen 1,844 % para Colombia y 1,512 % para Estados Unidos en 2024. Es preferible
 al GF01 total porque excluye intereses y transferencias, aunque todavía incluye
 funciones generales heterogéneas. Queda condicional hasta decidir si se modifica la

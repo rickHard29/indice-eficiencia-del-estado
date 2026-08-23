@@ -1,0 +1,136 @@
+version = "0.1"
+schema_version = "iee-observations-v1"
+catalog = "pilot_sources.toml"
+countries = ["COL", "USA"]
+
+# Estos indicadores tienen valores oficiales validados, pero su publicación actual
+# exige extraer una tabla HTML o PDF. No se simulan como descargas automáticas.
+manual_control_ids = ["EDU-EQ-01", "ADM-RES-01"]
+
+# Reservas metodológicas o indicadores que todavía requieren diseño.
+deferred_ids = ["EDU-IN-01", "SEG-EQ-01", "ADM-ACC-01"]
+
+[[series]]
+resource_id = "sal-res-01"
+indicator_id = "SAL-RES-01"
+source_id = "OECD-HEALTH"
+source_status = "validated"
+score_eligible = true
+adapter = "oecd_sdmx_csv"
+series_code = "DSD_HEALTH_STAT@DF_AM | AVM | DT_10P5HB | STANDARD"
+url = "https://sdmx.oecd.org/public/rest/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_AM,1.0/COL+USA.A.AVM.DT_10P5HB._T._T._Z._Z.STANDARD._Z._Z._Z._Z?startPeriod=2010&endPeriod=2022&dimensionAtObservation=AllDimensions&format=csvfile"
+direction = "lower"
+unit = "Muertes evitables estandarizadas por edad por 100.000 habitantes"
+expected_entities = ["COL", "USA"]
+expected_latest_year = { COL = 2021, USA = 2022 }
+expected_latest_value = { COL = 419.0, USA = 312.0 }
+latest_value_tolerance = 0.000001
+minimum_observations_per_entity = 10
+
+[[series]]
+resource_id = "sal-acc-01"
+indicator_id = "SAL-ACC-01"
+source_id = "WHO-UHC"
+source_status = "validated"
+score_eligible = true
+adapter = "world_bank_json"
+series_code = "SH_UHC_SCI"
+url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SH_UHC_SCI?format=json&date=2000%3A2023&per_page=200"
+direction = "higher"
+unit = "Índice de cobertura de servicios esenciales, 0 a 100"
+expected_entities = ["COL", "USA"]
+expected_latest_year = { COL = 2023, USA = 2023 }
+expected_latest_value = { COL = 82.0, USA = 88.0 }
+latest_value_tolerance = 0.000001
+minimum_observations_per_entity = 24
+
+[[series]]
+resource_id = "sal-in-01"
+indicator_id = "SAL-IN-01"
+source_id = "WHO-GHED"
+source_status = "conditional"
+score_eligible = false
+adapter = "world_bank_json"
+series_code = "SH.XPD.GHED.PP.CD"
+url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SH.XPD.GHED.PP.CD?format=json&date=2000%3A2024&per_page=200"
+direction = "input"
+unit = "Dólares internacionales corrientes por habitante"
+expected_entities = ["COL", "USA"]
+expected_latest_year = { COL = 2024, USA = 2023 }
+expected_latest_value = { COL = 1226.4157595, USA = 7269.2911847 }
+latest_value_tolerance = 0.000001
+minimum_observations_per_entity = 20
+
+[[series]]
+resource_id = "edu-res-01"
+indicator_id = "EDU-RES-01"
+source_id = "WB-HCI"
+source_status = "validated"
+score_eligible = true
+adapter = "world_bank_json"
+series_code = "HD.HCI.HLOS | source=63"
+url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/HD.HCI.HLOS?format=json&date=2010%3A2020&per_page=100&source=63"
+direction = "higher"
+unit = "Puntaje armonizado en unidades equivalentes a TIMSS"
+expected_entities = ["COL", "USA"]
+expected_latest_year = { COL = 2020, USA = 2020 }
+expected_latest_value = { COL = 419.02753, USA = 511.79868 }
+latest_value_tolerance = 0.00001
+minimum_observations_per_entity = 4
+
+[[series]]
+resource_id = "seg-res-01"
+indicator_id = "SEG-RES-01"
+source_id = "UNODC-WDI"
+source_status = "validated"
+score_eligible = true
+adapter = "world_bank_json"
+series_code = "VC.IHR.PSRC.P5"
+url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/VC.IHR.PSRC.P5?format=json&date=1990%3A2023&per_page=200"
+direction = "lower"
+unit = "Víctimas por 100.000 habitantes"
+expected_entities = ["COL", "USA"]
+expected_latest_year = { COL = 2023, USA = 2023 }
+expected_latest_value = { COL = 24.913442, USA = 5.76340794 }
+latest_value_tolerance = 0.000001
+minimum_observations_per_entity = 30
+
+[[series]]
+resource_id = "seg-in-01"
+indicator_id = "SEG-IN-01"
+source_id = "OECD-COFOG"
+source_status = "reserve"
+score_eligible = false
+adapter = "oecd_ppp_per_capita"
+series_code = "GF03 OTE / PA.NUS.PPP / SP.POP.TOTL"
+url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13._Z.D.OTE._Z.GF03.XDC.S.V.N.T1100?startPeriod=2009&endPeriod=2024&dimensionAtObservation=AllDimensions&format=csvfile"
+ppp_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/PA.NUS.PPP?format=json&date=2009%3A2024&per_page=200"
+population_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SP.POP.TOTL?format=json&date=2009%3A2024&per_page=200"
+direction = "input"
+unit = "Dólares internacionales corrientes por habitante, serie derivada"
+expected_entities = ["COL", "USA"]
+expected_latest_year = { COL = 2024, USA = 2024 }
+expected_latest_value = { COL = 430.63, USA = 1551.23 }
+latest_value_tolerance = 0.01
+minimum_observations_per_entity = 16
+
+[[series]]
+resource_id = "adm-in-01"
+indicator_id = "ADM-IN-01"
+source_id = "OECD-COFOG"
+source_status = "conditional"
+score_eligible = false
+adapter = "oecd_ratio_csv"
+series_code = "100 × (D1 + P2 in S13/GF01) / B1GQ"
+url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13._Z.D.D1+P2._Z.GF01.XDC.S.V.N.T1100?startPeriod=2009&endPeriod=2024&dimensionAtObservation=AllDimensions&format=csvfile"
+denominator_url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN10@DF_TABLE1_EXPENDITURE,2.0/A.COL+USA.S1.S1.B1GQ._Z._Z._Z.XDC.V.N.T0102?startPeriod=2009&endPeriod=2024&dimensionAtObservation=AllDimensions&format=csvfile"
+category_column = "TRANSACTION"
+expected_categories = ["D1", "P2"]
+scale = 100.0
+direction = "input"
+unit = "Porcentaje del PIB"
+expected_entities = ["COL", "USA"]
+expected_latest_year = { COL = 2024, USA = 2024 }
+expected_latest_value = { COL = 1.843968, USA = 1.511817 }
+latest_value_tolerance = 0.000001
+minimum_observations_per_entity = 16
