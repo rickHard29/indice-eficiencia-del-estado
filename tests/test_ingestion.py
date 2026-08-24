@@ -11,7 +11,9 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 
 from iee.ingestion import (
+    _acquire_series,
     _atomic_write_publication,
+    _validate_raw_targets,
     DownloadSpec,
     FetchedPayload,
     IngestionError,
@@ -19,10 +21,13 @@ from iee.ingestion import (
     download_url,
     load_download_manifest,
     observations_to_csv,
+    parse_oecd_percent_times_level,
     parse_oecd_ppp_per_capita,
     parse_oecd_ratio_csv,
+    parse_oecd_ratio_times_level,
     parse_oecd_sdmx_csv,
     parse_world_bank_json,
+    parse_world_bank_percent_times_level,
     run_pipeline,
     sha256_hex,
     validate_observations,
@@ -220,6 +225,139 @@ class IngestionParsingTests(unittest.TestCase):
         self.assertEqual([row.value for row in observations], [Decimal("5"), Decimal("10")])
         self.assertTrue(all(row.observation_kind == "derived" for row in observations))
 
+    def test_world_bank_percent_times_constant_ppp_level(self) -> None:
+        percentages = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2023","value":4},'
+            b'{"countryiso3code":"USA","date":"2023","value":8}]]'
+        )
+        levels = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2023","value":20000},'
+            b'{"countryiso3code":"USA","date":"2023","value":80000}]]'
+        )
+        spec = make_spec(
+            adapter="world_bank_percent_times_level",
+            direction="input",
+            score_eligible=False,
+            source_status="conditional",
+            level_url="https://example.test/level",
+            expected_latest_value={"COL": Decimal("800"), "USA": Decimal("6400")},
+            minimum_observations_per_entity=1,
+        )
+
+        observations = parse_world_bank_percent_times_level(percentages, levels, spec)
+
+        self.assertEqual([row.value for row in observations], [Decimal("800"), Decimal("6400")])
+        self.assertTrue(all(row.observation_kind == "derived" for row in observations))
+
+    def test_percent_adapter_requests_json_for_both_resources(self) -> None:
+        percentages = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2023","value":4},'
+            b'{"countryiso3code":"USA","date":"2023","value":8}]]'
+        )
+        levels = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2023","value":20000},'
+            b'{"countryiso3code":"USA","date":"2023","value":80000}]]'
+        )
+        calls: list[tuple[str, str]] = []
+
+        def fetcher(url: str, *, accept: str, **_kwargs: object) -> FetchedPayload:
+            calls.append((url, accept))
+            content = levels if url.endswith("/level") else percentages
+            return FetchedPayload(url, url, content, "application/json")
+
+        spec = make_spec(
+            adapter="world_bank_percent_times_level",
+            direction="input",
+            score_eligible=False,
+            source_status="conditional",
+            level_url="https://example.test/level",
+            expected_latest_value={"COL": Decimal("800"), "USA": Decimal("6400")},
+            minimum_observations_per_entity=1,
+        )
+
+        observations, payloads = _acquire_series(
+            spec,
+            timeout=5,
+            max_bytes=10_000,
+            fetcher=fetcher,
+        )
+
+        self.assertEqual(len(observations), 2)
+        self.assertEqual(len(payloads), 2)
+        self.assertTrue(all("json" in accept for _, accept in calls))
+
+    def test_oecd_percent_times_level_skips_explicit_missing_value(self) -> None:
+        percentages = (
+            b"REF_AREA,TIME_PERIOD,OBS_VALUE,UNIT_MULT,MEASURE,EXPENDITURE,OBS_STATUS\n"
+            b"COL,2022,2,0,GE,GF03,A\nCOL,2023,2.5,0,GE,GF03,A\n"
+            b"USA,2022,3,0,GE,GF03,A\nUSA,2023,,0,GE,GF03,A\n"
+        )
+        levels = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2022","value":20000},'
+            b'{"countryiso3code":"COL","date":"2023","value":24000},'
+            b'{"countryiso3code":"USA","date":"2022","value":80000},'
+            b'{"countryiso3code":"USA","date":"2023","value":82000}]]'
+        )
+        spec = make_spec(
+            adapter="oecd_percent_times_level",
+            direction="input",
+            score_eligible=False,
+            source_status="conditional",
+            level_url="https://example.test/level",
+            dimension_filters={"MEASURE": "GE", "EXPENDITURE": "GF03"},
+            expected_latest_year={"COL": 2023, "USA": 2022},
+            expected_latest_value={"COL": Decimal("600"), "USA": Decimal("2400")},
+            minimum_observations_per_entity=1,
+        )
+
+        observations = parse_oecd_percent_times_level(percentages, levels, spec)
+
+        self.assertEqual(len(observations), 3)
+        self.assertEqual(observations[-1].value, Decimal("2400"))
+
+    def test_oecd_ratio_times_level_omits_incomplete_country_year(self) -> None:
+        numerator = (
+            b"REF_AREA,TIME_PERIOD,OBS_VALUE,TRANSACTION,UNIT_MULT,CURRENCY,OBS_STATUS\n"
+            b"COL,2022,2,D1,6,COP,A\nCOL,2022,3,P2,6,COP,A\n"
+            b"COL,2023,2,D1,6,COP,A\nCOL,2023,2,P2,6,COP,A\n"
+            b"USA,2022,4,D1,6,USD,A\nUSA,2022,2,P2,6,USD,A\n"
+            b"USA,2023,4,D1,6,USD,A\nUSA,2023,,P2,6,USD,A\n"
+        )
+        denominator = (
+            b"REF_AREA,TIME_PERIOD,OBS_VALUE,UNIT_MULT,CURRENCY,OBS_STATUS\n"
+            b"COL,2022,10,6,COP,A\nCOL,2023,10,6,COP,A\n"
+            b"USA,2022,12,6,USD,A\nUSA,2023,12,6,USD,A\n"
+        )
+        levels = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2022","value":20000},'
+            b'{"countryiso3code":"COL","date":"2023","value":22000},'
+            b'{"countryiso3code":"USA","date":"2022","value":80000},'
+            b'{"countryiso3code":"USA","date":"2023","value":82000}]]'
+        )
+        spec = make_spec(
+            adapter="oecd_ratio_times_level",
+            category_column="TRANSACTION",
+            expected_categories=("D1", "P2"),
+            direction="input",
+            score_eligible=False,
+            source_status="conditional",
+            level_url="https://example.test/level",
+            expected_latest_year={"COL": 2023, "USA": 2022},
+            expected_latest_value={"COL": Decimal("8800"), "USA": Decimal("40000")},
+            minimum_observations_per_entity=1,
+        )
+
+        observations = parse_oecd_ratio_times_level(numerator, denominator, levels, spec)
+
+        self.assertEqual(len(observations), 3)
+        self.assertEqual(observations[-1].value, Decimal("40000"))
+
     def test_accepts_different_latest_year_per_country(self) -> None:
         spec = make_spec(
             expected_latest_year={"COL": 2024, "USA": 2023},
@@ -246,6 +384,34 @@ class IngestionParsingTests(unittest.TestCase):
         ]
 
         self.assertEqual(len(validate_observations(rows, spec)), 2)
+
+    def test_accepts_anchor_checkpoints_for_a_larger_country_sample(self) -> None:
+        spec = make_spec(
+            expected_entities=("CHL", "COL", "USA"),
+            expected_latest_year={"COL": 2023, "USA": 2023},
+            expected_latest_value={"COL": Decimal("1"), "USA": Decimal("1")},
+            minimum_observations_per_entity=1,
+        )
+        rows = [
+            Observation(
+                entity=entity,
+                period=2023,
+                indicator_id=spec.indicator_id,
+                value=Decimal("1"),
+                direction=spec.direction,
+                unit=spec.unit,
+                source_id=spec.source_id,
+                series_code=spec.series_code,
+                source_status=spec.source_status,
+                score_eligible=spec.score_eligible,
+                observation_status="observed",
+                observation_kind="reported",
+                resource_id=spec.resource_id,
+            )
+            for entity in spec.expected_entities
+        ]
+
+        self.assertEqual(len(validate_observations(rows, spec)), 3)
 
     def test_rejects_latest_value_outside_tolerance(self) -> None:
         observations = parse_world_bank_json(WB_JSON, make_spec())
@@ -304,12 +470,63 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(pisa_usa.value, Decimal("102.0"))
         self.assertEqual(pisa_usa.observation_status, "source:sampling_caution")
 
+    def test_pipeline_rejects_path_collisions_before_downloading(self) -> None:
+        project_root = Path(__file__).parents[1]
+        manifest_path = project_root / "config" / "downloads_inputs_v0.2.toml"
+        manifest = load_download_manifest(manifest_path)
+        assert manifest.country_universe is not None
+        fetch_called = False
+
+        def forbidden_fetcher(_url: str, **_kwargs: object) -> FetchedPayload:
+            nonlocal fetch_called
+            fetch_called = True
+            raise AssertionError("fetcher must not be called")
+
+        with TemporaryDirectory() as temporary_directory:
+            temporary = Path(temporary_directory)
+            protected_inputs = (
+                manifest_path,
+                manifest.catalog_path,
+                manifest.country_universe.path,
+            )
+            for protected in protected_inputs:
+                with self.subTest(protected=protected.name):
+                    with self.assertRaisesRegex(
+                        IngestionError,
+                        "salida no puede sobrescribir una entrada",
+                    ):
+                        run_pipeline(
+                            manifest_path,
+                            raw_dir=temporary / "raw",
+                            processed_path=protected,
+                            provenance_path=temporary / "provenance.json",
+                            fetcher=forbidden_fetcher,
+                        )
+            with self.assertRaisesRegex(IngestionError, "raw_dir no puede"):
+                run_pipeline(
+                    manifest_path,
+                    raw_dir=manifest.catalog_path,
+                    processed_path=temporary / "processed.csv",
+                    provenance_path=temporary / "provenance.json",
+                    fetcher=forbidden_fetcher,
+                )
+
+            with self.assertRaisesRegex(IngestionError, "recurso crudo no puede"):
+                _validate_raw_targets(
+                    manifest_path,
+                    manifest,
+                    (manifest.catalog_path,),
+                    (temporary / "processed.csv", temporary / "provenance.json"),
+                )
+        self.assertFalse(fetch_called)
+
     def test_pipeline_uses_fake_network_and_writes_provenance(self) -> None:
         with TemporaryDirectory() as temporary_directory:
             root = Path(temporary_directory)
             catalog = root / "pilot_sources.toml"
             manifest = root / "downloads.toml"
             manual_controls = root / "manual_controls.toml"
+            country_universe = root / "country_universe.toml"
             catalog.write_text(
                 """
 [[series]]
@@ -319,6 +536,8 @@ status = "validated"
 direction = "lower"
 official_code = "VC.IHR.PSRC.P5"
 unit = "Víctimas por 100.000 habitantes"
+exact_url = "https://example.test/data"
+reference_year = 2023
 latest_col_year = 2023
 latest_col_value = 24.913442
 latest_usa_year = 2023
@@ -376,11 +595,34 @@ observation_status = "observed"
                 + "\n",
                 encoding="utf-8",
             )
+            country_universe.write_text(
+                """
+version = "test"
+snapshot_date = "2026-08-23"
+frame = "TEST-2"
+official_source = "https://example.test/universe"
+membership_count = 2
+estimation_sample = "per-dimension"
+frontier_min_countries = 2
+require_complete_indicator_window = true
+allow_imputation_for_eligibility = false
+retain_flagged_observations = true
+countries = ["COL", "USA"]
+
+[[input_masks]]
+indicator_id = "SEG-RES-01"
+included_countries = ["COL", "USA"]
+excluded_countries = []
+""".strip()
+                + "\n",
+                encoding="utf-8",
+            )
             manifest.write_text(
                 """
 version = "test"
 schema_version = "iee-observations-v1"
 catalog = "pilot_sources.toml"
+country_universe = "country_universe.toml"
 countries = ["COL", "USA"]
 manual_controls = "manual_controls.toml"
 deferred_ids = []
@@ -401,6 +643,7 @@ expected_latest_year = { COL = 2023, USA = 2023 }
 expected_latest_value = { COL = 24.913442, USA = 5.76340794 }
 latest_value_tolerance = 0.000001
 minimum_observations_per_entity = 2
+reference_year = 2023
 """.strip()
                 + "\n",
                 encoding="utf-8",
@@ -448,6 +691,14 @@ minimum_observations_per_entity = 2
                 receipt["manual_controls"]["sha256"],
                 sha256_hex(manual_controls.read_bytes()),
             )
+            self.assertEqual(receipt["country_universe"]["frame"], "TEST-2")
+            self.assertEqual(receipt["country_universe"]["membership_count"], 2)
+            automatic = next(
+                row for row in receipt["series"] if row["indicator_id"] == "SEG-RES-01"
+            )
+            self.assertEqual(automatic["country_mask"]["included_count"], 2)
+            self.assertTrue(automatic["country_mask"]["frontier_min_met"])
+            self.assertEqual(automatic["vintage_age"], {"COL": 0, "USA": 0})
 
             manual_controls.write_bytes(
                 original_manual_bytes.replace(

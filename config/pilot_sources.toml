@@ -36,7 +36,7 @@ official_code = "SH_UHC_SCI"
 unit = "Índice de cobertura de servicios esenciales, 0 a 100"
 frequency = "anual"
 scope = "global"
-exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SH_UHC_SCI?format=json&per_page=200"
+exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SH_UHC_SCI?format=json&date=2000%3A2023&per_page=200"
 latest_col_year = 2023
 latest_col_value = 82.0
 latest_usa_year = 2023
@@ -56,7 +56,7 @@ official_code = "SH.XPD.GHED.PP.CD"
 unit = "Dólares internacionales corrientes por habitante"
 frequency = "anual"
 scope = "global"
-exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SH.XPD.GHED.PP.CD?format=json&per_page=200"
+exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SH.XPD.GHED.PP.CD?format=json&date=2000%3A2024&per_page=200"
 latest_col_year = 2024
 latest_col_value = 1226.4157595
 latest_usa_year = 2023
@@ -76,7 +76,7 @@ official_code = "HD.HCI.HLOS | source=63"
 unit = "Puntaje armonizado en unidades equivalentes a TIMSS"
 frequency = "periódica"
 scope = "global"
-exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/HD.HCI.HLOS?format=json&per_page=100&source=63"
+exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/HD.HCI.HLOS?format=json&date=2010%3A2020&per_page=100&source=63"
 latest_col_year = 2020
 latest_col_value = 419.02753
 latest_usa_year = 2020
@@ -138,7 +138,7 @@ official_code = "VC.IHR.PSRC.P5"
 unit = "Víctimas por 100.000 habitantes"
 frequency = "anual"
 scope = "global"
-exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/VC.IHR.PSRC.P5?format=json&date=1990%3A2025&per_page=2000"
+exact_url = "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/VC.IHR.PSRC.P5?format=json&date=1990%3A2023&per_page=200"
 latest_col_year = 2023
 latest_col_value = 24.913442
 latest_usa_year = 2023
@@ -176,8 +176,8 @@ frequency = "anual"
 scope = "bilateral_oecd"
 exact_url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.COL+USA.S13._Z.D.OTE._Z.GF03.XDC.S.V.N.T1100?startPeriod=2009&endPeriod=2024&dimensionAtObservation=AllDimensions&format=csvfile"
 dependency_urls = [
-  "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/PA.NUS.PPP?format=json&date=2024&per_page=200",
-  "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SP.POP.TOTL?format=json&date=2024&per_page=200",
+  "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/PA.NUS.PPP?format=json&date=2009%3A2024&per_page=200",
+  "https://api.worldbank.org/v2/country/COL%3BUSA/indicator/SP.POP.TOTL?format=json&date=2009%3A2024&per_page=200",
 ]
 latest_col_year = 2024
 latest_col_value = 430.63

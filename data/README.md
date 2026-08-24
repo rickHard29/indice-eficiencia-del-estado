@@ -13,4 +13,10 @@ La canalización oficial escribe en:
 - `interim/pilot_provenance.json`: recibo completo de adquisición y transformación.
 - `processed/pilot_observations.csv`: observaciones normalizadas.
 
+La ampliación multinacional v0.2 escribe, por separado:
+
+- `raw/official-v0.2/<sha256>.<formato>`: componentes oficiales inmutables;
+- `interim/v02_input_provenance.json`: universo, máscaras, vintages y hashes;
+- `processed/v02_input_proxies.csv`: cuatro proxies condicionales en PPA constante.
+
 Uso y controles: [`docs/data-pipeline.md`](../docs/data-pipeline.md).

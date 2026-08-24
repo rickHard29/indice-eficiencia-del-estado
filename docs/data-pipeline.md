@@ -4,6 +4,11 @@ La primera canalización del IEE descarga, valida y normaliza fuentes oficiales 
 Colombia y Estados Unidos. No calcula puntuaciones: su única función es producir una
 base trazable y detenerse si la fuente cambia de forma material.
 
+La extensión v0.2 usa el mismo motor para los cuatro insumos multinacionales. Su
+manifiesto referencia el universo OCDE-38, aplica máscaras de 38 o 34 países y deriva
+PPA constante de 2021 por habitante. Véase
+[`docs/input-proxies-v0.2.md`](input-proxies-v0.2.md).
+
 ## Cobertura
 
 El manifiesto [`config/downloads.toml`](../config/downloads.toml) asigna una ruta de
@@ -92,6 +97,9 @@ proyecto.
 La canalización falla antes de publicar las salidas cuando encuentra:
 
 - un indicador, fuente, estado o unidad que difiere del catálogo metodológico;
+- una URL primaria o dependiente que difiere del catálogo congelado;
+- un universo o una máscara de países que difiere del manifiesto;
+- una ruta de salida que pueda sobrescribir una entrada o un recurso crudo;
 - un país, año, valor o URL manual que difiere del catálogo metodológico;
 - una respuesta paginada incompleta, vacía, XML en lugar de CSV o con columnas
   faltantes;

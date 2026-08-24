@@ -1,0 +1,101 @@
+version = "0.2"
+validation_date = "2026-08-24"
+countries_frame = "OECD-38"
+common_unit = "Dólares internacionales constantes de 2021 por habitante"
+
+[[series]]
+indicator_id = "SAL-IN-02"
+dimension = "salud"
+role = "insumo"
+direction = "input"
+status = "conditional"
+source_id = "WHO-GHED-WDI-PPP"
+organization = "World Health Organization / World Bank"
+dataset = "GHED government health expenditure and WDI constant PPP GDP per capita"
+official_code = "SH.XPD.GHED.GD.ZS / 100 × NY.GDP.PCAP.PP.KD"
+unit = "Dólares internacionales constantes de 2021 por habitante"
+frequency = "anual"
+reference_year = 2023
+scope = "OECD-38"
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/SH.XPD.GHED.GD.ZS?format=json&date=2019%3A2023&per_page=10000"
+dependency_urls = [
+  "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/NY.GDP.PCAP.PP.KD?format=json&date=2019%3A2023&per_page=10000",
+]
+latest_col_year = 2023
+latest_col_value = "1056.14838528426089020447"
+latest_usa_year = 2023
+latest_usa_value = "6696.94227300978601549883"
+decision_reason = "Proxy en PPA constante; condicional porque usa el deflactor general del PIB."
+
+[[series]]
+indicator_id = "EDU-IN-02"
+dimension = "educacion"
+role = "insumo"
+direction = "input"
+status = "conditional"
+source_id = "UNESCO-UIS-WDI-PPP"
+organization = "UNESCO Institute for Statistics / World Bank"
+dataset = "Government education expenditure and WDI constant PPP GDP per capita"
+official_code = "SE.XPD.TOTL.GD.ZS / 100 × NY.GDP.PCAP.PP.KD"
+unit = "Dólares internacionales constantes de 2021 por habitante"
+frequency = "anual con vintages desiguales"
+reference_year = 2023
+scope = "OECD-38"
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/SE.XPD.TOTL.GD.ZS?format=json&date=2019%3A2023&per_page=10000"
+dependency_urls = [
+  "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/NY.GDP.PCAP.PP.KD?format=json&date=2019%3A2023&per_page=10000",
+]
+latest_col_year = 2020
+latest_col_value = "834.5782128786056666172698543"
+latest_usa_year = 2021
+latest_usa_value = "3872.386332550849341835072728"
+decision_reason = "Usa gasto total por habitante y conserva el vintage; no mezcla gasto total con población primaria."
+
+[[series]]
+indicator_id = "SEG-IN-02"
+dimension = "seguridad_justicia"
+role = "insumo"
+direction = "input"
+status = "conditional"
+source_id = "OECD-COFOG-WDI-PPP"
+organization = "OECD / World Bank"
+dataset = "Government at a Glance 2025 COFOG and WDI constant PPP GDP per capita"
+official_code = "GF03 PT_B1GQ / 100 × NY.GDP.PCAP.PP.KD"
+unit = "Dólares internacionales constantes de 2021 por habitante"
+frequency = "anual"
+reference_year = 2023
+scope = "OECD-34"
+exact_url = "https://sdmx.oecd.org/public/rest/v1/data/OECD.GOV.GIP,DSD_GOV_COFOG@DF_GOV_COFOG_2025,1.0/A.AUS+AUT+BEL+CHE+CHL+COL+CRI+CZE+DEU+DNK+ESP+EST+FIN+FRA+GBR+GRC+HUN+IRL+ISL+ISR+ITA+JPN+KOR+LTU+LUX+LVA+NLD+NOR+POL+PRT+SVK+SVN+SWE+USA.GE.PT_B1GQ.S13.GF03.2025.PF?startPeriod=2019&endPeriod=2023&dimensionAtObservation=AllDimensions&format=csvfile"
+dependency_urls = [
+  "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BNLD%3BNOR%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BUSA/indicator/NY.GDP.PCAP.PP.KD?format=json&date=2019%3A2023&per_page=10000",
+]
+latest_col_year = 2023
+latest_col_value = "410.46772041483493"
+latest_usa_year = 2023
+latest_usa_value = "1375.50592866524365"
+decision_reason = "Cobertura 34/38; GF03 es amplio y la conversión usa el deflactor del PIB."
+
+[[series]]
+indicator_id = "ADM-IN-02"
+dimension = "administracion"
+role = "insumo"
+direction = "input"
+status = "conditional"
+source_id = "OECD-COFOG-WDI-PPP"
+organization = "OECD / World Bank"
+dataset = "COFOG operational resources and WDI constant PPP GDP per capita"
+official_code = "((D1 + P2) in S13/GF01) / B1GQ × NY.GDP.PCAP.PP.KD"
+unit = "Dólares internacionales constantes de 2021 por habitante"
+frequency = "anual"
+reference_year = 2023
+scope = "OECD-34"
+exact_url = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NASEC10@DF_TABLE11,1.1/A.AUS+AUT+BEL+CHE+CHL+COL+CRI+CZE+DEU+DNK+ESP+EST+FIN+FRA+GBR+GRC+HUN+IRL+ISL+ISR+ITA+JPN+KOR+LTU+LUX+LVA+NLD+NOR+POL+PRT+SVK+SVN+SWE+USA.S13._Z.D.D1+P2._Z.GF01.XDC.S.V.N.T1100?startPeriod=2019&endPeriod=2023&dimensionAtObservation=AllDimensions&format=csvfile"
+dependency_urls = [
+  "https://sdmx.oecd.org/public/rest/data/OECD.SDD.NAD,DSD_NAMAIN10@DF_TABLE1_EXPENDITURE,2.0/A.AUS+AUT+BEL+CHE+CHL+COL+CRI+CZE+DEU+DNK+ESP+EST+FIN+FRA+GBR+GRC+HUN+IRL+ISL+ISR+ITA+JPN+KOR+LTU+LUX+LVA+NLD+NOR+POL+PRT+SVK+SVN+SWE+USA.S1.S1.B1GQ._Z._Z._Z.XDC.V.N.T0102?startPeriod=2019&endPeriod=2023&dimensionAtObservation=AllDimensions&format=csvfile",
+  "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BNLD%3BNOR%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BUSA/indicator/NY.GDP.PCAP.PP.KD?format=json&date=2019%3A2023&per_page=10000",
+]
+latest_col_year = 2023
+latest_col_value = "366.3813504410248338583669355"
+latest_usa_year = 2023
+latest_usa_value = "1128.941888167870342289505459"
+decision_reason = "Excluye intereses y transferencias, pero GF01 sigue siendo una proxy administrativa amplia."

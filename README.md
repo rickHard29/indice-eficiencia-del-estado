@@ -45,6 +45,16 @@ normalización, agregación, sensibilidad y procedencia con el snapshot bilatera
 El sistema mantiene el IEE oficial nulo y bloquea publicación y ranking porque aún
 faltan insumos compatibles, roles obligatorios y un universo multinacional.
 
+La [v0.2 ya congela un universo de 38 miembros de la OCDE](docs/universe-v0.2.md)
+y exige muestras separadas por dimensión. La ampliación permite auditar cobertura
+multinacional sin seleccionar países por sus faltantes, pero todavía no levanta los
+bloqueos metodológicos del IEE oficial.
+
+También existe una [canalización v0.2 de insumos comparables](docs/input-proxies-v0.2.md)
+que convierte las cuatro funciones a PPA constante de 2021 por habitante. Las
+series siguen siendo proxies condicionales hasta validar deflactores, vintages y
+rezagos sectoriales.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.

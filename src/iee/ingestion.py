@@ -48,6 +48,34 @@ class DownloadSpec:
     category_column: str | None = None
     expected_categories: tuple[str, ...] = ()
     scale: Decimal = Decimal("1")
+    level_url: str | None = None
+    dimension_filters: Mapping[str, str] | None = None
+    reference_year: int | None = None
+
+
+@dataclass(frozen=True)
+class UniverseMask:
+    indicator_id: str
+    included_countries: tuple[str, ...]
+    excluded_countries: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class CountryUniverse:
+    path: Path
+    sha256: str
+    version: str
+    snapshot_date: str
+    frame: str
+    official_source: str
+    countries: tuple[str, ...]
+    membership_count: int
+    estimation_sample: str
+    frontier_min_countries: int
+    require_complete_indicator_window: bool
+    allow_imputation_for_eligibility: bool
+    retain_flagged_observations: bool
+    input_masks: tuple[UniverseMask, ...]
 
 
 @dataclass(frozen=True)
@@ -89,6 +117,7 @@ class DownloadManifest:
     manual_controls: tuple[ManualControlSpec, ...]
     deferred_ids: tuple[str, ...]
     series: tuple[DownloadSpec, ...]
+    country_universe: CountryUniverse | None
 
     @property
     def manual_control_ids(self) -> tuple[str, ...]:
@@ -136,8 +165,11 @@ Fetcher = Callable[..., FetchedPayload]
 _RESOURCE_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 _ADAPTERS = {
     "world_bank_json",
+    "world_bank_percent_times_level",
     "oecd_sdmx_csv",
+    "oecd_percent_times_level",
     "oecd_ratio_csv",
+    "oecd_ratio_times_level",
     "oecd_ppp_per_capita",
 }
 _STATUSES = {"validated", "conditional", "reserve"}
@@ -162,6 +194,12 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
         schema_version = str(raw["schema_version"])
         countries = tuple(str(value) for value in raw["countries"])
         catalog_path = manifest_path.parent / str(raw["catalog"])
+        universe_filename = raw.get("country_universe")
+        universe_path = (
+            manifest_path.parent / str(universe_filename)
+            if universe_filename is not None
+            else None
+        )
         manual_filename = raw.get("manual_controls")
         manual_path = (
             manifest_path.parent / str(manual_filename)
@@ -179,6 +217,7 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
         raise IngestionError("el manifiesto debe incluir al menos una serie automática")
 
     specs = tuple(_parse_download_spec(item, countries) for item in raw_series)
+    country_universe = _load_country_universe(universe_path, version, countries, specs)
     try:
         catalog_bytes = catalog_path.read_bytes()
     except OSError as error:
@@ -219,9 +258,129 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
         manual_controls=manual_specs,
         deferred_ids=deferred_ids,
         series=specs,
+        country_universe=country_universe,
     )
     _validate_against_catalog(manifest, catalog_bytes)
     return manifest
+
+
+def _load_country_universe(
+    path: Path | None,
+    manifest_version: str,
+    manifest_countries: tuple[str, ...],
+    specs: tuple[DownloadSpec, ...],
+) -> CountryUniverse | None:
+    if path is None:
+        return None
+    try:
+        universe_bytes = path.read_bytes()
+        raw = tomllib.load(io.BytesIO(universe_bytes))
+        version = str(raw["version"])
+        snapshot_date = str(raw["snapshot_date"])
+        frame = str(raw["frame"])
+        official_source = str(raw["official_source"])
+        countries = tuple(str(value) for value in raw["countries"])
+        membership_count = int(raw["membership_count"])
+        estimation_sample = str(raw["estimation_sample"])
+        frontier_min_countries = int(raw["frontier_min_countries"])
+        require_complete = raw["require_complete_indicator_window"]
+        allow_imputation = raw["allow_imputation_for_eligibility"]
+        retain_flagged = raw["retain_flagged_observations"]
+        raw_masks = raw["input_masks"]
+    except (OSError, KeyError, TypeError, ValueError, tomllib.TOMLDecodeError) as error:
+        raise IngestionError(f"no se pudo leer el universo {path}: {error}") from error
+
+    if version != manifest_version:
+        raise IngestionError(
+            f"la versión del universo difiere del manifiesto ({version} != {manifest_version})"
+        )
+    try:
+        datetime.strptime(snapshot_date, "%Y-%m-%d")
+    except ValueError as error:
+        raise IngestionError("snapshot_date inválida en el universo") from error
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", snapshot_date):
+        raise IngestionError("snapshot_date inválida en el universo")
+    if not frame or not estimation_sample:
+        raise IngestionError("el universo debe declarar frame y estimation_sample")
+    _validate_https(official_source, "country_universe")
+    if countries != manifest_countries:
+        raise IngestionError("los países del universo difieren del manifiesto")
+    if not countries or len(countries) != len(set(countries)):
+        raise IngestionError("el universo debe contener países únicos")
+    if membership_count != len(countries):
+        raise IngestionError("membership_count difiere del número de países")
+    if not 1 <= frontier_min_countries <= membership_count:
+        raise IngestionError("frontier_min_countries es inválido")
+    for field, value in {
+        "require_complete_indicator_window": require_complete,
+        "allow_imputation_for_eligibility": allow_imputation,
+        "retain_flagged_observations": retain_flagged,
+    }.items():
+        if not isinstance(value, bool):
+            raise IngestionError(f"{field} debe ser booleano en el universo")
+    if not isinstance(raw_masks, list) or not raw_masks:
+        raise IngestionError("el universo debe declarar input_masks")
+
+    masks: list[UniverseMask] = []
+    try:
+        for raw_mask in raw_masks:
+            masks.append(
+                UniverseMask(
+                    indicator_id=str(raw_mask["indicator_id"]),
+                    included_countries=tuple(
+                        str(value) for value in raw_mask["included_countries"]
+                    ),
+                    excluded_countries=tuple(
+                        str(value) for value in raw_mask["excluded_countries"]
+                    ),
+                )
+            )
+    except (KeyError, TypeError) as error:
+        raise IngestionError(f"máscara de insumo incompleta: {error}") from error
+
+    mask_ids = [mask.indicator_id for mask in masks]
+    spec_ids = [spec.indicator_id for spec in specs]
+    if len(mask_ids) != len(set(mask_ids)):
+        raise IngestionError("input_masks contiene indicator_id duplicados")
+    if set(mask_ids) != set(spec_ids):
+        raise IngestionError("input_masks no coincide con las series automáticas")
+    universe_set = set(countries)
+    specs_by_id = {spec.indicator_id: spec for spec in specs}
+    for mask in masks:
+        included = set(mask.included_countries)
+        excluded = set(mask.excluded_countries)
+        if (
+            len(included) != len(mask.included_countries)
+            or len(excluded) != len(mask.excluded_countries)
+            or included & excluded
+            or included | excluded != universe_set
+        ):
+            raise IngestionError(f"máscara de países inválida para {mask.indicator_id}")
+        if tuple(mask.included_countries) != specs_by_id[mask.indicator_id].expected_entities:
+            raise IngestionError(
+                f"la máscara de {mask.indicator_id} difiere de expected_entities"
+            )
+        if len(included) < frontier_min_countries:
+            raise IngestionError(
+                f"la máscara de {mask.indicator_id} no alcanza el mínimo de frontera"
+            )
+
+    return CountryUniverse(
+        path=path,
+        sha256=sha256_hex(universe_bytes),
+        version=version,
+        snapshot_date=snapshot_date,
+        frame=frame,
+        official_source=official_source,
+        countries=countries,
+        membership_count=membership_count,
+        estimation_sample=estimation_sample,
+        frontier_min_countries=frontier_min_countries,
+        require_complete_indicator_window=require_complete,
+        allow_imputation_for_eligibility=allow_imputation,
+        retain_flagged_observations=retain_flagged,
+        input_masks=tuple(masks),
+    )
 
 
 def _load_manual_controls(
@@ -366,6 +525,16 @@ def _parse_download_spec(raw: Mapping[str, Any], countries: tuple[str, ...]) -> 
             category_column=_optional_text(raw, "category_column"),
             expected_categories=tuple(str(value) for value in raw.get("expected_categories", [])),
             scale=_parse_decimal(raw.get("scale", 1), "scale"),
+            level_url=_optional_text(raw, "level_url"),
+            dimension_filters={
+                str(key): str(value)
+                for key, value in raw.get("dimension_filters", {}).items()
+            },
+            reference_year=(
+                int(raw["reference_year"])
+                if raw.get("reference_year") is not None
+                else None
+            ),
         )
     except (KeyError, TypeError, ValueError, AttributeError) as error:
         raise IngestionError(f"serie de descarga incompleta: {error}") from error
@@ -384,16 +553,25 @@ def _parse_download_spec(raw: Mapping[str, Any], countries: tuple[str, ...]) -> 
         raise IngestionError(f"dirección no permitida para {spec.indicator_id}")
     if spec.direction == "input" and spec.score_eligible:
         raise IngestionError(f"un insumo no puede puntuarse directamente: {spec.indicator_id}")
-    if set(expected_entities) != set(countries):
-        raise IngestionError(f"{spec.indicator_id} debe exigir exactamente {countries}")
-    if set(latest_year) != set(expected_entities):
-        raise IngestionError(f"faltan años esperados por país en {spec.indicator_id}")
-    if set(latest_value) != set(expected_entities):
-        raise IngestionError(f"faltan valores esperados por país en {spec.indicator_id}")
+    if not expected_entities or len(expected_entities) != len(set(expected_entities)):
+        raise IngestionError(f"entidades esperadas inválidas en {spec.indicator_id}")
+    if not set(expected_entities) <= set(countries):
+        raise IngestionError(f"{spec.indicator_id} contiene países fuera del universo")
+    if not latest_year or set(latest_year) != set(latest_value):
+        raise IngestionError(f"checkpoints incompletos en {spec.indicator_id}")
+    if not set(latest_year) <= set(expected_entities):
+        raise IngestionError(f"checkpoint fuera de las entidades de {spec.indicator_id}")
     if spec.latest_value_tolerance < 0:
         raise IngestionError(f"tolerancia negativa en {spec.indicator_id}")
     if spec.minimum_observations_per_entity < 1:
         raise IngestionError(f"mínimo de observaciones inválido en {spec.indicator_id}")
+    if spec.reference_year is not None:
+        if spec.reference_year < 0:
+            raise IngestionError(f"reference_year inválido en {spec.indicator_id}")
+        if any(year > spec.reference_year for year in latest_year.values()):
+            raise IngestionError(
+                f"un checkpoint supera reference_year en {spec.indicator_id}"
+            )
     _validate_https(spec.url, spec.indicator_id)
 
     if adapter == "oecd_ratio_csv":
@@ -405,6 +583,21 @@ def _parse_download_spec(raw: Mapping[str, Any], countries: tuple[str, ...]) -> 
             raise IngestionError(f"faltan dependencias PPA/población en {spec.indicator_id}")
         _validate_https(spec.ppp_url, spec.indicator_id)
         _validate_https(spec.population_url, spec.indicator_id)
+    if adapter in {
+        "world_bank_percent_times_level",
+        "oecd_percent_times_level",
+        "oecd_ratio_times_level",
+    }:
+        if not spec.level_url:
+            raise IngestionError(f"falta la serie de nivel en {spec.indicator_id}")
+        _validate_https(spec.level_url, spec.indicator_id)
+    if adapter == "oecd_ratio_times_level":
+        if not spec.denominator_url or not spec.category_column or not spec.expected_categories:
+            raise IngestionError(f"faltan parámetros de razón en {spec.indicator_id}")
+        _validate_https(spec.denominator_url, spec.indicator_id)
+    if spec.dimension_filters is not None:
+        if any(not key or not value for key, value in spec.dimension_filters.items()):
+            raise IngestionError(f"filtros OECD inválidos en {spec.indicator_id}")
     return spec
 
 
@@ -445,6 +638,28 @@ def _validate_against_catalog(
     for spec in manifest.series:
         catalog_entry = catalog_entries[spec.indicator_id]
         _validate_catalog_identity(spec, catalog_entry)
+        if spec.url != catalog_entry.get("exact_url"):
+            raise IngestionError(
+                f"{spec.indicator_id}: la URL automática difiere del catálogo"
+            )
+        raw_dependency_urls = catalog_entry.get("dependency_urls", [])
+        if not isinstance(raw_dependency_urls, list):
+            raise IngestionError(
+                f"{spec.indicator_id}: dependency_urls debe ser una lista"
+            )
+        catalog_dependency_urls = tuple(str(value) for value in raw_dependency_urls)
+        if _dependency_urls(spec) != catalog_dependency_urls:
+            raise IngestionError(
+                f"{spec.indicator_id}: las dependencias difieren del catálogo"
+            )
+        catalog_reference_year = catalog_entry.get("reference_year")
+        expected_reference_year = (
+            int(catalog_reference_year) if catalog_reference_year is not None else None
+        )
+        if spec.reference_year != expected_reference_year:
+            raise IngestionError(
+                f"{spec.indicator_id}: reference_year difiere del catálogo"
+            )
         expected_catalog_years, expected_catalog_values = _catalog_checkpoints(
             spec.indicator_id, catalog_entry
         )
@@ -520,6 +735,22 @@ def _validate_catalog_identity(
                 f"{spec.indicator_id}: {field} difiere del catálogo "
                 f"({actual!r} != {expected!r})"
             )
+
+
+def _dependency_urls(spec: DownloadSpec) -> tuple[str, ...]:
+    if spec.adapter == "oecd_ppp_per_capita":
+        assert spec.ppp_url is not None and spec.population_url is not None
+        return (spec.ppp_url, spec.population_url)
+    if spec.adapter in {"oecd_ratio_csv"}:
+        assert spec.denominator_url is not None
+        return (spec.denominator_url,)
+    if spec.adapter in {"world_bank_percent_times_level", "oecd_percent_times_level"}:
+        assert spec.level_url is not None
+        return (spec.level_url,)
+    if spec.adapter == "oecd_ratio_times_level":
+        assert spec.denominator_url is not None and spec.level_url is not None
+        return (spec.denominator_url, spec.level_url)
+    return ()
 
 
 def _catalog_checkpoints(
@@ -614,6 +845,37 @@ def parse_world_bank_json(payload: bytes, spec: DownloadSpec) -> list[Observatio
     return validate_observations(observations, spec)
 
 
+def parse_world_bank_percent_times_level(
+    percent_payload: bytes,
+    level_payload: bytes,
+    spec: DownloadSpec,
+) -> list[Observation]:
+    """Convierte una participación del PIB en PPA constante por habitante."""
+
+    percentages = _world_bank_value_map(percent_payload, spec.expected_entities)
+    levels = _world_bank_value_map(level_payload, spec.expected_entities)
+    missing_levels = sorted(set(percentages) - set(levels))
+    if missing_levels:
+        raise IngestionError(f"faltan niveles PPA para {missing_levels}")
+
+    observations: list[Observation] = []
+    for key, (percentage, percentage_status) in percentages.items():
+        level, level_status = levels[key]
+        if percentage < 0 or level <= 0:
+            raise IngestionError(f"porcentaje o nivel inválido para {key}")
+        observations.append(
+            _make_observation(
+                spec,
+                entity=key[0],
+                period=key[1],
+                value=percentage / Decimal("100") * level,
+                status=_quality_status([percentage_status, level_status]),
+                kind="derived",
+            )
+        )
+    return validate_observations(observations, spec)
+
+
 def parse_oecd_sdmx_csv(payload: bytes, spec: DownloadSpec) -> list[Observation]:
     """Convierte una respuesta SDMX-CSV directa en observaciones IEE."""
 
@@ -629,6 +891,44 @@ def parse_oecd_sdmx_csv(payload: bytes, spec: DownloadSpec) -> list[Observation]
         )
         for row in rows
     ]
+    return validate_observations(observations, spec)
+
+
+def parse_oecd_percent_times_level(
+    percent_payload: bytes,
+    level_payload: bytes,
+    spec: DownloadSpec,
+) -> list[Observation]:
+    """Convierte una participación OECD del PIB en PPA constante por habitante."""
+
+    percentage_rows = _unique_oecd_rows(
+        _read_oecd_rows(
+            percent_payload,
+            spec.expected_entities,
+            dimension_filters=spec.dimension_filters,
+        )
+    )
+    levels = _world_bank_value_map(level_payload, spec.expected_entities)
+    missing_levels = sorted(set(percentage_rows) - set(levels))
+    if missing_levels:
+        raise IngestionError(f"faltan niveles PPA para {missing_levels}")
+
+    observations: list[Observation] = []
+    for key, row in percentage_rows.items():
+        percentage = _scaled_oecd_value(row)
+        level, level_status = levels[key]
+        if percentage < 0 or level <= 0:
+            raise IngestionError(f"porcentaje o nivel inválido para {key}")
+        observations.append(
+            _make_observation(
+                spec,
+                entity=key[0],
+                period=key[1],
+                value=percentage / Decimal("100") * level,
+                status=_quality_status([row.get("OBS_STATUS", ""), level_status]),
+                kind="derived",
+            )
+        )
     return validate_observations(observations, spec)
 
 
@@ -681,6 +981,69 @@ def parse_oecd_ratio_csv(
                 entity=key[0],
                 period=key[1],
                 value=numerator / denominator * spec.scale,
+                status=_quality_status(statuses),
+                kind="derived",
+            )
+        )
+    return validate_observations(observations, spec)
+
+
+def parse_oecd_ratio_times_level(
+    numerator_payload: bytes,
+    denominator_payload: bytes,
+    level_payload: bytes,
+    spec: DownloadSpec,
+) -> list[Observation]:
+    """Multiplica una razón OECD por un nivel PPA constante de WDI."""
+
+    if not spec.category_column or not spec.expected_categories:
+        raise IngestionError(f"configuración de razón incompleta para {spec.indicator_id}")
+    numerator_rows = _read_oecd_rows(
+        numerator_payload,
+        spec.expected_entities,
+        additional_columns=(spec.category_column,),
+        dimension_filters=spec.dimension_filters,
+    )
+    denominator_rows = _read_oecd_rows(denominator_payload, spec.expected_entities)
+    levels = _world_bank_value_map(level_payload, spec.expected_entities)
+
+    grouped: dict[tuple[str, int], dict[str, Mapping[str, str]]] = defaultdict(dict)
+    for row in numerator_rows:
+        key = (row["REF_AREA"], _parse_year(row["TIME_PERIOD"]))
+        category = row[spec.category_column]
+        if category not in spec.expected_categories:
+            raise IngestionError(f"categoría inesperada {category} en {spec.indicator_id}")
+        if category in grouped[key]:
+            raise IngestionError(f"componente duplicado {category} para {key}")
+        grouped[key][category] = row
+
+    denominators = _unique_oecd_rows(denominator_rows)
+    missing_denominators = sorted(set(grouped) - set(denominators))
+    missing_levels = sorted(set(grouped) - set(levels))
+    if missing_denominators:
+        raise IngestionError(f"faltan denominadores para {missing_denominators}")
+    if missing_levels:
+        raise IngestionError(f"faltan niveles PPA para {missing_levels}")
+
+    observations: list[Observation] = []
+    for key, components in grouped.items():
+        if set(components) != set(spec.expected_categories):
+            continue
+        denominator_row = denominators[key]
+        _validate_same_currency([*components.values(), denominator_row], key)
+        numerator = sum((_scaled_oecd_value(row) for row in components.values()), Decimal())
+        denominator = _scaled_oecd_value(denominator_row)
+        level, level_status = levels[key]
+        if denominator == 0 or level <= 0:
+            raise IngestionError(f"denominador o nivel inválido para {key}")
+        statuses = [row.get("OBS_STATUS", "") for row in components.values()]
+        statuses.extend([denominator_row.get("OBS_STATUS", ""), level_status])
+        observations.append(
+            _make_observation(
+                spec,
+                entity=key[0],
+                period=key[1],
+                value=numerator / denominator * level * spec.scale,
                 status=_quality_status(statuses),
                 kind="derived",
             )
@@ -776,6 +1139,7 @@ def _read_oecd_rows(
     expected_entities: Sequence[str],
     *,
     additional_columns: Sequence[str] = (),
+    dimension_filters: Mapping[str, str] | None = None,
 ) -> list[dict[str, str]]:
     if payload.lstrip().startswith((b"<?xml", b"<message:")):
         raise IngestionError("OECD devolvió XML; la consulta debe solicitar format=csvfile")
@@ -784,7 +1148,14 @@ def _read_oecd_rows(
     except UnicodeDecodeError as error:
         raise IngestionError(f"SDMX-CSV no está en UTF-8: {error}") from error
     reader = csv.DictReader(io.StringIO(text))
-    required = {"REF_AREA", "TIME_PERIOD", "OBS_VALUE", *additional_columns}
+    filters = dimension_filters or {}
+    required = {
+        "REF_AREA",
+        "TIME_PERIOD",
+        "OBS_VALUE",
+        *additional_columns,
+        *filters,
+    }
     if not reader.fieldnames or not required <= set(reader.fieldnames):
         missing = sorted(required - set(reader.fieldnames or []))
         raise IngestionError(f"faltan columnas SDMX-CSV: {missing}")
@@ -796,6 +1167,14 @@ def _read_oecd_rows(
         if entity not in allowed:
             raise IngestionError(f"país inesperado en OECD: {entity}")
         _parse_year(row.get("TIME_PERIOD"))
+        for column, expected in filters.items():
+            if row.get(column) != expected:
+                raise IngestionError(
+                    f"dimensión OECD inesperada en {column}: "
+                    f"{row.get(column)!r} != {expected!r}"
+                )
+        if row.get("OBS_VALUE") in (None, ""):
+            continue
         _parse_decimal(row.get("OBS_VALUE"), f"OECD {entity}")
         rows.append(row)
     if not rows:
@@ -941,7 +1320,8 @@ def validate_observations(
             raise IngestionError(
                 f"cobertura insuficiente en {spec.indicator_id}/{entity}: {counts[entity]}"
             )
-        expected_latest = spec.expected_latest_year[entity]
+
+    for entity, expected_latest in spec.expected_latest_year.items():
         if latest.get(entity) != expected_latest:
             raise IngestionError(
                 f"último año inesperado en {spec.indicator_id}/{entity}: "
@@ -959,6 +1339,53 @@ def validate_observations(
     return sorted(observations, key=lambda row: (row.entity, row.period, row.indicator_id))
 
 
+def _manifest_input_paths(manifest_file: Path, manifest: DownloadManifest) -> set[Path]:
+    paths = {manifest_file.resolve(), manifest.catalog_path.resolve()}
+    if manifest.manual_controls_path is not None:
+        paths.add(manifest.manual_controls_path.resolve())
+    if manifest.country_universe is not None:
+        paths.add(manifest.country_universe.path.resolve())
+    return paths
+
+
+def _validate_pipeline_paths(
+    manifest_file: Path,
+    manifest: DownloadManifest,
+    raw_root: Path,
+    processed_file: Path,
+    provenance_file: Path,
+) -> None:
+    inputs = _manifest_input_paths(manifest_file, manifest)
+    outputs = [processed_file.resolve(), provenance_file.resolve()]
+    if len(outputs) != len(set(outputs)):
+        raise IngestionError("las rutas de salida deben ser únicas")
+    collisions = sorted(path.as_posix() for path in set(outputs) & inputs)
+    if collisions:
+        raise IngestionError(
+            f"una salida no puede sobrescribir una entrada: {', '.join(collisions)}"
+        )
+    raw_resolved = raw_root.resolve()
+    if raw_resolved in inputs or raw_resolved in outputs:
+        raise IngestionError("raw_dir no puede ser una ruta de entrada o salida")
+
+
+def _validate_raw_targets(
+    manifest_file: Path,
+    manifest: DownloadManifest,
+    raw_targets: Sequence[Path],
+    output_targets: Sequence[Path],
+) -> None:
+    inputs = _manifest_input_paths(manifest_file, manifest)
+    outputs = {path.resolve() for path in output_targets}
+    raw = {path.resolve() for path in raw_targets}
+    collisions = sorted(path.as_posix() for path in raw & (inputs | outputs))
+    if collisions:
+        raise IngestionError(
+            f"un recurso crudo no puede sobrescribir una entrada o salida: "
+            f"{', '.join(collisions)}"
+        )
+
+
 def run_pipeline(
     manifest_path: str | Path,
     *,
@@ -974,9 +1401,27 @@ def run_pipeline(
 
     manifest_file = Path(manifest_path)
     manifest = load_download_manifest(manifest_file)
+    raw_root = Path(raw_dir)
+    processed_file = Path(processed_path)
+    provenance_file = Path(provenance_path)
+    _validate_pipeline_paths(
+        manifest_file,
+        manifest,
+        raw_root,
+        processed_file,
+        provenance_file,
+    )
     observations: list[Observation] = []
     payloads: list[tuple[str, str, FetchedPayload]] = []
     series_summaries: list[dict[str, Any]] = []
+    universe_masks = (
+        {
+            mask.indicator_id: mask
+            for mask in manifest.country_universe.input_masks
+        }
+        if manifest.country_universe is not None
+        else {}
+    )
 
     for spec in manifest.series:
         series_observations, series_payloads = _acquire_series(
@@ -994,22 +1439,52 @@ def run_pipeline(
             )
             for entity in spec.expected_entities
         }
-        series_summaries.append(
-            {
-                "indicator_id": spec.indicator_id,
-                "resource_id": spec.resource_id,
-                "acquisition_mode": "automatic",
-                "records": len(series_observations),
-                "latest_year": {
-                    entity: row.period for entity, row in latest_rows.items()
-                },
-                "latest_value": {
-                    entity: _decimal_text(row.value) for entity, row in latest_rows.items()
-                },
-                "score_eligible": spec.score_eligible,
-                "source_status": spec.source_status,
+        record_counts = Counter(row.entity for row in series_observations)
+        summary: dict[str, Any] = {
+            "indicator_id": spec.indicator_id,
+            "resource_id": spec.resource_id,
+            "acquisition_mode": "automatic",
+            "records": len(series_observations),
+            "records_by_entity": {
+                entity: record_counts[entity] for entity in spec.expected_entities
+            },
+            "latest_year": {
+                entity: row.period for entity, row in latest_rows.items()
+            },
+            "latest_value": {
+                entity: _decimal_text(row.value) for entity, row in latest_rows.items()
+            },
+            "reference_year": spec.reference_year,
+            "vintage_age": (
+                {
+                    entity: spec.reference_year - row.period
+                    for entity, row in latest_rows.items()
+                }
+                if spec.reference_year is not None
+                else None
+            ),
+            "dimension_filters": dict(spec.dimension_filters or {}),
+            "score_eligible": spec.score_eligible,
+            "source_status": spec.source_status,
+        }
+        mask = universe_masks.get(spec.indicator_id)
+        if mask is not None:
+            assert manifest.country_universe is not None
+            summary["country_mask"] = {
+                "frame": manifest.country_universe.frame,
+                "included_countries": list(mask.included_countries),
+                "included_count": len(mask.included_countries),
+                "excluded_countries": list(mask.excluded_countries),
+                "excluded_count": len(mask.excluded_countries),
+                "frontier_min_countries": (
+                    manifest.country_universe.frontier_min_countries
+                ),
+                "frontier_min_met": (
+                    len(mask.included_countries)
+                    >= manifest.country_universe.frontier_min_countries
+                ),
             }
-        )
+        series_summaries.append(summary)
 
     for spec in manifest.manual_controls:
         series_observations = manual_control_observations(spec)
@@ -1045,7 +1520,6 @@ def run_pipeline(
     processed_bytes = observations_to_csv(observations)
     processed_hash = sha256_hex(processed_bytes)
 
-    raw_root = Path(raw_dir)
     raw_entries: list[dict[str, Any]] = []
     raw_writes: dict[Path, bytes] = {}
     for resource_id, role, fetched in payloads:
@@ -1068,6 +1542,13 @@ def run_pipeline(
             }
         )
 
+    _validate_raw_targets(
+        manifest_file,
+        manifest,
+        tuple(raw_writes),
+        (processed_file, provenance_file),
+    )
+
     timestamp = retrieved_at or datetime.now(UTC).replace(microsecond=0).isoformat()
     manual_controls_metadata = None
     if manifest.manual_controls_path is not None:
@@ -1077,6 +1558,40 @@ def run_pipeline(
             "version": manifest.manual_controls_version,
             "validation_date": manifest.manual_controls_validation_date,
             "indicator_ids": list(manifest.manual_control_ids),
+        }
+    country_universe_metadata = None
+    if manifest.country_universe is not None:
+        universe = manifest.country_universe
+        country_universe_metadata = {
+            "path": universe.path.as_posix(),
+            "sha256": universe.sha256,
+            "version": universe.version,
+            "snapshot_date": universe.snapshot_date,
+            "frame": universe.frame,
+            "official_source": universe.official_source,
+            "countries": list(universe.countries),
+            "membership_count": universe.membership_count,
+            "estimation_sample": universe.estimation_sample,
+            "frontier_min_countries": universe.frontier_min_countries,
+            "require_complete_indicator_window": (
+                universe.require_complete_indicator_window
+            ),
+            "allow_imputation_for_eligibility": (
+                universe.allow_imputation_for_eligibility
+            ),
+            "retain_flagged_observations": universe.retain_flagged_observations,
+            "input_masks": [
+                {
+                    "indicator_id": mask.indicator_id,
+                    "included_countries": list(mask.included_countries),
+                    "excluded_countries": list(mask.excluded_countries),
+                    "included_count": len(mask.included_countries),
+                    "frontier_min_met": (
+                        len(mask.included_countries) >= universe.frontier_min_countries
+                    ),
+                }
+                for mask in universe.input_masks
+            ],
         }
     provenance = {
         "schema_version": manifest.schema_version,
@@ -1091,6 +1606,7 @@ def run_pipeline(
             "sha256": manifest.catalog_sha256,
         },
         "manual_controls": manual_controls_metadata,
+        "country_universe": country_universe_metadata,
         "countries": list(manifest.countries),
         "resources": raw_entries,
         "series": series_summaries,
@@ -1102,7 +1618,7 @@ def run_pipeline(
         "manual_control_ids": list(manifest.manual_control_ids),
         "deferred_ids": list(manifest.deferred_ids),
         "processed": {
-            "path": Path(processed_path).as_posix(),
+            "path": processed_file.as_posix(),
             "records": len(observations),
             "sha256": processed_hash,
         },
@@ -1115,8 +1631,8 @@ def run_pipeline(
         _atomic_write_bytes(path, content)
     _atomic_write_publication(
         (
-            (Path(processed_path), processed_bytes),
-            (Path(provenance_path), provenance_bytes),
+            (processed_file, processed_bytes),
+            (provenance_file, provenance_bytes),
         )
     )
 
@@ -1124,8 +1640,8 @@ def run_pipeline(
         observation_count=len(observations),
         series_count=len(manifest.series) + len(manifest.manual_controls),
         raw_resource_count=len(raw_entries),
-        processed_path=Path(processed_path),
-        provenance_path=Path(provenance_path),
+        processed_path=processed_file,
+        provenance_path=provenance_file,
         processed_sha256=processed_hash,
     )
 
@@ -1137,15 +1653,48 @@ def _acquire_series(
     max_bytes: int,
     fetcher: Fetcher,
 ) -> tuple[list[Observation], list[tuple[str, str, FetchedPayload]]]:
-    primary_accept = _JSON_ACCEPT if spec.adapter == "world_bank_json" else _CSV_ACCEPT
+    primary_accept = (
+        _JSON_ACCEPT
+        if spec.adapter in {"world_bank_json", "world_bank_percent_times_level"}
+        else _CSV_ACCEPT
+    )
     primary = fetcher(spec.url, accept=primary_accept, timeout=timeout, max_bytes=max_bytes)
-    _validate_content_type(primary, "json" if spec.adapter == "world_bank_json" else "csv")
+    _validate_content_type(
+        primary,
+        (
+            "json"
+            if spec.adapter in {"world_bank_json", "world_bank_percent_times_level"}
+            else "csv"
+        ),
+    )
     payloads = [(spec.resource_id, "primary", primary)]
 
     if spec.adapter == "world_bank_json":
         return parse_world_bank_json(primary.content, spec), payloads
+    if spec.adapter == "world_bank_percent_times_level":
+        assert spec.level_url is not None
+        level = fetcher(
+            spec.level_url,
+            accept=_JSON_ACCEPT,
+            timeout=timeout,
+            max_bytes=max_bytes,
+        )
+        _validate_content_type(level, "json")
+        payloads.append((spec.resource_id, "level", level))
+        return parse_world_bank_percent_times_level(primary.content, level.content, spec), payloads
     if spec.adapter == "oecd_sdmx_csv":
         return parse_oecd_sdmx_csv(primary.content, spec), payloads
+    if spec.adapter == "oecd_percent_times_level":
+        assert spec.level_url is not None
+        level = fetcher(
+            spec.level_url,
+            accept=_JSON_ACCEPT,
+            timeout=timeout,
+            max_bytes=max_bytes,
+        )
+        _validate_content_type(level, "json")
+        payloads.append((spec.resource_id, "level", level))
+        return parse_oecd_percent_times_level(primary.content, level.content, spec), payloads
     if spec.adapter == "oecd_ratio_csv":
         assert spec.denominator_url is not None
         denominator = fetcher(
@@ -1179,6 +1728,37 @@ def _acquire_series(
                 primary.content,
                 ppp.content,
                 population.content,
+                spec,
+            ),
+            payloads,
+        )
+    if spec.adapter == "oecd_ratio_times_level":
+        assert spec.denominator_url is not None and spec.level_url is not None
+        denominator = fetcher(
+            spec.denominator_url,
+            accept=_CSV_ACCEPT,
+            timeout=timeout,
+            max_bytes=max_bytes,
+        )
+        level = fetcher(
+            spec.level_url,
+            accept=_JSON_ACCEPT,
+            timeout=timeout,
+            max_bytes=max_bytes,
+        )
+        _validate_content_type(denominator, "csv")
+        _validate_content_type(level, "json")
+        payloads.extend(
+            [
+                (spec.resource_id, "denominator", denominator),
+                (spec.resource_id, "level", level),
+            ]
+        )
+        return (
+            parse_oecd_ratio_times_level(
+                primary.content,
+                denominator.content,
+                level.content,
                 spec,
             ),
             payloads,
@@ -1272,7 +1852,8 @@ def _atomic_write_publication(outputs: Sequence[tuple[Path, bytes]]) -> None:
     """Publica salidas relacionadas y restaura la versión anterior ante un fallo."""
 
     targets = [path for path, _content in outputs]
-    if not targets or len(targets) != len(set(targets)):
+    resolved_targets = [path.resolve() for path in targets]
+    if not targets or len(resolved_targets) != len(set(resolved_targets)):
         raise IngestionError("la publicación debe incluir rutas únicas")
 
     staged: dict[Path, Path] = {}
