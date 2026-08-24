@@ -1,0 +1,253 @@
+version = "0.1-experimental"
+schema_version = "iee-experimental-diagnostics-v1"
+ingestion_schema_version = "iee-observations-v1"
+status = "experimental-not-for-publication"
+reference_cutoff_year = 2024
+countries = ["COL", "USA"]
+input_sha256 = "8209f9ca28b5473ca866e21faa4fe2f54134f4df41e805bba1032967336cc490"
+catalog = "pilot_sources.toml"
+methodology = "methodology.toml"
+aggregation = "weighted-geometric-mean"
+minimum_role_coverage = 0.75
+minimum_dimension_coverage = 0.75
+frontier_min_countries = 30
+official_roles = ["resultado", "acceso", "equidad"]
+
+[role_weights]
+resultado = 0.50
+acceso = 0.25
+equidad = 0.25
+
+[[dimensions]]
+id = "salud"
+label = "Salud"
+weight = 0.25
+input_indicator_id = "SAL-IN-01"
+input_selection = "latest"
+input_compatible = false
+input_reason = "PPA corriente por habitante; falta convertir a precios constantes."
+
+[[dimensions]]
+id = "educacion"
+label = "Educación"
+weight = 0.25
+input_indicator_id = "EDU-IN-01"
+input_selection = "latest"
+input_compatible = false
+input_reason = "Serie en reserva y no materializada; Colombia termina en 1999."
+
+[[dimensions]]
+id = "seguridad_justicia"
+label = "Seguridad y justicia"
+weight = 0.25
+input_indicator_id = "SEG-IN-01"
+input_selection = "latest"
+input_compatible = false
+input_reason = "Serie derivada en PPA corriente y estado metodológico de reserva."
+
+[[dimensions]]
+id = "administracion"
+label = "Administración, recaudo y compras públicas"
+weight = 0.25
+input_indicator_id = "ADM-IN-01"
+input_selection = "mean"
+input_start_year = 2022
+input_end_year = 2024
+input_compatible = false
+input_reason = "Proxy condicional en porcentaje del PIB, no volumen comparable por habitante."
+
+[[indicators]]
+indicator_id = "SAL-RES-01"
+dimension = "salud"
+role = "resultado"
+selection = "mean"
+start_year = 2019
+end_year = 2021
+direction = "lower"
+transform = "linear"
+lower_bound = 0.0
+upper_bound = 500.0
+bound_status = "provisional"
+bound_reference = "Límite de estrés de ingeniería; requiere universo internacional."
+flags = ["pandemic_sensitive", "bounds_provisional"]
+
+[[indicators]]
+indicator_id = "SAL-ACC-01"
+dimension = "salud"
+role = "acceso"
+selection = "point"
+year = 2021
+direction = "higher"
+transform = "linear"
+lower_bound = 0.0
+upper_bound = 100.0
+bound_status = "natural_scale"
+bound_reference = "WHO UHC service coverage index, escala 0 a 100."
+flags = []
+
+[[indicators]]
+indicator_id = "EDU-RES-01"
+dimension = "educacion"
+role = "resultado"
+selection = "point"
+year = 2020
+direction = "higher"
+transform = "linear"
+lower_bound = 300.0
+upper_bound = 625.0
+bound_status = "technical_scale"
+bound_reference = "World Bank HLO: 300 mínimo y 625 logro avanzado."
+flags = ["carried_forward_2y"]
+
+[[indicators]]
+indicator_id = "EDU-EQ-01"
+dimension = "educacion"
+role = "equidad"
+selection = "point"
+year = 2022
+direction = "lower"
+transform = "linear"
+lower_bound = 0.0
+upper_bound = 150.0
+bound_status = "provisional"
+bound_reference = "Límite de estrés de ingeniería; sensibilidad obligatoria."
+flags = ["bounds_provisional"]
+
+[[indicators]]
+indicator_id = "SEG-RES-01"
+dimension = "seguridad_justicia"
+role = "resultado"
+selection = "mean"
+start_year = 2021
+end_year = 2023
+direction = "lower"
+transform = "log1p"
+lower_bound = 0.0
+upper_bound = 50.0
+bound_status = "provisional"
+bound_reference = "Techo de estrés de ingeniería de 50 homicidios por 100.000."
+flags = ["bounds_provisional"]
+
+[[indicators]]
+indicator_id = "ADM-RES-01"
+dimension = "administracion"
+role = "resultado"
+selection = "point"
+year = 2024
+direction = "higher"
+transform = "linear"
+lower_bound = 0.0
+upper_bound = 1.0
+bound_status = "natural_scale"
+bound_reference = "UN Online Service Index, escala normalizada 0 a 1."
+flags = ["manual_control"]
+
+[[sensitivity]]
+id = "arithmetic_aggregation"
+description = "Sustituye la media geométrica por media aritmética."
+aggregation = "weighted-mean"
+result_weight_multiplier = 1.0
+
+[[sensitivity]]
+id = "result_weight_minus_25pct"
+description = "Reduce 25 % el peso planificado de resultado y repondera roles disponibles."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 0.75
+
+[[sensitivity]]
+id = "result_weight_plus_25pct"
+description = "Aumenta 25 % el peso planificado de resultado y repondera roles disponibles."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.25
+
+[[sensitivity]]
+id = "health_pre_pandemic_2017_2019"
+description = "Reemplaza solo la ventana de mortalidad evitable por 2017–2019; UHC permanece en 2021."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "SAL-RES-01"
+override_selection = "mean"
+override_start_year = 2017
+override_end_year = 2019
+remove_flags = ["pandemic_sensitive"]
+add_flags = ["pandemic_window_excluded"]
+
+[[sensitivity]]
+id = "avoidable_mortality_cap_400"
+description = "Prueba un límite superior de 400 muertes evitables por 100.000."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "SAL-RES-01"
+override_upper_bound = 400.0
+
+[[sensitivity]]
+id = "avoidable_mortality_cap_600"
+description = "Prueba un límite superior de 600 muertes evitables por 100.000."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "SAL-RES-01"
+override_upper_bound = 600.0
+
+[[sensitivity]]
+id = "pisa_gap_cap_110"
+description = "Prueba un límite superior de 110 puntos para la brecha PISA."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "EDU-EQ-01"
+override_upper_bound = 110.0
+
+[[sensitivity]]
+id = "pisa_gap_cap_120"
+description = "Prueba un límite superior de 120 puntos para la brecha PISA."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "EDU-EQ-01"
+override_upper_bound = 120.0
+
+[[sensitivity]]
+id = "pisa_gap_cap_200"
+description = "Prueba un límite superior de 200 puntos para la brecha PISA."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "EDU-EQ-01"
+override_upper_bound = 200.0
+
+[[sensitivity]]
+id = "homicide_cap_30"
+description = "Prueba un límite superior de 30 homicidios por 100.000."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "SEG-RES-01"
+override_upper_bound = 30.0
+
+[[sensitivity]]
+id = "homicide_cap_75"
+description = "Prueba un límite superior de 75 homicidios por 100.000."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "SEG-RES-01"
+override_upper_bound = 75.0
+
+[[sensitivity]]
+id = "homicide_mean_linear"
+description = "Mantiene el promedio 2021–2023 y sustituye log1p por normalización lineal."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "SEG-RES-01"
+override_transform = "linear"
+
+[[sensitivity]]
+id = "homicide_point_2023_log1p"
+description = "Usa el punto 2023 con log1p en lugar del promedio 2021–2023."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+override_indicator_id = "SEG-RES-01"
+override_selection = "point"
+override_year = 2023
+
+[[sensitivity]]
+id = "exclude_sampling_caution"
+description = "Excluye observaciones con advertencia de muestreo de la composición."
+aggregation = "weighted-geometric-mean"
+result_weight_multiplier = 1.0
+exclude_observation_statuses = ["source:sampling_caution"]

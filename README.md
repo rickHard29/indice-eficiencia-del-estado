@@ -26,6 +26,7 @@ tests/           Pruebas automatizadas
 python -m pip install -e ".[dev]"
 python -m unittest discover -s tests -v
 iee-download
+iee-score
 ```
 
 ## Estado
@@ -38,6 +39,11 @@ Todavía no se ha calculado ni publicado un puntaje IEE.
 La [canalización reproducible de datos](docs/data-pipeline.md) ya descarga y valida
 7 series oficiales, incorpora 2 controles manuales versionados y deja 3 indicadores
 explícitamente diferidos. Los datos reales y sus recibos permanecen fuera de Git.
+
+El [diagnóstico experimental v0.1](docs/experimental-scoring-v0.1.md) ya prueba
+normalización, agregación, sensibilidad y procedencia con el snapshot bilateral.
+El sistema mantiene el IEE oficial nulo y bloquea publicación y ranking porque aún
+faltan insumos compatibles, roles obligatorios y un universo multinacional.
 
 ## Principios
 

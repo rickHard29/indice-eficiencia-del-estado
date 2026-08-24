@@ -14,6 +14,7 @@ dependencies = []
 
 [project.scripts]
 iee-download = "iee.download:main"
+iee-score = "iee.score:main"
 
 [project.optional-dependencies]
 dev = [
