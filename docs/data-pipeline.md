@@ -87,6 +87,20 @@ Este comando no estima una frontera ni puntúa países. Publica pares de resulta
 insumo solo cuando sus ventanas están completas y deja en un archivo de gates las
 dimensiones que no alcanzan la muestra mínima.
 
+La frontera experimental se ejecuta después:
+
+```bash
+iee-frontier-estimate \
+  --config config/frontier_estimator_v0.3.toml \
+  --panel data/processed/v03_frontier_panel.csv \
+  --gates data/processed/v03_frontier_gates.csv \
+  --panel-provenance data/interim/v03_frontier_provenance.json
+```
+
+La salida conserva nulo el IEE oficial y bloquea publicación y ranking. El método,
+las sensibilidades y sus límites se documentan en
+[`ADR 0006`](decisions/0006-v03-experimental-quantile-frontier.md).
+
 ## Salidas
 
 ### Datos crudos

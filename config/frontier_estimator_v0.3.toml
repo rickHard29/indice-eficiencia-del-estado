@@ -1,0 +1,57 @@
+version = "0.3"
+schema_version = "iee-experimental-frontier-v1"
+status = "experimental-not-for-publication"
+panel_config = "frontier_panel_v0.3.toml"
+panel_config_sha256 = "579eaac428cc2ea6a865e1bb268ff13cbc550325d0b5b75ddc8559ccdd3e4d30"
+diagnostic_config = "scoring_experiment.toml"
+diagnostic_config_sha256 = "2d179d4a4dd52432f1d6b502cc2700bf34fca5c4d0d87d7122bec1bab4867355"
+panel_sha256 = "215575bf72c4f7b8817979025dcf1adadbaf75ccd021bba206cfb70906c8234e"
+gates_sha256 = "049c8c3f12610da2c9323774968e7000bc72962ea5a4a9d73b2b9f38e93aa22e"
+panel_provenance_sha256 = "6752161bfe8dc69559207b96619cab954d0d9bdadcae7cf6079eaad7c19f99a7"
+frontier_quantile = 0.90
+sensitivity_quantiles = [0.85, 0.95]
+input_transform = "log1p"
+require_non_decreasing_frontier = true
+bootstrap_replications = 200
+confidence_level = 0.90
+random_seed = 20260824
+
+[[dimensions]]
+id = "salud"
+outcome_indicator_id = "SAL-RES-01"
+direction = "lower"
+transform = "linear"
+lower_bound = 0.0
+upper_bound = 500.0
+bound_status = "provisional"
+bound_reference = "Límite de estrés de ingeniería; requiere universo internacional."
+
+[[dimensions]]
+id = "educacion"
+outcome_indicator_id = "EDU-RES-01"
+direction = "higher"
+transform = "linear"
+lower_bound = 300.0
+upper_bound = 625.0
+bound_status = "technical_scale"
+bound_reference = "World Bank HLO: 300 mínimo y 625 logro avanzado."
+
+[[dimensions]]
+id = "seguridad_justicia"
+outcome_indicator_id = "SEG-RES-01"
+direction = "lower"
+transform = "log1p"
+lower_bound = 0.0
+upper_bound = 50.0
+bound_status = "provisional"
+bound_reference = "Techo de estrés de ingeniería de 50 homicidios por 100.000."
+
+[[dimensions]]
+id = "administracion"
+outcome_indicator_id = "ADM-RES-01"
+direction = "higher"
+transform = "linear"
+lower_bound = 0.0
+upper_bound = 1.0
+bound_status = "natural_scale"
+bound_reference = "UN Online Service Index, escala normalizada 0 a 1."

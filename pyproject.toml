@@ -16,6 +16,7 @@ dependencies = []
 iee-download = "iee.download:main"
 iee-score = "iee.score:main"
 iee-frontier-panel = "iee.frontier:main"
+iee-frontier-estimate = "iee.frontier_estimate:main"
 
 [project.optional-dependencies]
 dev = [

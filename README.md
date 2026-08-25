@@ -59,6 +59,11 @@ La v0.3 ya inició con un [panel multinacional reproducible de resultados](docs/
 para los 38 países OCDE. Es la base de una futura frontera experimental por
 dimensión; no habilita todavía un IEE, ranking ni publicación de eficiencia.
 
+Sobre ese panel, la [frontera cuantílica experimental v0.3](docs/decisions/0006-v03-experimental-quantile-frontier.md)
+estima únicamente las dimensiones que superan el mínimo de 30 pares completos,
+con sensibilidad e intervalos reproducibles. Todos sus resultados continúan
+marcados como experimentales y el IEE oficial permanece nulo.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.

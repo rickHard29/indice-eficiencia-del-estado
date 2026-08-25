@@ -33,4 +33,11 @@ El panel de frontera experimental v0.3 añade:
 
 Estas salidas no contienen un IEE ni un ranking: sus insumos continúan condicionales.
 
+La estimación experimental v0.3 produce:
+
+- `processed/v03_experimental_frontier_estimates.csv`: perfiles y brechas por país;
+- `processed/v03_experimental_frontier_models.csv`: parámetros y gates por dimensión;
+- `processed/v03_experimental_frontier_sensitivity.csv`: cuantiles 85, 90 y 95;
+- `interim/v03_experimental_frontier_provenance.json`: método, hashes y bloqueos.
+
 Uso y controles: [`docs/data-pipeline.md`](../docs/data-pipeline.md).
