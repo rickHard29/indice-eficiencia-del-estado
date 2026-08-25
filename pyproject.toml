@@ -17,6 +17,7 @@ iee-download = "iee.download:main"
 iee-score = "iee.score:main"
 iee-frontier-panel = "iee.frontier:main"
 iee-frontier-estimate = "iee.frontier_estimate:main"
+iee-context-sensitivity = "iee.context_sensitivity:main"
 
 [project.optional-dependencies]
 dev = [

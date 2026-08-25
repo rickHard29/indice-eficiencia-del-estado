@@ -1,0 +1,30 @@
+version = "0.4"
+schema_version = "iee-experimental-context-sensitivity-v1"
+status = "experimental-not-for-publication"
+frontier_config = "frontier_estimator_v0.3.toml"
+frontier_config_sha256 = "072468cb2e2292b290c56130386de508c193804318c0250cb97cd8adf79f5933"
+context_catalog = "context_sources_v0.4.toml"
+context_catalog_sha256 = "b5a4364c35ade345b5ed886e19938a1c15596bff5b2ad2efc903adff92780e44"
+context_manifest = "downloads_context_v0.4.toml"
+context_manifest_sha256 = "803a7307cf175028eab7079a8e9e4cf9209e60f248218047a4425d5af66fccc4"
+context_observations_sha256 = "3bab0ccaf0f3a76d2fe6f761b31f3ad015c4329ed4d8ded13dd563dba4719b56"
+context_provenance_sha256 = "0692714934aa4f177b1865b425c35dccfb084250099a510c04d4dccd5442fcf9"
+context_start_year = 2019
+context_end_year = 2021
+frontier_quantile = 0.90
+minimum_sample = 30
+uncertainty = "not-estimated-for-context-sensitivity"
+
+[[controls]]
+indicator_id = "CTX-AGE-01"
+transform = "linear"
+
+[[controls]]
+indicator_id = "CTX-DENS-01"
+transform = "log1p"
+
+[[dimensions]]
+id = "salud"
+
+[[dimensions]]
+id = "educacion"

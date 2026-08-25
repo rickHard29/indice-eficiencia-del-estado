@@ -68,6 +68,10 @@ La [v0.4 añade un panel de contexto estructural](docs/structural-controls-v0.4.
 para probar controles demográficos y de concentración espacial. Es una base para
 sensibilidades futuras, no un cambio automático de la frontera ni del IEE.
 
+Las [sensibilidades de contexto v0.4](docs/context-sensitivity-v0.4.md) ya comparan
+esos controles por separado contra la frontera experimental. Siguen bloqueadas para
+publicación y sirven para detectar fragilidad de especificación.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.

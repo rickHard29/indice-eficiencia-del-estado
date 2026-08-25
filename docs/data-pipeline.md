@@ -115,6 +115,22 @@ Estas observaciones no se inyectan automáticamente en la frontera. El contrato,
 la cobertura y la regla de uso futuro están en
 [`controles estructurales v0.4`](structural-controls-v0.4.md).
 
+Para ejecutar los controles uno por uno como sensibilidad de frontera:
+
+```bash
+iee-context-sensitivity \
+  --config config/context_sensitivity_v0.4.toml \
+  --panel data/processed/v03_frontier_panel.csv \
+  --gates data/processed/v03_frontier_gates.csv \
+  --panel-provenance data/interim/v03_frontier_provenance.json \
+  --context data/processed/v04_context_observations.csv \
+  --context-provenance data/interim/v04_context_provenance.json
+```
+
+Esta comparación no modifica la frontera base, no selecciona controles y conserva
+nulos el IEE oficial y el ranking. Véase
+[`sensibilidad de contexto v0.4`](context-sensitivity-v0.4.md).
+
 ## Salidas
 
 ### Datos crudos

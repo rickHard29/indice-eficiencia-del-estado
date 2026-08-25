@@ -48,3 +48,9 @@ El contexto estructural v0.4 añade, por separado:
 - `interim/v04_context_provenance.json`: fuentes, hashes y cobertura de contexto.
 
 Ambos artefactos son insumos de sensibilidad y no habilitan puntuación ni ranking.
+
+La sensibilidad condicionada v0.4 produce:
+
+- `processed/v04_context_frontier_sensitivity.csv`: cambio frente a la frontera base;
+- `processed/v04_context_frontier_models.csv`: parámetros por dimensión y control;
+- `interim/v04_context_frontier_provenance.json`: recibo, hashes y gate bloqueado.
