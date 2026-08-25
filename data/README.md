@@ -19,4 +19,10 @@ La ampliación multinacional v0.2 escribe, por separado:
 - `interim/v02_input_provenance.json`: universo, máscaras, vintages y hashes;
 - `processed/v02_input_proxies.csv`: cuatro proxies condicionales en PPA constante.
 
+La primera entrega de resultados v0.3 escribe, por separado:
+
+- `raw/official-v0.3/<sha256>.<formato>`: respuestas oficiales inmutables;
+- `interim/v03_result_provenance.json`: recibo con el corte y vintages por país;
+- `processed/v03_result_observations.csv`: resultados observados sin imputación.
+
 Uso y controles: [`docs/data-pipeline.md`](../docs/data-pipeline.md).

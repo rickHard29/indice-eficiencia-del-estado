@@ -1,0 +1,87 @@
+version = "0.3"
+validation_date = "2026-08-24"
+countries_frame = "OECD-38"
+
+[[series]]
+indicator_id = "SAL-RES-01"
+dimension = "salud"
+role = "resultado"
+direction = "lower"
+status = "validated"
+source_id = "OECD-HEALTH"
+organization = "OECD"
+dataset = "Avoidable mortality"
+official_code = "DSD_HEALTH_STAT@DF_AM | AVM | DT_10P5HB | _T | STANDARD"
+unit = "Muertes evitables estandarizadas por edad por 100.000 habitantes"
+frequency = "anual"
+scope = "OECD-38"
+reference_year = 2022
+exact_url = "https://sdmx.oecd.org/public/rest/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_AM,1.0/AUS+AUT+BEL+CAN+CHE+CHL+COL+CRI+CZE+DEU+DNK+ESP+EST+FIN+FRA+GBR+GRC+HUN+IRL+ISL+ISR+ITA+JPN+KOR+LTU+LUX+LVA+MEX+NLD+NOR+NZL+POL+PRT+SVK+SVN+SWE+TUR+USA.A.AVM.DT_10P5HB._T._T._Z._Z.STANDARD._Z._Z._Z._Z?startPeriod=2010&endPeriod=2022&dimensionAtObservation=AllDimensions&format=csvfile"
+latest_col_year = 2021
+latest_col_value = 419.0
+latest_usa_year = 2022
+latest_usa_value = 312.0
+decision_reason = "Resultado validado. La elegibilidad para una frontera exige después una ventana completa explícita y trata la pandemia como sensibilidad."
+
+[[series]]
+indicator_id = "SAL-ACC-01"
+dimension = "salud"
+role = "acceso"
+direction = "higher"
+status = "validated"
+source_id = "WHO-UHC"
+organization = "World Health Organization / World Bank"
+dataset = "UHC service coverage index"
+official_code = "SH_UHC_SCI"
+unit = "Índice de cobertura de servicios esenciales, 0 a 100"
+frequency = "anual"
+scope = "OECD-38"
+reference_year = 2023
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/SH_UHC_SCI?format=json&date=2000%3A2023&per_page=10000"
+latest_col_year = 2023
+latest_col_value = 82.0
+latest_usa_year = 2023
+latest_usa_value = 88.0
+decision_reason = "Resultado de acceso validado. Es un índice compuesto de cobertura y no un porcentaje literal de población atendida."
+
+[[series]]
+indicator_id = "EDU-RES-01"
+dimension = "educacion"
+role = "resultado"
+direction = "higher"
+status = "validated"
+source_id = "WB-HCI"
+organization = "World Bank"
+dataset = "Human Capital Index"
+official_code = "HD.HCI.HLOS | source=63"
+unit = "Puntaje armonizado en unidades equivalentes a TIMSS"
+frequency = "periódica"
+scope = "OECD-38"
+reference_year = 2020
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/HD.HCI.HLOS?format=json&date=2010%3A2020&per_page=10000&source=63"
+latest_col_year = 2020
+latest_col_value = 419.02753
+latest_usa_year = 2020
+latest_usa_value = 511.79868
+decision_reason = "Resultado validado y periódico. Solo se usarán observaciones efectivas, sin interpolación anual implícita."
+
+[[series]]
+indicator_id = "SEG-RES-01"
+dimension = "seguridad_justicia"
+role = "resultado"
+direction = "lower"
+status = "validated"
+source_id = "UNODC-WDI"
+organization = "UNODC / World Bank"
+dataset = "Intentional homicides"
+official_code = "VC.IHR.PSRC.P5"
+unit = "Víctimas por 100.000 habitantes"
+frequency = "anual"
+scope = "OECD-38"
+reference_year = 2023
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/VC.IHR.PSRC.P5?format=json&date=1990%3A2023&per_page=10000"
+latest_col_year = 2023
+latest_col_value = 24.913442
+latest_usa_year = 2023
+latest_usa_value = 5.76340794
+decision_reason = "Resultado validado. La elegibilidad posterior exige ventana común y una decisión explícita entre promedio móvil y log1p."

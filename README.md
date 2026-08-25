@@ -55,6 +55,10 @@ que convierte las cuatro funciones a PPA constante de 2021 por habitante. Las
 series siguen siendo proxies condicionales hasta validar deflactores, vintages y
 rezagos sectoriales.
 
+La v0.3 ya inició con un [panel multinacional reproducible de resultados](docs/decisions/0005-v03-frontier-experimental-panel.md)
+para los 38 países OCDE. Es la base de una futura frontera experimental por
+dimensión; no habilita todavía un IEE, ranking ni publicación de eficiencia.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.

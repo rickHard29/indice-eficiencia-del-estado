@@ -9,6 +9,10 @@ manifiesto referencia el universo OCDE-38, aplica máscaras de 38 o 34 países y
 PPA constante de 2021 por habitante. Véase
 [`docs/input-proxies-v0.2.md`](input-proxies-v0.2.md).
 
+La primera entrega v0.3 materializa, por separado, un panel de cuatro resultados
+validados para el mismo marco OCDE-38. La decisión y sus límites se documentan en
+[`ADR 0005`](decisions/0005-v03-frontier-experimental-panel.md).
+
 ## Cobertura
 
 El manifiesto [`config/downloads.toml`](../config/downloads.toml) asigna una ruta de
@@ -52,6 +56,16 @@ iee-download \
   --raw-dir data/raw/official \
   --processed data/processed/pilot_observations.csv \
   --provenance data/interim/pilot_provenance.json
+```
+
+Para el panel multinacional de resultados v0.3:
+
+```bash
+iee-download \
+  --manifest config/downloads_results_v0.3.toml \
+  --raw-dir data/raw/official-v0.3 \
+  --processed data/processed/v03_result_observations.csv \
+  --provenance data/interim/v03_result_provenance.json
 ```
 
 ## Salidas
