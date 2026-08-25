@@ -10,15 +10,17 @@ import os
 import re
 import tempfile
 import tomllib
+import zipfile
 from collections import Counter, defaultdict
 from collections.abc import Callable, Iterable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+from xml.etree import ElementTree
 
 
 class IngestionError(RuntimeError):
@@ -51,6 +53,10 @@ class DownloadSpec:
     level_url: str | None = None
     dimension_filters: Mapping[str, str] | None = None
     reference_year: int | None = None
+    worksheet: str | None = None
+    entity_column: str | None = None
+    value_column: str | None = None
+    entity_aliases: Mapping[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -171,6 +177,7 @@ _ADAPTERS = {
     "oecd_ratio_csv",
     "oecd_ratio_times_level",
     "oecd_ppp_per_capita",
+    "oecd_pisa_xlsx",
 }
 _STATUSES = {"validated", "conditional", "reserve"}
 _DIRECTIONS = {"higher", "lower", "input"}
@@ -216,7 +223,16 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
     if not isinstance(raw_series, list) or not raw_series:
         raise IngestionError("el manifiesto debe incluir al menos una serie automática")
 
-    specs = tuple(_parse_download_spec(item, countries) for item in raw_series)
+    entity_aliases = {
+        str(label): str(entity) for label, entity in raw.get("entity_aliases", {}).items()
+    }
+    if any(not label or entity not in countries for label, entity in entity_aliases.items()):
+        raise IngestionError("entity_aliases contiene una etiqueta o país inválido")
+
+    specs = tuple(
+        _parse_download_spec(item, countries, entity_aliases=entity_aliases)
+        for item in raw_series
+    )
     country_universe = _load_country_universe(universe_path, version, countries, specs)
     try:
         catalog_bytes = catalog_path.read_bytes()
@@ -490,7 +506,12 @@ def _parse_manual_control_spec(
     return spec
 
 
-def _parse_download_spec(raw: Mapping[str, Any], countries: tuple[str, ...]) -> DownloadSpec:
+def _parse_download_spec(
+    raw: Mapping[str, Any],
+    countries: tuple[str, ...],
+    *,
+    entity_aliases: Mapping[str, str] | None = None,
+) -> DownloadSpec:
     try:
         adapter = str(raw["adapter"])
         expected_entities = tuple(str(value) for value in raw["expected_entities"])
@@ -535,6 +556,10 @@ def _parse_download_spec(raw: Mapping[str, Any], countries: tuple[str, ...]) -> 
                 if raw.get("reference_year") is not None
                 else None
             ),
+            worksheet=_optional_text(raw, "worksheet"),
+            entity_column=_optional_text(raw, "entity_column"),
+            value_column=_optional_text(raw, "value_column"),
+            entity_aliases=dict(entity_aliases or {}),
         )
     except (KeyError, TypeError, ValueError, AttributeError) as error:
         raise IngestionError(f"serie de descarga incompleta: {error}") from error
@@ -595,6 +620,20 @@ def _parse_download_spec(raw: Mapping[str, Any], countries: tuple[str, ...]) -> 
         if not spec.denominator_url or not spec.category_column or not spec.expected_categories:
             raise IngestionError(f"faltan parámetros de razón en {spec.indicator_id}")
         _validate_https(spec.denominator_url, spec.indicator_id)
+    if adapter == "oecd_pisa_xlsx":
+        if (
+            not spec.worksheet
+            or not spec.entity_column
+            or not spec.value_column
+            or not spec.entity_aliases
+        ):
+            raise IngestionError(f"faltan parámetros XLSX PISA en {spec.indicator_id}")
+        if not re.fullmatch(r"[A-Z]+", spec.entity_column) or not re.fullmatch(
+            r"[A-Z]+", spec.value_column
+        ):
+            raise IngestionError(f"columnas XLSX inválidas en {spec.indicator_id}")
+        if not set(spec.expected_entities) <= set(spec.entity_aliases.values()):
+            raise IngestionError(f"aliases insuficientes para {spec.indicator_id}")
     if spec.dimension_filters is not None:
         if any(not key or not value for key, value in spec.dimension_filters.items()):
             raise IngestionError(f"filtros OECD inválidos en {spec.indicator_id}")
@@ -892,6 +931,137 @@ def parse_oecd_sdmx_csv(payload: bytes, spec: DownloadSpec) -> list[Observation]
         for row in rows
     ]
     return validate_observations(observations, spec)
+
+
+def parse_oecd_pisa_xlsx(payload: bytes, spec: DownloadSpec) -> list[Observation]:
+    """Extrae una columna de una tabla oficial PISA distribuida como XLSX.
+
+    El libro de PISA 2022 no requiere una dependencia de ejecución: XLSX es un
+    contenedor ZIP de XML. La configuración congela hoja, columnas y el mapeo de
+    nombres OCDE a ISO3; los asteriscos publicados se preservan como cautelas de
+    muestreo, en vez de descartarse silenciosamente.
+    """
+
+    if not spec.worksheet or not spec.entity_column or not spec.value_column:
+        raise IngestionError(f"configuración XLSX incompleta para {spec.indicator_id}")
+    if spec.reference_year is None:
+        raise IngestionError(f"XLSX PISA exige reference_year en {spec.indicator_id}")
+
+    cells = _xlsx_sheet_cells(payload, spec.worksheet)
+    observations: list[Observation] = []
+    for row_number, row in sorted(cells.items()):
+        raw_label = row.get(spec.entity_column)
+        raw_value = row.get(spec.value_column)
+        if raw_label is None or raw_value is None:
+            continue
+        label = str(raw_label).strip()
+        sampling_caution = label.endswith("*")
+        canonical_label = label.rstrip("*").strip()
+        entity = spec.entity_aliases.get(canonical_label)
+        if entity is None or entity not in spec.expected_entities:
+            continue
+        if str(raw_value).strip().lower() in {"", "m"}:
+            continue
+        observations.append(
+            _make_observation(
+                spec,
+                entity=entity,
+                period=spec.reference_year,
+                value=_parse_decimal(raw_value, f"PISA {spec.indicator_id} fila {row_number}"),
+                status="source:sampling_caution" if sampling_caution else "observed",
+                kind="reported",
+            )
+        )
+    return validate_observations(observations, spec)
+
+
+def _xlsx_sheet_cells(payload: bytes, worksheet_name: str) -> dict[int, dict[str, str]]:
+    """Lee las celdas con valor de una hoja XLSX usando únicamente la biblioteca estándar."""
+
+    spreadsheet_ns = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+    office_ns = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
+    package_ns = "{http://schemas.openxmlformats.org/package/2006/relationships}"
+    try:
+        with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+            workbook = ElementTree.fromstring(archive.read("xl/workbook.xml"))
+            relationship_id = next(
+                (
+                    sheet.attrib.get(f"{office_ns}id")
+                    for sheet in workbook.findall(f"{spreadsheet_ns}sheets/{spreadsheet_ns}sheet")
+                    if sheet.attrib.get("name") == worksheet_name
+                ),
+                None,
+            )
+            if relationship_id is None:
+                raise IngestionError(f"hoja XLSX no encontrada: {worksheet_name}")
+            relationships = ElementTree.fromstring(archive.read("xl/_rels/workbook.xml.rels"))
+            target = next(
+                (
+                    relation.attrib.get("Target")
+                    for relation in relationships.findall(f"{package_ns}Relationship")
+                    if relation.attrib.get("Id") == relationship_id
+                ),
+                None,
+            )
+            if not target:
+                raise IngestionError(f"relación XLSX no encontrada: {worksheet_name}")
+            target_path = target.lstrip("/")
+            if not target_path.startswith("xl/"):
+                target_path = f"xl/{target_path}"
+            shared_strings = _xlsx_shared_strings(archive, spreadsheet_ns)
+            sheet = ElementTree.fromstring(archive.read(target_path))
+    except (KeyError, OSError, ValueError, zipfile.BadZipFile, ElementTree.ParseError) as error:
+        raise IngestionError(f"XLSX PISA inválido: {error}") from error
+
+    rows: dict[int, dict[str, str]] = {}
+    for row in sheet.findall(f".//{spreadsheet_ns}row"):
+        try:
+            row_number = int(row.attrib["r"])
+        except (KeyError, ValueError) as error:
+            raise IngestionError("fila XLSX sin referencia válida") from error
+        values: dict[str, str] = {}
+        for cell in row.findall(f"{spreadsheet_ns}c"):
+            reference = cell.attrib.get("r", "")
+            match = re.fullmatch(r"([A-Z]+)[1-9][0-9]*", reference)
+            if not match:
+                continue
+            value = _xlsx_cell_value(cell, spreadsheet_ns, shared_strings)
+            if value is not None:
+                values[match.group(1)] = value
+        if values:
+            rows[row_number] = values
+    return rows
+
+
+def _xlsx_shared_strings(
+    archive: zipfile.ZipFile,
+    spreadsheet_ns: str,
+) -> list[str]:
+    try:
+        root = ElementTree.fromstring(archive.read("xl/sharedStrings.xml"))
+    except KeyError:
+        return []
+    return [
+        "".join(node.text or "" for node in item.iter(f"{spreadsheet_ns}t"))
+        for item in root.findall(f"{spreadsheet_ns}si")
+    ]
+
+
+def _xlsx_cell_value(
+    cell: ElementTree.Element,
+    spreadsheet_ns: str,
+    shared_strings: Sequence[str],
+) -> str | None:
+    value_node = cell.find(f"{spreadsheet_ns}v")
+    if value_node is None or value_node.text is None:
+        return None
+    value = value_node.text
+    if cell.attrib.get("t") != "s":
+        return value
+    try:
+        return shared_strings[int(value)]
+    except (IndexError, ValueError) as error:
+        raise IngestionError("índice de cadena compartida XLSX inválido") from error
 
 
 def parse_oecd_percent_times_level(
@@ -1656,7 +1826,11 @@ def _acquire_series(
     primary_accept = (
         _JSON_ACCEPT
         if spec.adapter in {"world_bank_json", "world_bank_percent_times_level"}
-        else _CSV_ACCEPT
+        else (
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            if spec.adapter == "oecd_pisa_xlsx"
+            else _CSV_ACCEPT
+        )
     )
     primary = fetcher(spec.url, accept=primary_accept, timeout=timeout, max_bytes=max_bytes)
     _validate_content_type(
@@ -1664,6 +1838,8 @@ def _acquire_series(
         (
             "json"
             if spec.adapter in {"world_bank_json", "world_bank_percent_times_level"}
+            else "xlsx"
+            if spec.adapter == "oecd_pisa_xlsx"
             else "csv"
         ),
     )
@@ -1684,6 +1860,8 @@ def _acquire_series(
         return parse_world_bank_percent_times_level(primary.content, level.content, spec), payloads
     if spec.adapter == "oecd_sdmx_csv":
         return parse_oecd_sdmx_csv(primary.content, spec), payloads
+    if spec.adapter == "oecd_pisa_xlsx":
+        return parse_oecd_pisa_xlsx(primary.content, spec), payloads
     if spec.adapter == "oecd_percent_times_level":
         assert spec.level_url is not None
         level = fetcher(
@@ -1770,8 +1948,10 @@ def _validate_content_type(payload: FetchedPayload, expected: str) -> None:
     content_type = payload.content_type.lower()
     if expected == "json":
         valid = "json" in content_type or payload.content.lstrip().startswith((b"[", b"{"))
-    else:
+    elif expected == "csv":
         valid = "csv" in content_type and not payload.content.lstrip().startswith(b"<")
+    else:
+        valid = "spreadsheetml" in content_type and payload.content.startswith(b"PK")
     if not valid:
         raise IngestionError(
             f"tipo de contenido inesperado para {payload.requested_url}: "

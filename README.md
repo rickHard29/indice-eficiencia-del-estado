@@ -72,6 +72,12 @@ Las [sensibilidades de contexto v0.4](docs/context-sensitivity-v0.4.md) ya compa
 esos controles por separado contra la frontera experimental. Siguen bloqueadas para
 publicación y sirven para detectar fragilidad de especificación.
 
+La [v0.5 materializa los roles educativos](docs/education-roles-v0.5.md) de
+resultado, acceso y equidad para OCDE-38, con máscaras explícitas para los faltantes
+PISA y cautelas de muestreo por país. Es un panel de calidad/cobertura: por el
+desfase 2020–2022 y la ausencia de un insumo educativo final, no habilita todavía
+eficiencia, ranking ni IEE oficial.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.

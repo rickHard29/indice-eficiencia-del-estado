@@ -13,6 +13,10 @@ La primera entrega v0.3 materializa, por separado, un panel de cuatro resultados
 validados para el mismo marco OCDE-38. La decisión y sus límites se documentan en
 [`ADR 0005`](decisions/0005-v03-frontier-experimental-panel.md).
 
+La v0.5 extiende educación con dos roles PISA 2022: acceso y equidad. La descarga
+del libro oficial XLSX, sus máscaras de cobertura y sus cautelas de muestreo se
+documentan en [`roles de educación v0.5`](education-roles-v0.5.md).
+
 ## Cobertura
 
 El manifiesto [`config/downloads.toml`](../config/downloads.toml) asigna una ruta de
@@ -67,6 +71,19 @@ iee-download \
   --processed data/processed/v03_result_observations.csv \
   --provenance data/interim/v03_result_provenance.json
 ```
+
+Para los tres roles de educación v0.5:
+
+```bash
+iee-download \
+  --manifest config/downloads_education_v0.5.toml \
+  --raw-dir data/raw/v05_education \
+  --processed data/processed/v05_education_observations.csv \
+  --provenance data/interim/v05_education_provenance.json
+```
+
+Este panel no se incorpora automáticamente a la frontera: el resultado es de 2020,
+PISA de 2022 y el insumo educativo continúa condicionado.
 
 La unión experimental con los insumos v0.2 se ejecuta después de tener ambos
 snapshots congelados:

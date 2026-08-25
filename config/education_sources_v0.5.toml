@@ -1,0 +1,66 @@
+version = "0.5"
+validation_date = "2026-08-24"
+countries_frame = "OECD-38"
+
+[[series]]
+indicator_id = "EDU-RES-01"
+dimension = "educacion"
+role = "resultado"
+direction = "higher"
+status = "validated"
+source_id = "WB-HCI"
+organization = "World Bank"
+dataset = "Human Capital Index"
+official_code = "HD.HCI.HLOS | source=63"
+unit = "Puntaje armonizado en unidades equivalentes a TIMSS"
+frequency = "periódica"
+scope = "OECD-38"
+reference_year = 2020
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/HD.HCI.HLOS?format=json&date=2010%3A2020&per_page=10000&source=63"
+latest_col_year = 2020
+latest_col_value = 419.02753
+latest_usa_year = 2020
+latest_usa_value = 511.79868
+decision_reason = "Resultado periódico validado; se limita a los años efectivamente observados."
+
+[[series]]
+indicator_id = "EDU-ACC-02"
+dimension = "educacion"
+role = "acceso"
+direction = "higher"
+status = "validated"
+source_id = "OECD-PISA"
+organization = "OECD"
+dataset = "PISA 2022 Results, Volume I, Table I.B1.4.1"
+official_code = "Coverage Index 3 | cobertura de población de 15 años"
+unit = "Porcentaje de la población nacional de 15 años cubierta por la muestra PISA"
+frequency = "trienal"
+scope = "PISA 2022; estudiantes de 15 años"
+reference_year = 2022
+exact_url = "https://stat.link/3mudz9"
+latest_col_year = 2022
+latest_col_value = 72.85649568212921
+latest_usa_year = 2022
+latest_usa_value = 86.44799537033539
+decision_reason = "Proxy de acceso a secundaria: CI3 mide la proporción de toda la población de 15 años representada por PISA, incluidos quienes no están escolarizados en el denominador. Luxemburgo no tiene dato PISA 2022 y queda visible en la máscara."
+
+[[series]]
+indicator_id = "EDU-EQ-01"
+dimension = "educacion"
+role = "equidad"
+direction = "lower"
+status = "validated"
+source_id = "OECD-PISA"
+organization = "OECD"
+dataset = "PISA 2022 Results, Volume I, Table I.B1.4.3"
+official_code = "Diferencia en matemáticas entre cuartiles superior e inferior de ESCS"
+unit = "Puntos PISA"
+frequency = "trienal"
+scope = "PISA 2022; estudiantes de 15 años"
+reference_year = 2022
+exact_url = "https://stat.link/3mudz9"
+latest_col_year = 2022
+latest_col_value = 78.53883263804101
+latest_usa_year = 2022
+latest_usa_value = 102.01016862325474
+decision_reason = "Brecha socioeconómica publicada por PISA; menor es mejor. Costa Rica y Luxemburgo no tienen estimación en esta tabla y las cautelas de muestreo se preservan por país."

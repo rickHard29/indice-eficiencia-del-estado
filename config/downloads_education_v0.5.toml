@@ -1,0 +1,128 @@
+version = "0.5"
+schema_version = "iee-observations-v1"
+catalog = "education_sources_v0.5.toml"
+countries = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+
+[entity_aliases]
+Australia = "AUS"
+Austria = "AUT"
+Belgium = "BEL"
+Canada = "CAN"
+Chile = "CHL"
+Colombia = "COL"
+"Costa Rica" = "CRI"
+"Czech Republic" = "CZE"
+Denmark = "DNK"
+Estonia = "EST"
+Finland = "FIN"
+France = "FRA"
+Germany = "DEU"
+Greece = "GRC"
+Hungary = "HUN"
+Iceland = "ISL"
+Ireland = "IRL"
+Israel = "ISR"
+Italy = "ITA"
+Japan = "JPN"
+Korea = "KOR"
+Latvia = "LVA"
+Lithuania = "LTU"
+Luxembourg = "LUX"
+Mexico = "MEX"
+Netherlands = "NLD"
+"New Zealand" = "NZL"
+Norway = "NOR"
+Poland = "POL"
+Portugal = "PRT"
+"Slovak Republic" = "SVK"
+Slovenia = "SVN"
+Spain = "ESP"
+Sweden = "SWE"
+Switzerland = "CHE"
+"Türkiye" = "TUR"
+"United Kingdom" = "GBR"
+"United States" = "USA"
+
+[[series]]
+resource_id = "edu-res-05"
+indicator_id = "EDU-RES-01"
+source_id = "WB-HCI"
+source_status = "validated"
+score_eligible = true
+adapter = "world_bank_json"
+series_code = "HD.HCI.HLOS | source=63"
+url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/HD.HCI.HLOS?format=json&date=2010%3A2020&per_page=10000&source=63"
+direction = "higher"
+unit = "Puntaje armonizado en unidades equivalentes a TIMSS"
+expected_entities = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+expected_latest_year = { COL = 2020, USA = 2020 }
+expected_latest_value = { COL = "419.02753", USA = "511.79868" }
+latest_value_tolerance = "0.00001"
+minimum_observations_per_entity = 1
+reference_year = 2020
+
+[[series]]
+resource_id = "edu-acc-05"
+indicator_id = "EDU-ACC-02"
+source_id = "OECD-PISA"
+source_status = "validated"
+score_eligible = true
+adapter = "oecd_pisa_xlsx"
+series_code = "Coverage Index 3 | cobertura de población de 15 años"
+url = "https://stat.link/3mudz9"
+direction = "higher"
+unit = "Porcentaje de la población nacional de 15 años cubierta por la muestra PISA"
+expected_entities = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LVA", "MEX", "NLD", "NOR", "NZL", "POL", "PRT",
+  "SVK", "SVN", "SWE", "TUR", "USA",
+]
+expected_latest_year = { COL = 2022, USA = 2022 }
+expected_latest_value = { COL = "72.85649568212921", USA = "86.44799537033539" }
+latest_value_tolerance = "0.000001"
+minimum_observations_per_entity = 1
+reference_year = 2022
+worksheet = "Table I.B1.4.1"
+entity_column = "A"
+value_column = "E"
+
+[[series]]
+resource_id = "edu-eq-05"
+indicator_id = "EDU-EQ-01"
+source_id = "OECD-PISA"
+source_status = "validated"
+score_eligible = true
+adapter = "oecd_pisa_xlsx"
+series_code = "Diferencia en matemáticas entre cuartiles superior e inferior de ESCS"
+url = "https://stat.link/3mudz9"
+direction = "lower"
+unit = "Puntos PISA"
+expected_entities = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CZE",
+  "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR", "GRC",
+  "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR", "LTU",
+  "LVA", "MEX", "NLD", "NOR", "NZL", "POL", "PRT", "SVK",
+  "SVN", "SWE", "TUR", "USA",
+]
+expected_latest_year = { COL = 2022, USA = 2022 }
+expected_latest_value = { COL = "78.53883263804101", USA = "102.01016862325474" }
+latest_value_tolerance = "0.000001"
+minimum_observations_per_entity = 1
+reference_year = 2022
+worksheet = "Table I.B1.4.3"
+entity_column = "A"
+value_column = "T"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
+import io
 import json
 import os
 from pathlib import Path
@@ -9,6 +10,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 from urllib.error import HTTPError
+import zipfile
 
 from iee.ingestion import (
     _acquire_series,
@@ -22,6 +24,7 @@ from iee.ingestion import (
     load_download_manifest,
     observations_to_csv,
     parse_oecd_percent_times_level,
+    parse_oecd_pisa_xlsx,
     parse_oecd_ppp_per_capita,
     parse_oecd_ratio_csv,
     parse_oecd_ratio_times_level,
@@ -42,6 +45,38 @@ WB_JSON = (
     b'{"countryiso3code":"USA","date":"2022","value":6.383588},'
     b'{"countryiso3code":"USA","date":"2023","value":5.76340794}]]'
 )
+
+
+def pisa_xlsx_fixture() -> bytes:
+    """Minimal XLSX fixture: numeric value, sampling caution and a missing value."""
+
+    payload = io.BytesIO()
+    with zipfile.ZipFile(payload, "w") as archive:
+        archive.writestr(
+            "xl/workbook.xml",
+            """<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"
+            xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">
+            <sheets><sheet name=\"Table I.B1.4.1\" sheetId=\"1\" r:id=\"rId1\"/></sheets></workbook>""",
+        )
+        archive.writestr(
+            "xl/_rels/workbook.xml.rels",
+            """<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">
+            <Relationship Id=\"rId1\" Target=\"worksheets/sheet1.xml\"/></Relationships>""",
+        )
+        archive.writestr(
+            "xl/sharedStrings.xml",
+            """<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">
+            <si><t>Colombia</t></si><si><t>United States*</t></si><si><t>m</t></si></sst>""",
+        )
+        archive.writestr(
+            "xl/worksheets/sheet1.xml",
+            """<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\"><sheetData>
+            <row r=\"11\"><c r=\"A11\" t=\"s\"><v>0</v></c><c r=\"E11\"><v>72.5</v></c></row>
+            <row r=\"12\"><c r=\"A12\" t=\"s\"><v>1</v></c><c r=\"E12\"><v>86.4</v></c></row>
+            <row r=\"13\"><c r=\"A13\" t=\"s\"><v>2</v></c><c r=\"E13\" t=\"s\"><v>2</v></c></row>
+            </sheetData></worksheet>""",
+        )
+    return payload.getvalue()
 
 
 def make_spec(**overrides: object) -> DownloadSpec:
@@ -138,6 +173,31 @@ class IngestionParsingTests(unittest.TestCase):
         self.assertEqual(observations[0].entity, "COL")
         self.assertEqual(observations[0].value, Decimal("25.4"))
         self.assertEqual(observations[-1].value, Decimal("5.76340794"))
+
+    def test_pisa_xlsx_preserves_sampling_caution_and_skips_missing_values(self) -> None:
+        spec = make_spec(
+            adapter="oecd_pisa_xlsx",
+            indicator_id="EDU-ACC-02",
+            series_code="Coverage Index 3",
+            direction="higher",
+            unit="Porcentaje",
+            expected_latest_year={"COL": 2022, "USA": 2022},
+            expected_latest_value={"COL": Decimal("72.5"), "USA": Decimal("86.4")},
+            minimum_observations_per_entity=1,
+            reference_year=2022,
+            worksheet="Table I.B1.4.1",
+            entity_column="A",
+            value_column="E",
+            entity_aliases={"Colombia": "COL", "United States": "USA"},
+        )
+
+        observations = parse_oecd_pisa_xlsx(pisa_xlsx_fixture(), spec)
+
+        self.assertEqual([(row.entity, row.period, row.value) for row in observations], [
+            ("COL", 2022, Decimal("72.5")),
+            ("USA", 2022, Decimal("86.4")),
+        ])
+        self.assertEqual(observations[1].observation_status, "source:sampling_caution")
 
     def test_world_bank_rejects_incomplete_pagination(self) -> None:
         payload = WB_JSON.replace(b'"pages":1', b'"pages":2', 1)
