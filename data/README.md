@@ -25,4 +25,12 @@ La primera entrega de resultados v0.3 escribe, por separado:
 - `interim/v03_result_provenance.json`: recibo con el corte y vintages por país;
 - `processed/v03_result_observations.csv`: resultados observados sin imputación.
 
+El panel de frontera experimental v0.3 añade:
+
+- `processed/v03_frontier_panel.csv`: pares resultado–insumo con ventanas completas;
+- `processed/v03_frontier_gates.csv`: cobertura y bloqueo por dimensión;
+- `interim/v03_frontier_provenance.json`: hashes de ambos snapshots y del panel.
+
+Estas salidas no contienen un IEE ni un ranking: sus insumos continúan condicionales.
+
 Uso y controles: [`docs/data-pipeline.md`](../docs/data-pipeline.md).

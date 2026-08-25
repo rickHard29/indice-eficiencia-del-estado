@@ -15,6 +15,7 @@ dependencies = []
 [project.scripts]
 iee-download = "iee.download:main"
 iee-score = "iee.score:main"
+iee-frontier-panel = "iee.frontier:main"
 
 [project.optional-dependencies]
 dev = [

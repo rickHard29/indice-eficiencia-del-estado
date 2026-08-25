@@ -68,6 +68,25 @@ iee-download \
   --provenance data/interim/v03_result_provenance.json
 ```
 
+La unión experimental con los insumos v0.2 se ejecuta después de tener ambos
+snapshots congelados:
+
+```bash
+iee-frontier-panel \
+  --config config/frontier_panel_v0.3.toml \
+  --result-observations data/processed/v03_result_observations.csv \
+  --result-provenance data/interim/v03_result_provenance.json \
+  --input-observations data/processed/v02_input_proxies.csv \
+  --input-provenance data/interim/v02_input_provenance.json \
+  --panel-output data/processed/v03_frontier_panel.csv \
+  --gates-output data/processed/v03_frontier_gates.csv \
+  --provenance-output data/interim/v03_frontier_provenance.json
+```
+
+Este comando no estima una frontera ni puntúa países. Publica pares de resultado e
+insumo solo cuando sus ventanas están completas y deja en un archivo de gates las
+dimensiones que no alcanzan la muestra mínima.
+
 ## Salidas
 
 ### Datos crudos
