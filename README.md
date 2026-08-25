@@ -64,6 +64,10 @@ estima únicamente las dimensiones que superan el mínimo de 30 pares completos,
 con sensibilidad e intervalos reproducibles. Todos sus resultados continúan
 marcados como experimentales y el IEE oficial permanece nulo.
 
+La [v0.4 añade un panel de contexto estructural](docs/structural-controls-v0.4.md)
+para probar controles demográficos y de concentración espacial. Es una base para
+sensibilidades futuras, no un cambio automático de la frontera ni del IEE.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.

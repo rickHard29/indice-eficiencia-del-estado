@@ -1,0 +1,48 @@
+version = "0.4"
+validation_date = "2026-08-25"
+countries_frame = "OECD-38"
+integration_status = "experimental-context-only"
+
+[[series]]
+indicator_id = "CTX-AGE-01"
+dimension = "transversal"
+role = "contexto"
+direction = "input"
+status = "validated"
+source_id = "UN-WPP-WDI"
+organization = "United Nations Population Division / World Bank"
+dataset = "World Development Indicators"
+official_code = "SP.POP.DPND"
+unit = "Dependientes por cada 100 personas en edad de trabajar"
+frequency = "anual"
+scope = "OECD-38"
+reference_year = 2023
+transform = "linear"
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/SP.POP.DPND?format=json&date=2010%3A2023&per_page=10000"
+latest_col_year = 2023
+latest_col_value = "42.8026198463432"
+latest_usa_year = 2023
+latest_usa_value = "53.9087998260781"
+decision_reason = "Control demográfico transversal y anual. Captura composición etaria, no dependencia económica observada; se conserva como contexto y no puntúa."
+
+[[series]]
+indicator_id = "CTX-DENS-01"
+dimension = "transversal"
+role = "contexto"
+direction = "input"
+status = "validated"
+source_id = "FAO-WDI"
+organization = "Food and Agriculture Organization / World Bank"
+dataset = "World Development Indicators"
+official_code = "EN.POP.DNST"
+unit = "Personas por kilómetro cuadrado de superficie terrestre"
+frequency = "anual"
+scope = "OECD-38"
+reference_year = 2023
+transform = "log1p"
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/EN.POP.DNST?format=json&date=2010%3A2023&per_page=10000"
+latest_col_year = 2023
+latest_col_value = "47.1574150518251"
+latest_usa_year = 2023
+latest_usa_value = "36.8142112202129"
+decision_reason = "Control de concentración espacial. Se transforma con log1p al modelar; no se combina automáticamente con ruralidad ni puntúa."

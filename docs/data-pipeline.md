@@ -101,6 +101,20 @@ La salida conserva nulo el IEE oficial y bloquea publicación y ranking. El mét
 las sensibilidades y sus límites se documentan en
 [`ADR 0006`](decisions/0006-v03-experimental-quantile-frontier.md).
 
+La base de contexto estructural v0.4 se adquiere de forma independiente:
+
+```bash
+iee-download \
+  --manifest config/downloads_context_v0.4.toml \
+  --raw-dir data/raw/official-v0.4 \
+  --processed data/processed/v04_context_observations.csv \
+  --provenance data/interim/v04_context_provenance.json
+```
+
+Estas observaciones no se inyectan automáticamente en la frontera. El contrato,
+la cobertura y la regla de uso futuro están en
+[`controles estructurales v0.4`](structural-controls-v0.4.md).
+
 ## Salidas
 
 ### Datos crudos

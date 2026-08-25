@@ -41,3 +41,10 @@ La estimación experimental v0.3 produce:
 - `interim/v03_experimental_frontier_provenance.json`: método, hashes y bloqueos.
 
 Uso y controles: [`docs/data-pipeline.md`](../docs/data-pipeline.md).
+
+El contexto estructural v0.4 añade, por separado:
+
+- `processed/v04_context_observations.csv`: dependencia etaria y densidad para OCDE-38;
+- `interim/v04_context_provenance.json`: fuentes, hashes y cobertura de contexto.
+
+Ambos artefactos son insumos de sensibilidad y no habilitan puntuación ni ranking.
