@@ -28,6 +28,19 @@ _HEADER = (
 
 
 class FrontierPanelTests(unittest.TestCase):
+    def test_v06_education_bridge_uses_pre_outcome_proxy_window(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        config = load_frontier_panel_config(root / "config/frontier_panel_v0.6.toml")
+
+        self.assertEqual(config.version, "0.6")
+        self.assertEqual(config.status, "experimental-not-for-publication")
+        self.assertEqual(len(config.dimensions), 1)
+        education = config.dimensions[0]
+        self.assertEqual(education.id, "educacion")
+        self.assertEqual(education.outcome_periods, (2020,))
+        self.assertEqual(education.input_periods, (2019, 2020))
+        self.assertEqual(education.input_status_required, "conditional")
+
     def _prepare(self, directory: Path) -> dict[str, Path]:
         universe = directory / "universe.toml"
         result_catalog = directory / "results.toml"

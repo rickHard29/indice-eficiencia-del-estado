@@ -1,0 +1,21 @@
+version = "0.6"
+schema_version = "iee-frontier-panel-v1"
+status = "experimental-not-for-publication"
+country_universe = "country_universe_v0.2.toml"
+result_catalog = "result_sources_v0.3.toml"
+input_catalog = "input_sources_v0.2.toml"
+result_snapshot_sha256 = "6d71bddd2660c37471baf3f18d0b0906dea2661a181773a88682a342e257683f"
+input_snapshot_sha256 = "a623301ab3ab60eb81894092a276c44ce915cad5d4d0ac8d9775afbac1700d67"
+frontier_min_countries = 30
+
+[[dimensions]]
+id = "educacion"
+label = "Educación — puente de recursos v0.6"
+outcome_indicator_id = "EDU-RES-01"
+outcome_selection = "point"
+outcome_year = 2020
+input_indicator_id = "EDU-IN-02"
+input_selection = "mean"
+input_start_year = 2019
+input_end_year = 2020
+input_status_required = "conditional"

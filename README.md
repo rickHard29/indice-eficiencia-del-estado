@@ -78,6 +78,11 @@ PISA y cautelas de muestreo por país. Es un panel de calidad/cobertura: por el
 desfase 2020–2022 y la ausencia de un insumo educativo final, no habilita todavía
 eficiencia, ranking ni IEE oficial.
 
+La v0.6 añade un [puente reproducible de recursos educativos](docs/education-resource-bridge-v0.6.md):
+35 pares entre aprendizaje 2020 y gasto aproximado 2019–2020, incluidos Colombia y
+Estados Unidos. La proxy es condicional y el panel bloquea explícitamente cualquier
+frontera o publicación de eficiencia.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.

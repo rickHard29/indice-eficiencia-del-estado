@@ -85,6 +85,21 @@ iee-download \
 Este panel no se incorpora automáticamente a la frontera: el resultado es de 2020,
 PISA de 2022 y el insumo educativo continúa condicionado.
 
+El puente de recursos educativos v0.6 usa el resultado HCI de 2020 y el promedio
+condicional de recursos 2019–2020, sin estimar eficiencia:
+
+```bash
+iee-frontier-panel \
+  --config config/frontier_panel_v0.6.toml \
+  --panel-output data/processed/v06_education_resource_panel.csv \
+  --gates-output data/processed/v06_education_resource_gates.csv \
+  --provenance-output data/interim/v06_education_resource_provenance.json
+```
+
+Los argumentos de entrada mantienen sus rutas predeterminadas v0.2/v0.3. La decisión
+de fuente y el bloqueo de eficiencia se explican en
+[`puente de recursos educativos v0.6`](education-resource-bridge-v0.6.md).
+
 La unión experimental con los insumos v0.2 se ejecuta después de tener ambos
 snapshots congelados:
 

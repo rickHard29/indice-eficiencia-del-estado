@@ -100,7 +100,7 @@ _SELECTIONS = {"point", "mean"}
 
 
 def load_frontier_panel_config(path: str | Path) -> FrontierPanelConfig:
-    """Carga la definición v0.3 y la contrasta con sus catálogos congelados."""
+    """Carga la definición de un panel experimental y sus catálogos congelados."""
 
     config_path = Path(path)
     config_bytes, raw = _load_toml(config_path, "configuración del panel de frontera")
@@ -165,7 +165,7 @@ def _parse_dimension(raw: Mapping[str, Any]) -> DimensionSpec:
             input_status_required=str(raw["input_status_required"]),
         )
     except (KeyError, TypeError, ValueError) as error:
-        raise FrontierPanelError(f"dimensión v0.3 incompleta: {error}") from error
+        raise FrontierPanelError(f"dimensión de panel incompleta: {error}") from error
 
 
 def _selection_periods(raw: Mapping[str, Any], prefix: str, selection: str) -> tuple[int, ...]:
@@ -185,8 +185,8 @@ def _validate_config(
     result_catalog: Mapping[str, Any],
     input_catalog: Mapping[str, Any],
 ) -> None:
-    if config.version != "0.3":
-        raise FrontierPanelError("la configuración debe declarar versión 0.3")
+    if config.version not in {"0.3", "0.6"}:
+        raise FrontierPanelError("la configuración debe declarar una versión de panel compatible")
     if config.status != "experimental-not-for-publication":
         raise FrontierPanelError("el panel v0.3 debe bloquear publicación")
     if not config.countries or len(config.countries) != len(set(config.countries)):
