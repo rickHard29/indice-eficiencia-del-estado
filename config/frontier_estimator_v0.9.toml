@@ -1,0 +1,27 @@
+version = "0.9"
+schema_version = "iee-experimental-frontier-v1"
+status = "experimental-not-for-publication"
+panel_config = "frontier_panel_v0.9.toml"
+panel_config_sha256 = "8b0d6efd814d5cff4c349586b9ff28c5d26332275f4a4d3afc9b42450d843392"
+diagnostic_config = "scoring_experiment.toml"
+diagnostic_config_sha256 = "2d179d4a4dd52432f1d6b502cc2700bf34fca5c4d0d87d7122bec1bab4867355"
+panel_sha256 = "eb3fcf6476735974353ef9485005b54ea472a595a9d30bfa864b4adc68d76a43"
+gates_sha256 = "57bee2401ed95c44ccda394bc3b3f221e4c1cd27398a8c526bee1d2dcb5f0557"
+panel_provenance_sha256 = "17528f2e8d3e7f9e9369438031f691f0d9b920a28a0b50825e1dabc1109fc2fc"
+frontier_quantile = 0.90
+sensitivity_quantiles = [0.85, 0.95]
+input_transform = "log1p"
+require_non_decreasing_frontier = true
+bootstrap_replications = 200
+confidence_level = 0.90
+random_seed = 20260825
+
+[[dimensions]]
+id = "educacion"
+outcome_indicator_id = "EDU-RES-01"
+direction = "higher"
+transform = "linear"
+lower_bound = 300.0
+upper_bound = 625.0
+bound_status = "technical_scale"
+bound_reference = "World Bank HLO: 300 mínimo y 625 logro avanzado."

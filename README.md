@@ -88,6 +88,11 @@ gasto bajo esquemas gubernamentales u obligatorios, en PPA constante y con cober
 OCDE-38. Sirve para contrastar la proxy sanitaria anterior; ambas definiciones siguen
 siendo condicionales y toda frontera, ranking e IEE oficial permanecen bloqueados.
 
+La v0.9 aplica ese mismo control a educación y encuentra una
+[frontera plana](docs/education-frontier-v0.9.md) con el puente de gasto por
+habitante. El resultado descarta interpretarla como eficiencia de recursos y
+mantiene el insumo como contexto condicional.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.
