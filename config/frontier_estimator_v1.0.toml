@@ -1,0 +1,27 @@
+version = "1.0"
+schema_version = "iee-experimental-frontier-v1"
+status = "experimental-not-for-publication"
+panel_config = "frontier_panel_v1.0.toml"
+panel_config_sha256 = "8c477d267b92ad89672218640a683c3af7263ea2d41f3bf770bd6dc1dd22701a"
+diagnostic_config = "scoring_experiment.toml"
+diagnostic_config_sha256 = "2d179d4a4dd52432f1d6b502cc2700bf34fca5c4d0d87d7122bec1bab4867355"
+panel_sha256 = "dcb47481dc9628b5a53d1fd2908bdf047f79afc0099ac03ad7208fea0749a70e"
+gates_sha256 = "3fb4fb7a2549742d1e7297d2dead789cbf920f9e424a4fa1f462fd2b1cd6bbe5"
+panel_provenance_sha256 = "23dd992c94f7b7cc1e1a82b557c4e26093a2f91ebc8ee7090d35f03ff98514e8"
+frontier_quantile = 0.90
+sensitivity_quantiles = [0.85, 0.95]
+input_transform = "log1p"
+require_non_decreasing_frontier = true
+bootstrap_replications = 200
+confidence_level = 0.90
+random_seed = 20260825
+
+[[dimensions]]
+id = "seguridad_justicia"
+outcome_indicator_id = "SEG-RES-01"
+direction = "lower"
+transform = "log1p"
+lower_bound = 0.0
+upper_bound = 50.0
+bound_status = "provisional"
+bound_reference = "Techo de estrés de ingeniería de 50 homicidios por 100.000."

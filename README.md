@@ -93,6 +93,11 @@ La v0.9 aplica ese mismo control a educación y encuentra una
 habitante. El resultado descarta interpretarla como eficiencia de recursos y
 mantiene el insumo como contexto condicional.
 
+La v1.0 añade una [sensibilidad temporal de seguridad y justicia](docs/security-frontier-v1.0.md):
+alinea recursos y homicidios en 2019–2021 para recuperar 33 pares observados. Es
+una prueba de cobertura y rezago; conserva el carácter condicional del insumo y no
+habilita eficiencia oficial, ranking ni IEE.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.
