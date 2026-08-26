@@ -11,6 +11,7 @@ registrados son puntos de control, no un resultado del índice.
 |---|---|---|---:|---:|
 | SAL-RES-01 | Mortalidad evitable | Validado | 419,0 (2021) | 312,0 (2022) |
 | SAL-ACC-01 | Cobertura de servicios esenciales de salud | Validado | 82 (2023) | 88 (2023) |
+| SAL-EQ-02 (candidata v0.7) | Brecha de dificultad financiera por quintil | Rechazada v0.7 | 1,40 p.p. (2021) | 26,53 p.p. (2023) |
 | SAL-IN-01 | Gasto público en salud por habitante, PPA | Condicional | 1.226,42 (2024) | 7.269,29 (2023) |
 | EDU-RES-01 | Puntaje armonizado de aprendizaje | Validado | 419,03 (2020) | 511,80 (2020) |
 | EDU-EQ-01 | Brecha PISA por nivel socioeconómico | Validado | 79 (2022) | 102 (2022) |
@@ -22,7 +23,9 @@ registrados son puntos de control, no un resultado del índice.
 | ADM-ACC-01 | Tiempo y finalización de transacciones públicas | Requiere diseño | — | — |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
-Resumen: **6 validados, 2 condicionales, 2 en reserva y 2 que requieren diseño**.
+Resumen del catálogo del piloto: **6 validados, 2 condicionales, 2 en reserva y
+2 que requieren diseño**. La candidata SAL-EQ-02 no se materializa en el catálogo
+ni cambia esos conteos.
 Un indicador condicional tiene fuente y cobertura utilizables, pero necesita una
 decisión de transformación o definición antes de entrar al modelo. Una reserva no
 cumple hoy la comparabilidad requerida.
@@ -45,6 +48,28 @@ El código vigente es `SH_UHC_SCI`; el código histórico
 contiene 24 observaciones anuales para ambos países entre 2000 y 2023. Es un índice
 de 0 a 100 construido por la OMS con 14 indicadores trazadores; por ello no se debe
 interpretar como porcentaje literal de personas atendidas.
+
+### Equidad: brecha de dificultad financiera por quintil
+
+La definición revisada en 2025 del indicador ODS 3.8.2 de la OMS mide la
+proporción de población cuyo gasto directo en salud supera el 40 % de su
+presupuesto discrecional. La [API oficial de la OMS](https://ghoapi.azureedge.net/api/FINANCIALHARDSHIP_PROPORTIONOFPOP)
+publica observaciones por quintil de riqueza, con las que se puede construir una
+diferencia de puntos porcentuales entre el primer y el quinto quintil como
+candidata de desigualdad.
+Los puntos de control más recientes son 1,40 p.p. para Colombia (2021) y 26,53
+p.p. para Estados Unidos (2023), calculados como `Q1 - Q5` a partir de las
+observaciones de cada país y año.
+
+La candidata queda rechazada en v0.7 y no se incorpora al panel ni al catálogo.
+Solo 32 de los
+38 países OCDE tienen ambos quintiles en algún año; la cobertura baja a 25 desde
+2010, 21 desde 2015 y 16 desde 2019. No alcanza el mínimo de 30 países con una
+vintage razonable. Además, la OMS advierte que las personas que no superan las
+barreras de acceso pueden registrar gasto cero, subestimando la dificultad
+financiera. Antes de reabrirla se requiere una ventana temporal que conserve al
+menos 30 países y una decisión explícita sobre la transformación de la brecha y
+ese sesgo de acceso.
 
 ### Insumo: gasto público en salud
 
@@ -158,5 +183,6 @@ definición metodológica o se convierte a una medida de volumen por habitante.
 5. No calcular un puntaje general hasta que cada dimensión cumpla el umbral de
    cobertura y cuente con un insumo compatible.
 
-La fuente legible por máquina de este inventario es
-[`config/pilot_sources.toml`](../config/pilot_sources.toml).
+La fuente legible por máquina de los 12 indicadores del piloto es
+[`config/pilot_sources.toml`](../config/pilot_sources.toml). La candidata no
+materializada SAL-EQ-02 queda registrada en la [decisión v0.7](decisions/0011-v07-health-equity-screen.md).
