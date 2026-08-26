@@ -1,0 +1,25 @@
+version = "0.8"
+validation_date = "2026-08-25"
+countries_frame = "OECD-38"
+common_unit = "Dólares estadounidenses PPA constantes de 2020 por habitante"
+
+[[series]]
+indicator_id = "SAL-IN-03"
+dimension = "salud"
+role = "insumo"
+direction = "input"
+status = "conditional"
+source_id = "OECD-SHA-HF1-CONSTANT-PPP"
+organization = "OECD"
+dataset = "Health expenditure and financing (System of Health Accounts)"
+official_code = "DSD_SHA@DF_SHA 1.1 | EXP_HEALTH | USD_PPP_PS | HF1 | _T | Q"
+unit = "Dólares estadounidenses PPA constantes de 2020 por habitante"
+frequency = "anual"
+reference_year = 2023
+scope = "OECD-38"
+exact_url = "https://sdmx.oecd.org/public/rest/v1/data/OECD.ELS.HD,DSD_SHA@DF_SHA,1.1/AUS+AUT+BEL+CAN+CHE+CHL+COL+CRI+CZE+DEU+DNK+ESP+EST+FIN+FRA+GBR+GRC+HUN+IRL+ISL+ISR+ITA+JPN+KOR+LTU+LUX+LVA+MEX+NLD+NOR+NZL+POL+PRT+SVK+SVN+SWE+TUR+USA.A.EXP_HEALTH.USD_PPP_PS.HF1.._T._T._T...Q?startPeriod=2019&endPeriod=2023&dimensionAtObservation=AllDimensions&format=csvfile"
+latest_col_year = 2023
+latest_col_value = "1177.410"
+latest_usa_year = 2023
+latest_usa_value = "10078.994"
+decision_reason = "Serie directa en PPA constante que elimina el deflactor general del PIB. Permanece condicional: HF1 cubre esquemas gubernamentales y seguros obligatorios, un alcance más amplio que gasto del gobierno general."

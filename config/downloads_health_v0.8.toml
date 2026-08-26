@@ -1,0 +1,36 @@
+version = "0.8"
+schema_version = "iee-observations-v1"
+catalog = "health_input_sources_v0.8.toml"
+country_universe = "country_universe_v0.8.toml"
+countries = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+
+[[series]]
+resource_id = "sal-in-03"
+indicator_id = "SAL-IN-03"
+source_id = "OECD-SHA-HF1-CONSTANT-PPP"
+source_status = "conditional"
+score_eligible = false
+adapter = "oecd_sdmx_csv"
+series_code = "DSD_SHA@DF_SHA 1.1 | EXP_HEALTH | USD_PPP_PS | HF1 | _T | Q"
+url = "https://sdmx.oecd.org/public/rest/v1/data/OECD.ELS.HD,DSD_SHA@DF_SHA,1.1/AUS+AUT+BEL+CAN+CHE+CHL+COL+CRI+CZE+DEU+DNK+ESP+EST+FIN+FRA+GBR+GRC+HUN+IRL+ISL+ISR+ITA+JPN+KOR+LTU+LUX+LVA+MEX+NLD+NOR+NZL+POL+PRT+SVK+SVN+SWE+TUR+USA.A.EXP_HEALTH.USD_PPP_PS.HF1.._T._T._T...Q?startPeriod=2019&endPeriod=2023&dimensionAtObservation=AllDimensions&format=csvfile"
+direction = "input"
+unit = "Dólares estadounidenses PPA constantes de 2020 por habitante"
+expected_entities = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+expected_latest_year = { COL = 2023, USA = 2023 }
+expected_latest_value = { COL = "1177.410", USA = "10078.994" }
+latest_value_tolerance = "0.000001"
+minimum_observations_per_entity = 5
+reference_year = 2023
+dimension_filters = { FREQ = "A", MEASURE = "EXP_HEALTH", UNIT_MEASURE = "USD_PPP_PS", FINANCING_SCHEME = "HF1", FINANCING_SCHEME_REV = "_Z", FUNCTION = "_T", MODE_PROVISION = "_T", PROVIDER = "_T", FACTOR_PROVISION = "_Z", ASSET_TYPE = "_Z", PRICE_BASE = "Q" }

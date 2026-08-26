@@ -263,11 +263,11 @@ def _validate_config(
     diagnostic_config: Mapping[str, Any],
 ) -> None:
     if (
-        config.version != "0.3"
+        config.version not in {"0.3", "0.8"}
         or config.schema_version != "iee-experimental-frontier-v1"
         or config.status != "experimental-not-for-publication"
     ):
-        raise ExperimentalFrontierError("la frontera debe ser v0.3 experimental")
+        raise ExperimentalFrontierError("la frontera debe declarar una versión experimental compatible")
     if not config.countries or len(config.countries) != len(set(config.countries)):
         raise ExperimentalFrontierError("el universo debe contener países únicos")
     for digest in (
@@ -599,7 +599,7 @@ def _read_inputs(
             raise ExperimentalFrontierError("la procedencia del panel difiere de la configuración")
         if receipt["schema_version"] != "iee-frontier-panel-v1":
             raise ExperimentalFrontierError("esquema del panel no compatible")
-        if receipt["version"] != "0.3":
+        if receipt["version"] != config.version:
             raise ExperimentalFrontierError("versión de procedencia del panel no compatible")
         if receipt["status"] != "experimental-not-for-publication":
             raise ExperimentalFrontierError("estado de procedencia del panel no compatible")

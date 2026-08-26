@@ -83,6 +83,11 @@ La v0.6 añade un [puente reproducible de recursos educativos](docs/education-re
 Estados Unidos. La proxy es condicional y el panel bloquea explícitamente cualquier
 frontera o publicación de eficiencia.
 
+La v0.8 añade una [alternativa directa de recursos sanitarios](docs/health-resources-v0.8.md):
+gasto bajo esquemas gubernamentales u obligatorios, en PPA constante y con cobertura
+OCDE-38. Sirve para contrastar la proxy sanitaria anterior; ambas definiciones siguen
+siendo condicionales y toda frontera, ranking e IEE oficial permanecen bloqueados.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.
