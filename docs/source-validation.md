@@ -26,6 +26,7 @@ registrados son puntos de control, no un resultado del índice.
 | ADM-SAT-01 (candidata v1.3) | Satisfacción con último servicio gubernamental | Rechazada v1.3 por cobertura | — | — |
 | ADM-ID-01 (candidata v1.4) | Identidad oficial como prerrequisito de acceso | En evaluación metodológica | 98,3836 % (2024) | 89,7975 % (2024) |
 | ADM-EQ-02 (candidata v1.7) | Brecha de identidad oficial por sexo | En evaluación metodológica | 0,995574 p.p. (2024) | 2,916416 p.p. (2024) |
+| ADM-EQ-03 (candidata v1.8) | Brecha territorial de identidad oficial | Pendiente de adopción | 1,367093 p.p. (2024) | 7,452805 p.p. (2024) |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
 Resumen del catálogo del piloto: **6 validados, 3 condicionales, 2 en reserva y
@@ -110,6 +111,22 @@ habilitante, pero no mide disparidad territorial, población empresarial ni
 finalización de trámites. `ADM-EQ-02` no modifica aún el catálogo ni los
 puntajes; la [ADR 0021](decisions/0021-v17-administrative-identity-equity-screen.md)
 registra el cambio metodológico que exigiría.
+
+### Cribado v1.8: brecha territorial de identidad oficial
+
+La misma fuente ID4D--Global Findex 2025 publica cobertura de identidad oficial
+para población rural y urbana de 15 años o más. La diferencia absoluta entre
+ambas proporciones conserva explícitamente la noción territorial del marco:
+Colombia registra 1,367093 p.p. y Estados Unidos 7,452805 p.p. en 2024. Las dos
+series están disponibles para 34 de 38 países OCDE; Australia, Estonia,
+Luxemburgo y República Eslovaca no tienen la pareja completa.
+
+`ADM-EQ-03` es una candidata más coherente que `ADM-EQ-02` para el rol de
+equidad territorial. Aun así, mide paridad de un requisito de acceso, no uso,
+tiempo ni calidad de trámites, y no observa diferencias entre municipios. Queda
+pendiente de adopción y no cambia el catálogo, los puntajes ni la frontera. La
+[ADR 0022](decisions/0022-v18-administrative-territorial-equity-screen.md)
+conserva fórmula, cobertura y límites.
 
 ## Salud
 
