@@ -21,6 +21,7 @@ registrados son puntos de control, no un resultado del índice.
 | SEG-IN-01 | Gasto en orden público y seguridad por habitante | Reserva | 430,63 (2024) | 1.551,23 (2024) |
 | ADM-RES-01 | Índice de servicios públicos en línea | Validado | 0,7521 (2024) | 0,9136 (2024) |
 | ADM-ACC-01 | Tiempo y finalización de transacciones públicas | Requiere diseño | — | — |
+| ADM-EPI-01 (candidata v1.2) | Participación electrónica | Rechazada v1.2 como acceso | 0,7397 (2024) | 0,9452 (2024) |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
 Resumen del catálogo del piloto: **6 validados, 2 condicionales, 2 en reserva y
@@ -29,6 +30,23 @@ ni cambia esos conteos.
 Un indicador condicional tiene fuente y cobertura utilizables, pero necesita una
 decisión de transformación o definición antes de entrar al modelo. Una reserva no
 cumple hoy la comparabilidad requerida.
+
+### Cribado v1.2: participación no equivale a acceso administrativo
+
+La tabla 9 del [apéndice técnico oficial de la Encuesta de Gobierno Electrónico
+2024 de la ONU](https://desapublications.un.org/sites/default/files/publications/2024-10/Technical%20Appendix%20%28Web%20version%29%2030102024.pdf)
+ofrece el *E-Participation Index* (EPI) para los 38 países OCDE. Colombia tiene
+0,7397 y Estados Unidos 0,9452. La cobertura es suficiente, pero el índice se
+compone de e-información, e-consulta y e-toma de decisiones: describe mecanismos
+institucionales de participación, no la experiencia de completar un trámite, su
+tiempo de respuesta, uso efectivo ni accesibilidad para grupos distintos.
+
+Por ello `ADM-EPI-01` queda rechazada como sustituto de `ADM-ACC-01`; puede
+servir más adelante como referencia de participación cívica, sin puntaje ni
+reponderación. El *Digital Government Index* 2023 de la OCDE también se descartó
+como alternativa: es una medida de capacidades y políticas y su edición no
+incluye a Estados Unidos. La decisión completa está en la
+[ADR 0016](decisions/0016-v12-administrative-access-screen.md).
 
 ## Salud
 
