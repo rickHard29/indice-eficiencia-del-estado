@@ -25,6 +25,7 @@ registrados son puntos de control, no un resultado del índice.
 | ADM-EPI-01 (candidata v1.2) | Participación electrónica | Rechazada v1.2 como acceso | 0,7397 (2024) | 0,9452 (2024) |
 | ADM-SAT-01 (candidata v1.3) | Satisfacción con último servicio gubernamental | Rechazada v1.3 por cobertura | — | — |
 | ADM-ID-01 (candidata v1.4) | Identidad oficial como prerrequisito de acceso | En evaluación metodológica | 98,3836 % (2024) | 89,7975 % (2024) |
+| ADM-EQ-02 (candidata v1.7) | Brecha de identidad oficial por sexo | En evaluación metodológica | 0,995574 p.p. (2024) | 2,916416 p.p. (2024) |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
 Resumen del catálogo del piloto: **6 validados, 3 condicionales, 2 en reserva y
@@ -98,6 +99,17 @@ establecimientos privados y no a toda la población. Con la aprobación v1.6,
 rol ciudadano pendiente, no puntúa y no habilita resultados oficiales. La
 [ADR 0020](decisions/0020-v16-business-access-adoption.md) conserva el contrato
 ejecutable y sus límites.
+
+### Cribado v1.7: paridad de identidad oficial
+
+El conjunto abierto ID4D--Global Findex 2025 permite calcular la diferencia
+absoluta entre cobertura de identidad oficial de mujeres y hombres de 15 años o
+más. Cubre Colombia, Estados Unidos y 34 miembros OCDE, por lo que supera el
+umbral técnico de muestra. Es una candidata razonable para paridad de acceso
+habilitante, pero no mide disparidad territorial, población empresarial ni
+finalización de trámites. `ADM-EQ-02` no modifica aún el catálogo ni los
+puntajes; la [ADR 0021](decisions/0021-v17-administrative-identity-equity-screen.md)
+registra el cambio metodológico que exigiría.
 
 ## Salud
 
