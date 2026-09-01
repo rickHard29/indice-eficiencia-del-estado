@@ -47,6 +47,7 @@ class DownloadSpec:
     denominator_url: str | None = None
     ppp_url: str | None = None
     population_url: str | None = None
+    comparison_url: str | None = None
     category_column: str | None = None
     expected_categories: tuple[str, ...] = ()
     scale: Decimal = Decimal("1")
@@ -171,6 +172,7 @@ Fetcher = Callable[..., FetchedPayload]
 _RESOURCE_ID = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 _ADAPTERS = {
     "world_bank_json",
+    "world_bank_absolute_gap",
     "world_bank_percent_times_level",
     "oecd_sdmx_csv",
     "oecd_percent_times_level",
@@ -547,6 +549,7 @@ def _parse_download_spec(
             denominator_url=_optional_text(raw, "denominator_url"),
             ppp_url=_optional_text(raw, "ppp_url"),
             population_url=_optional_text(raw, "population_url"),
+            comparison_url=_optional_text(raw, "comparison_url"),
             category_column=_optional_text(raw, "category_column"),
             expected_categories=tuple(str(value) for value in raw.get("expected_categories", [])),
             scale=_parse_decimal(raw.get("scale", 1), "scale"),
@@ -620,6 +623,10 @@ def _parse_download_spec(
         if not spec.level_url:
             raise IngestionError(f"falta la serie de nivel en {spec.indicator_id}")
         _validate_https(spec.level_url, spec.indicator_id)
+    if adapter == "world_bank_absolute_gap":
+        if not spec.comparison_url:
+            raise IngestionError(f"falta la serie de comparación en {spec.indicator_id}")
+        _validate_https(spec.comparison_url, spec.indicator_id)
     if adapter == "oecd_ratio_times_level":
         if not spec.denominator_url or not spec.category_column or not spec.expected_categories:
             raise IngestionError(f"faltan parámetros de razón en {spec.indicator_id}")
@@ -793,6 +800,9 @@ def _dependency_urls(spec: DownloadSpec) -> tuple[str, ...]:
     if spec.adapter in {"world_bank_percent_times_level", "oecd_percent_times_level"}:
         assert spec.level_url is not None
         return (spec.level_url,)
+    if spec.adapter == "world_bank_absolute_gap":
+        assert spec.comparison_url is not None
+        return (spec.comparison_url,)
     if spec.adapter == "oecd_ratio_times_level":
         assert spec.denominator_url is not None and spec.level_url is not None
         return (spec.denominator_url, spec.level_url)
@@ -916,6 +926,39 @@ def parse_world_bank_percent_times_level(
                 period=key[1],
                 value=percentage / Decimal("100") * level,
                 status=_quality_status([percentage_status, level_status]),
+                kind="derived",
+            )
+        )
+    return validate_observations(observations, spec)
+
+
+def parse_world_bank_absolute_gap(
+    primary_payload: bytes,
+    comparison_payload: bytes,
+    spec: DownloadSpec,
+) -> list[Observation]:
+    """Calcula una brecha absoluta entre dos series World Bank por país y año."""
+
+    primary = _world_bank_value_map(primary_payload, spec.expected_entities)
+    comparison = _world_bank_value_map(comparison_payload, spec.expected_entities)
+    if set(primary) != set(comparison):
+        missing_primary = sorted(set(comparison) - set(primary))
+        missing_comparison = sorted(set(primary) - set(comparison))
+        raise IngestionError(
+            f"series incompletas para brecha absoluta en {spec.indicator_id}; "
+            f"faltan_primaria={missing_primary}, faltan_comparación={missing_comparison}"
+        )
+
+    observations: list[Observation] = []
+    for (entity, period), (primary_value, primary_status) in primary.items():
+        comparison_value, comparison_status = comparison[(entity, period)]
+        observations.append(
+            _make_observation(
+                spec,
+                entity=entity,
+                period=period,
+                value=abs(primary_value - comparison_value),
+                status=_quality_status([primary_status, comparison_status]),
                 kind="derived",
             )
         )
@@ -1832,7 +1875,8 @@ def _acquire_series(
 ) -> tuple[list[Observation], list[tuple[str, str, FetchedPayload]]]:
     primary_accept = (
         _JSON_ACCEPT
-        if spec.adapter in {"world_bank_json", "world_bank_percent_times_level"}
+        if spec.adapter
+        in {"world_bank_json", "world_bank_absolute_gap", "world_bank_percent_times_level"}
         else (
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             if spec.adapter == "oecd_pisa_xlsx"
@@ -1844,7 +1888,8 @@ def _acquire_series(
         primary,
         (
             "json"
-            if spec.adapter in {"world_bank_json", "world_bank_percent_times_level"}
+            if spec.adapter
+            in {"world_bank_json", "world_bank_absolute_gap", "world_bank_percent_times_level"}
             else "xlsx"
             if spec.adapter == "oecd_pisa_xlsx"
             else "csv"
@@ -1854,6 +1899,17 @@ def _acquire_series(
 
     if spec.adapter == "world_bank_json":
         return parse_world_bank_json(primary.content, spec), payloads
+    if spec.adapter == "world_bank_absolute_gap":
+        assert spec.comparison_url is not None
+        comparison = fetcher(
+            spec.comparison_url,
+            accept=_JSON_ACCEPT,
+            timeout=timeout,
+            max_bytes=max_bytes,
+        )
+        _validate_content_type(comparison, "json")
+        payloads.append((spec.resource_id, "comparison", comparison))
+        return parse_world_bank_absolute_gap(primary.content, comparison.content, spec), payloads
     if spec.adapter == "world_bank_percent_times_level":
         assert spec.level_url is not None
         level = fetcher(

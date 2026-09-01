@@ -30,6 +30,7 @@ from iee.ingestion import (
     parse_oecd_ratio_times_level,
     parse_oecd_sdmx_csv,
     parse_world_bank_json,
+    parse_world_bank_absolute_gap,
     parse_world_bank_percent_times_level,
     run_pipeline,
     sha256_hex,
@@ -311,6 +312,39 @@ class IngestionParsingTests(unittest.TestCase):
         self.assertEqual([row.value for row in observations], [Decimal("800"), Decimal("6400")])
         self.assertTrue(all(row.observation_kind == "derived" for row in observations))
 
+    def test_world_bank_absolute_gap_uses_matched_country_years(self) -> None:
+        urban = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2024","value":98.9038513392265},'
+            b'{"countryiso3code":"USA","date":"2024","value":93.5827214886651}]]'
+        )
+        rural = (
+            b'[{"page":1,"pages":1},['
+            b'{"countryiso3code":"COL","date":"2024","value":97.536757962324},'
+            b'{"countryiso3code":"USA","date":"2024","value":86.1299167271381}]]'
+        )
+        spec = make_spec(
+            adapter="world_bank_absolute_gap",
+            direction="lower",
+            score_eligible=False,
+            source_status="conditional",
+            comparison_url="https://example.test/rural",
+            expected_latest_year={"COL": 2024, "USA": 2024},
+            expected_latest_value={
+                "COL": Decimal("1.3670933769025"),
+                "USA": Decimal("7.452804761527"),
+            },
+            minimum_observations_per_entity=1,
+        )
+
+        observations = parse_world_bank_absolute_gap(urban, rural, spec)
+
+        self.assertEqual(
+            [row.value for row in observations],
+            [Decimal("1.3670933769025"), Decimal("7.452804761527")],
+        )
+        self.assertTrue(all(row.observation_kind == "derived" for row in observations))
+
     def test_percent_adapter_requests_json_for_both_resources(self) -> None:
         percentages = (
             b'[{"page":1,"pages":1},['
@@ -522,8 +556,9 @@ class PipelineTests(unittest.TestCase):
 
         self.assertEqual(len(automatic), 7)
         self.assertEqual(len(manifest.manual_controls), 2)
-        self.assertEqual(len(covered), 13)
+        self.assertEqual(len(covered), 14)
         self.assertIn("ADM-ACC-02", manifest.deferred_ids)
+        self.assertIn("ADM-EQ-03", manifest.deferred_ids)
         controls = {spec.indicator_id: spec for spec in manifest.manual_controls}
         pisa_usa = next(
             value for value in controls["EDU-EQ-01"].observations if value.entity == "USA"

@@ -24,6 +24,7 @@ class PilotSourceTests(unittest.TestCase):
             "ADM-RES-01",
             "ADM-ACC-01",
             "ADM-ACC-02",
+            "ADM-EQ-03",
             "ADM-IN-01",
         }
         indicator_ids = {entry["indicator_id"] for entry in self.series}
@@ -60,6 +61,7 @@ class PilotSourceTests(unittest.TestCase):
             "ADM-RES-01": "resultado",
             "ADM-ACC-01": "acceso",
             "ADM-ACC-02": "acceso",
+            "ADM-EQ-03": "equidad",
             "ADM-IN-01": "insumo",
         }
         actual_roles = {entry["indicator_id"]: entry["role"] for entry in self.series}
@@ -76,7 +78,7 @@ class PilotSourceTests(unittest.TestCase):
 
     def test_derived_indicators_record_all_dependency_urls(self) -> None:
         by_id = {entry["indicator_id"]: entry for entry in self.series}
-        for indicator_id in {"SEG-IN-01", "ADM-IN-01"}:
+        for indicator_id in {"SEG-IN-01", "ADM-EQ-03", "ADM-IN-01"}:
             urls = by_id[indicator_id]["dependency_urls"]
             self.assertTrue(urls)
             self.assertTrue(all(url.startswith("https://") for url in urls))
@@ -89,12 +91,12 @@ class PilotSourceTests(unittest.TestCase):
         )
         for fragment in {
             "6 indicadores validados",
-            "3 condicionales",
+            "4 condicionales",
             "2 en reserva",
             "2 que requieren diseño",
         }:
             self.assertIn(fragment, readme)
-        self.assertIn("6 validados, 3 condicionales, 2 en reserva", validation_note)
+        self.assertIn("6 validados, 4 condicionales, 2 en reserva", validation_note)
         self.assertIn("2 que requieren diseño", validation_note)
 
     def test_status_count_matches_review_decision(self) -> None:
@@ -106,7 +108,7 @@ class PilotSourceTests(unittest.TestCase):
             counts,
             {
                 "validated": 6,
-                "conditional": 3,
+                "conditional": 4,
                 "reserve": 2,
                 "design_required": 2,
             },

@@ -1,0 +1,30 @@
+version = "1.9"
+snapshot_date = "2026-09-01"
+frame = "OECD-38"
+comparison_scope = "oecd-relative"
+official_source = "https://www.oecd.org/en/about/members-partners.html"
+membership_count = 38
+estimation_sample = "per-dimension"
+frontier_min_countries = 30
+require_complete_indicator_window = false
+allow_imputation_for_eligibility = false
+retain_flagged_observations = true
+
+countries = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+
+[[input_masks]]
+indicator_id = "ADM-EQ-03"
+included_countries = [
+  "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI", "CZE",
+  "DEU", "DNK", "ESP", "FIN", "FRA", "GBR", "GRC", "HUN",
+  "IRL", "ISL", "ISR", "ITA", "JPN", "KOR", "LTU", "LVA",
+  "MEX", "NLD", "NOR", "NZL", "POL", "PRT", "SVN", "SWE",
+  "TUR", "USA",
+]
+excluded_countries = ["AUS", "EST", "LUX", "SVK"]

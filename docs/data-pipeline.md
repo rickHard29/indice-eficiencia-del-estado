@@ -20,7 +20,7 @@ documentan en [`roles de educación v0.5`](education-roles-v0.5.md).
 ## Cobertura
 
 El manifiesto [`config/downloads.toml`](../config/downloads.toml) asigna una ruta de
-adquisición a los 12 indicadores propuestos:
+adquisición a los 14 indicadores propuestos:
 
 - **7 automáticos:** mortalidad evitable, cobertura sanitaria universal, gasto
   público en salud, aprendizaje armonizado, homicidios, gasto en seguridad por
@@ -29,9 +29,10 @@ adquisición a los 12 indicadores propuestos:
   Online Service Index bilateral y el panel OCDE-38 de OSI 2024. Sus valores se
   incorporan a la salida normalizada desde los archivos de controles, con fuente,
   edición, localizador y estado de calidad. No se presentan como descargas de API.
-- **3 diferidos:** gasto educativo por estudiante, disparidad territorial de
-  violencia y finalización de trámites. El primero está en reserva por cobertura; los
-  otros dos requieren diseño.
+- **5 diferidos:** gasto educativo por estudiante, disparidad territorial de
+  violencia, finalización de trámites, carga regulatoria empresarial y brecha
+  territorial de identidad. Los dos últimos tienen canalizaciones específicas y
+  condicionales; no se mezclan con el cálculo general.
 
 Que una serie pueda descargarse no significa que pueda puntuar. `score_eligible`
 separa la adquisición técnica del dictamen metodológico. Los insumos condicionales o

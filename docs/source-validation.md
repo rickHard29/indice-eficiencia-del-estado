@@ -26,10 +26,10 @@ registrados son puntos de control, no un resultado del índice.
 | ADM-SAT-01 (candidata v1.3) | Satisfacción con último servicio gubernamental | Rechazada v1.3 por cobertura | — | — |
 | ADM-ID-01 (candidata v1.4) | Identidad oficial como prerrequisito de acceso | En evaluación metodológica | 98,3836 % (2024) | 89,7975 % (2024) |
 | ADM-EQ-02 (candidata v1.7) | Brecha de identidad oficial por sexo | En evaluación metodológica | 0,995574 p.p. (2024) | 2,916416 p.p. (2024) |
-| ADM-EQ-03 (candidata v1.8) | Brecha territorial de identidad oficial | Pendiente de adopción | 1,367093 p.p. (2024) | 7,452805 p.p. (2024) |
+| ADM-EQ-03 | Brecha territorial de identidad oficial | Condicional v1.9 | 1,367093 p.p. (2024) | 7,452805 p.p. (2024) |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
-Resumen del catálogo del piloto: **6 validados, 3 condicionales, 2 en reserva y
+Resumen del catálogo del piloto: **6 validados, 4 condicionales, 2 en reserva y
 2 que requieren diseño**. La candidata SAL-EQ-02 no se materializa en el catálogo
 ni cambia esos conteos.
 Un indicador condicional tiene fuente y cobertura utilizables, pero necesita una
@@ -127,6 +127,12 @@ tiempo ni calidad de trámites, y no observa diferencias entre municipios. Queda
 pendiente de adopción y no cambia el catálogo, los puntajes ni la frontera. La
 [ADR 0022](decisions/0022-v18-administrative-territorial-equity-screen.md)
 conserva fórmula, cobertura y límites.
+
+Con la aprobación v1.9, `ADM-EQ-03` se adopta como subindicador condicional de
+equidad territorial. La canalización conserva las dos series fuente, calcula la
+diferencia absoluta y restringe el panel a 34 países; puntajes, ranking y
+frontera continúan bloqueados. La [ADR 0023](decisions/0023-v19-territorial-equity-adoption.md)
+y el contrato ejecutable registran los controles.
 
 ## Salud
 
@@ -281,6 +287,6 @@ definición metodológica o se convierte a una medida de volumen por habitante.
 5. No calcular un puntaje general hasta que cada dimensión cumpla el umbral de
    cobertura y cuente con un insumo compatible.
 
-La fuente legible por máquina de los 12 indicadores del piloto es
+La fuente legible por máquina de los 14 indicadores del piloto es
 [`config/pilot_sources.toml`](../config/pilot_sources.toml). La candidata no
 materializada SAL-EQ-02 queda registrada en la [decisión v0.7](decisions/0011-v07-health-equity-screen.md).

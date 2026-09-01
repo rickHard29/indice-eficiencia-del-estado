@@ -245,6 +245,30 @@ latest_usa_value = 5.754378796
 decision_reason = "Subindicador de acceso administrativo empresarial aprobado en v1.6. Mide carga reportada de requisitos regulatorios; no representa hogares ni habilita puntaje oficial."
 
 [[series]]
+indicator_id = "ADM-EQ-03"
+dimension = "administracion"
+role = "equidad"
+direction = "lower"
+status = "conditional"
+source_id = "WB-ID4D"
+organization = "World Bank"
+dataset = "ID4D--Global Findex 2025"
+official_code = "|ID.OWN.TOTL.UR.ZS - ID.OWN.TOTL.RU.ZS|"
+unit = "Brecha absoluta en puntos porcentuales"
+frequency = "periódica"
+scope = "ocde_34_personas_15_mas"
+exact_url = "https://api.worldbank.org/v2/country/AUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVN%3BSWE%3BTUR%3BUSA/indicator/ID.OWN.TOTL.UR.ZS?format=json&date=2024&per_page=10000"
+dependency_urls = [
+  "https://api.worldbank.org/v2/country/AUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVN%3BSWE%3BTUR%3BUSA/indicator/ID.OWN.TOTL.RU.ZS?format=json&date=2024&per_page=10000",
+]
+reference_year = 2024
+latest_col_year = 2024
+latest_col_value = 1.3670933769025
+latest_usa_year = 2024
+latest_usa_value = 7.452804761527
+decision_reason = "Indicador condicional de paridad territorial del prerrequisito de identidad oficial. Conserva una máscara OCDE de 34 países, no mide uso, tiempo ni calidad de trámites y no habilita puntaje oficial."
+
+[[series]]
 indicator_id = "ADM-IN-01"
 dimension = "administracion"
 role = "insumo"

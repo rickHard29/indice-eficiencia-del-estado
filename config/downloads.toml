@@ -9,7 +9,7 @@ manual_controls = "manual_controls.toml"
 
 # Reservas metodológicas, indicadores que requieren diseño o subindicadores
 # materializados en una canalización específica sin elegibilidad de puntaje.
-deferred_ids = ["EDU-IN-01", "SEG-EQ-01", "ADM-ACC-01", "ADM-ACC-02"]
+deferred_ids = ["EDU-IN-01", "SEG-EQ-01", "ADM-ACC-01", "ADM-ACC-02", "ADM-EQ-03"]
 
 [[series]]
 resource_id = "sal-res-01"

@@ -32,12 +32,12 @@ iee-score
 ## Estado
 
 Versión metodológica `0.1-draft`. La estructura es funcional y ya cuenta con una
-[evaluación reproducible de los 12 indicadores propuestos del piloto](docs/source-validation.md):
-6 indicadores validados, 3 condicionales, 2 en reserva y 2 que requieren diseño.
+[evaluación reproducible de los 14 indicadores propuestos del piloto](docs/source-validation.md):
+6 indicadores validados, 4 condicionales, 2 en reserva y 2 que requieren diseño.
 Todavía no se ha calculado ni publicado un puntaje IEE.
 
 La [canalización reproducible de datos](docs/data-pipeline.md) ya descarga y valida
-7 series oficiales, incorpora 2 controles manuales versionados y deja 3 indicadores
+7 series oficiales, incorpora 2 controles manuales versionados y deja 5 indicadores
 explícitamente diferidos. Los datos reales y sus recibos permanecen fuera de Git.
 
 El [diagnóstico experimental v0.1](docs/experimental-scoring-v0.1.md) ya prueba
@@ -101,6 +101,10 @@ habilita eficiencia oficial, ranking ni IEE.
 La v1.6 incorpora un [subindicador condicional de carga regulatoria empresarial](docs/administration-access-v1.6.md)
 para los 38 países OCDE. Mide tiempo de alta gerencia en requisitos estatales y
 conserva explícitamente su población empresarial; no puntúa ni habilita el IEE.
+
+La v1.9 incorpora una [brecha territorial condicional de identidad oficial](docs/administration-equity-v1.9.md)
+para 34 países OCDE. Compara la cobertura rural y urbana de personas de 15 años o
+más; mide un requisito de acceso y no habilita puntajes, ranking ni IEE.
 
 ## Principios
 
