@@ -134,6 +134,19 @@ diferencia absoluta y restringe el panel a 34 países; puntajes, ranking y
 frontera continúan bloqueados. La [ADR 0023](decisions/0023-v19-territorial-equity-adoption.md)
 y el contrato ejecutable registran los controles.
 
+### Recribado v2.0: no hay sustituto internacional de acceso ciudadano
+
+La revisión de Global Findex, ODS 16.6.2 y la *Serving Citizens Survey* reciente
+de la OCDE no modifica el dictamen de `ADM-ACC-01`. Findex conserva una pregunta
+directa de uso reciente de servicios o información gubernamental, pero no cubre
+Estados Unidos y solo alcanza cuatro países OCDE. El ODS sigue sin Colombia ni
+Estados Unidos. La encuesta OCDE aporta datos de arreglos institucionales y
+medición desde funcionarios, no experiencia, tiempo o finalización de personas.
+
+`ADM-ACC-01` permanece en diseño requerido. La [ADR 0024](decisions/0024-v20-citizen-administrative-access-rescreen.md)
+prohíbe sustituirlo por esas aproximaciones y define el próximo paso: un
+protocolo explícito de trámites comparables con fuentes abiertas nacionales.
+
 ## Salud
 
 ### Resultado: mortalidad evitable
