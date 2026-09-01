@@ -1,0 +1,253 @@
+version = "1.1"
+validation_date = "2026-08-25"
+countries = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+
+# Transcripción de la columna OSI 2024 de la Tabla 7. La fuente se publica
+# exclusivamente como PDF; el pipeline conserva esta adquisición como control
+# manual, junto con edición, URL y localizador verificables.
+[[series]]
+resource_id = "adm-res-01-control-oecd38"
+indicator_id = "ADM-RES-01"
+source_id = "UN-EGDI"
+source_status = "validated"
+score_eligible = true
+series_code = "OSI | Technical Appendix Table 7"
+source_url = "https://desapublications.un.org/sites/default/files/publications/2024-10/Technical%20Appendix%20%28Web%20version%29%2030102024.pdf"
+release = "UN E-Government Survey 2024, Technical Appendix"
+locator = "Table 7, PDF pp. 36–45; column OSI 2024"
+direction = "higher"
+unit = "Índice de 0 a 1"
+
+[[series.observations]]
+entity = "AUS"
+period = 2024
+value = 0.9222
+observation_status = "observed"
+
+[[series.observations]]
+entity = "AUT"
+period = 2024
+value = 0.8383
+observation_status = "observed"
+
+[[series.observations]]
+entity = "BEL"
+period = 2024
+value = 0.7224
+observation_status = "observed"
+
+[[series.observations]]
+entity = "CAN"
+period = 2024
+value = 0.8552
+observation_status = "observed"
+
+[[series.observations]]
+entity = "CHE"
+period = 2024
+value = 0.8408
+observation_status = "observed"
+
+[[series.observations]]
+entity = "CHL"
+period = 2024
+value = 0.8612
+observation_status = "observed"
+
+[[series.observations]]
+entity = "COL"
+period = 2024
+value = 0.7521
+observation_status = "observed"
+
+[[series.observations]]
+entity = "CRI"
+period = 2024
+value = 0.7217
+observation_status = "observed"
+
+[[series.observations]]
+entity = "CZE"
+period = 2024
+value = 0.8217
+observation_status = "observed"
+
+[[series.observations]]
+entity = "DEU"
+period = 2024
+value = 0.9238
+observation_status = "observed"
+
+[[series.observations]]
+entity = "DNK"
+period = 2024
+value = 0.9992
+observation_status = "observed"
+
+[[series.observations]]
+entity = "ESP"
+period = 2024
+value = 0.9054
+observation_status = "observed"
+
+[[series.observations]]
+entity = "EST"
+period = 2024
+value = 0.9954
+observation_status = "observed"
+
+[[series.observations]]
+entity = "FIN"
+period = 2024
+value = 0.9097
+observation_status = "observed"
+
+[[series.observations]]
+entity = "FRA"
+period = 2024
+value = 0.8440
+observation_status = "observed"
+
+[[series.observations]]
+entity = "GBR"
+period = 2024
+value = 0.9535
+observation_status = "observed"
+
+[[series.observations]]
+entity = "GRC"
+period = 2024
+value = 0.8145
+observation_status = "observed"
+
+[[series.observations]]
+entity = "HUN"
+period = 2024
+value = 0.7144
+observation_status = "observed"
+
+[[series.observations]]
+entity = "IRL"
+period = 2024
+value = 0.8768
+observation_status = "observed"
+
+[[series.observations]]
+entity = "ISL"
+period = 2024
+value = 0.9076
+observation_status = "observed"
+
+[[series.observations]]
+entity = "ISR"
+period = 2024
+value = 0.8541
+observation_status = "observed"
+
+[[series.observations]]
+entity = "ITA"
+period = 2024
+value = 0.7624
+observation_status = "observed"
+
+[[series.observations]]
+entity = "JPN"
+period = 2024
+value = 0.9427
+observation_status = "observed"
+
+[[series.observations]]
+entity = "KOR"
+period = 2024
+value = 1.0000
+observation_status = "observed"
+
+[[series.observations]]
+entity = "LTU"
+period = 2024
+value = 0.8839
+observation_status = "observed"
+
+[[series.observations]]
+entity = "LUX"
+period = 2024
+value = 0.7555
+observation_status = "observed"
+
+[[series.observations]]
+entity = "LVA"
+period = 2024
+value = 0.8092
+observation_status = "observed"
+
+[[series.observations]]
+entity = "MEX"
+period = 2024
+value = 0.7637
+observation_status = "observed"
+
+[[series.observations]]
+entity = "NLD"
+period = 2024
+value = 0.9212
+observation_status = "observed"
+
+[[series.observations]]
+entity = "NOR"
+period = 2024
+value = 0.9117
+observation_status = "observed"
+
+[[series.observations]]
+entity = "NZL"
+period = 2024
+value = 0.9453
+observation_status = "observed"
+
+[[series.observations]]
+entity = "POL"
+period = 2024
+value = 0.8037
+observation_status = "observed"
+
+[[series.observations]]
+entity = "PRT"
+period = 2024
+value = 0.7878
+observation_status = "observed"
+
+[[series.observations]]
+entity = "SVK"
+period = 2024
+value = 0.7097
+observation_status = "observed"
+
+[[series.observations]]
+entity = "SVN"
+period = 2024
+value = 0.8640
+observation_status = "observed"
+
+[[series.observations]]
+entity = "SWE"
+period = 2024
+value = 0.8836
+observation_status = "observed"
+
+[[series.observations]]
+entity = "TUR"
+period = 2024
+value = 0.9225
+observation_status = "observed"
+
+[[series.observations]]
+entity = "USA"
+period = 2024
+value = 0.9136
+observation_status = "observed"

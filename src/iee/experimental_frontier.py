@@ -263,7 +263,7 @@ def _validate_config(
     diagnostic_config: Mapping[str, Any],
 ) -> None:
     if (
-        config.version not in {"0.3", "0.8", "0.9", "1.0"}
+        config.version not in {"0.3", "0.8", "0.9", "1.0", "1.1"}
         or config.schema_version != "iee-experimental-frontier-v1"
         or config.status != "experimental-not-for-publication"
     ):

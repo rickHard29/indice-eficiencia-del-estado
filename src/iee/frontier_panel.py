@@ -185,7 +185,7 @@ def _validate_config(
     result_catalog: Mapping[str, Any],
     input_catalog: Mapping[str, Any],
 ) -> None:
-    if config.version not in {"0.3", "0.6", "0.8", "0.9", "1.0"}:
+    if config.version not in {"0.3", "0.6", "0.8", "0.9", "1.0", "1.1"}:
         raise FrontierPanelError("la configuración debe declarar una versión de panel compatible")
     if config.status != "experimental-not-for-publication":
         raise FrontierPanelError("el panel v0.3 debe bloquear publicación")

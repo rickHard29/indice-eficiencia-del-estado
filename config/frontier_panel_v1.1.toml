@@ -1,0 +1,21 @@
+version = "1.1"
+schema_version = "iee-frontier-panel-v1"
+status = "experimental-not-for-publication"
+country_universe = "country_universe_v0.2.toml"
+result_catalog = "admin_result_sources_v1.1.toml"
+input_catalog = "input_sources_v0.2.toml"
+result_snapshot_sha256 = "0e81403adcebab785128f6ca661cc2bc425ab833fe9301e2147abb7f35bc3dfb"
+input_snapshot_sha256 = "a623301ab3ab60eb81894092a276c44ce915cad5d4d0ac8d9775afbac1700d67"
+frontier_min_countries = 30
+
+[[dimensions]]
+id = "administracion"
+label = "Administración pública — resultado ONU 2024 y proxy operativo 2019–2021"
+outcome_indicator_id = "ADM-RES-01"
+outcome_selection = "point"
+outcome_year = 2024
+input_indicator_id = "ADM-IN-02"
+input_selection = "mean"
+input_start_year = 2019
+input_end_year = 2021
+input_status_required = "conditional"

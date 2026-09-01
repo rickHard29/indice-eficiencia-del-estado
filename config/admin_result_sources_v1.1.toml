@@ -1,0 +1,26 @@
+version = "1.1"
+validation_date = "2026-08-25"
+countries_frame = "OECD-38"
+
+[[series]]
+indicator_id = "ADM-RES-01"
+dimension = "administracion"
+role = "resultado"
+direction = "higher"
+status = "validated"
+source_id = "UN-EGDI"
+organization = "United Nations Department of Economic and Social Affairs"
+dataset = "UN E-Government Survey 2024, Technical Appendix"
+official_code = "OSI | Technical Appendix Table 7"
+unit = "Índice de 0 a 1"
+frequency = "bienal"
+scope = "OECD-38"
+reference_year = 2024
+exact_url = "https://desapublications.un.org/sites/default/files/publications/2024-10/Technical%20Appendix%20%28Web%20version%29%2030102024.pdf"
+latest_col_year = 2024
+latest_col_value = 0.7521
+latest_col_status = "observed"
+latest_usa_year = 2024
+latest_usa_value = 0.9136
+latest_usa_status = "observed"
+decision_reason = "Resultado validado. Tabla oficial en PDF, transcrita y revisada visualmente; mide oferta de servicios públicos en línea, no uso efectivo ni equidad de acceso."

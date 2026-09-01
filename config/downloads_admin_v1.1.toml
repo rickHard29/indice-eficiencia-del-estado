@@ -1,0 +1,13 @@
+version = "1.1"
+schema_version = "iee-observations-v1"
+catalog = "admin_result_sources_v1.1.toml"
+countries = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+manual_controls = "admin_manual_controls_v1.1.toml"
+deferred_ids = []
+series = []

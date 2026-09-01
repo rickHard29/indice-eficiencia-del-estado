@@ -220,8 +220,8 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
 
     if not countries or len(set(countries)) != len(countries):
         raise IngestionError("countries debe contener códigos únicos")
-    if not isinstance(raw_series, list) or not raw_series:
-        raise IngestionError("el manifiesto debe incluir al menos una serie automática")
+    if not isinstance(raw_series, list):
+        raise IngestionError("series debe ser una lista")
 
     entity_aliases = {
         str(label): str(entity) for label, entity in raw.get("entity_aliases", {}).items()
@@ -244,6 +244,10 @@ def load_download_manifest(path: str | Path) -> DownloadManifest:
         manual_sha256,
         manual_specs,
     ) = _load_manual_controls(manual_path, countries)
+    if not specs and not manual_specs:
+        raise IngestionError(
+            "el manifiesto debe incluir al menos una serie automática o un control manual"
+        )
     resource_ids = [spec.resource_id for spec in (*specs, *manual_specs)]
     indicator_ids = [spec.indicator_id for spec in specs]
     manual_ids = [spec.indicator_id for spec in manual_specs]
@@ -728,8 +732,11 @@ def _validate_against_catalog(
             )
             for entity in manifest.countries
         }
-        actual_years = {entity: value.period for entity, value in latest.items()}
-        actual_values = {entity: value.value for entity, value in latest.items()}
+        # El catálogo congela puntos de control para COL y USA. Un control
+        # manual puede cubrir un universo mayor, cuyos países adicionales no
+        # deben invalidar esos checkpoints canónicos.
+        actual_years = {entity: latest[entity].period for entity in expected_years}
+        actual_values = {entity: latest[entity].value for entity in expected_values}
         try:
             expected_statuses = {
                 "COL": str(catalog_entry["latest_col_status"]),
@@ -740,7 +747,7 @@ def _validate_against_catalog(
                 f"{spec.indicator_id}: faltan estados manuales en el catálogo"
             ) from error
         actual_statuses = {
-            entity: value.observation_status for entity, value in latest.items()
+            entity: latest[entity].observation_status for entity in expected_statuses
         }
         if actual_years != expected_years:
             raise IngestionError(

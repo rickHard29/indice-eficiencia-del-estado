@@ -25,9 +25,9 @@ adquisición a los 12 indicadores propuestos:
 - **7 automáticos:** mortalidad evitable, cobertura sanitaria universal, gasto
   público en salud, aprendizaje armonizado, homicidios, gasto en seguridad por
   habitante en PPA y recursos operativos administrativos.
-- **2 controles manuales versionados:** brecha PISA por nivel socioeconómico y
-  Online Service Index. Sus cuatro valores se incorporan a la salida normalizada
-  desde [`config/manual_controls.toml`](../config/manual_controls.toml), con fuente,
+- **Controles manuales versionados:** brecha PISA por nivel socioeconómico,
+  Online Service Index bilateral y el panel OCDE-38 de OSI 2024. Sus valores se
+  incorporan a la salida normalizada desde los archivos de controles, con fuente,
   edición, localizador y estado de calidad. No se presentan como descargas de API.
 - **3 diferidos:** gasto educativo por estudiante, disparidad territorial de
   violencia y finalización de trámites. El primero está en reserva por cobertura; los
