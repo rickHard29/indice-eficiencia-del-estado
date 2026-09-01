@@ -1,0 +1,35 @@
+version = "1.6"
+schema_version = "iee-observations-v1"
+catalog = "admin_access_sources_v1.6.toml"
+country_universe = "country_universe_v1.6.toml"
+countries = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+
+[[series]]
+resource_id = "adm-acc-02-v16"
+indicator_id = "ADM-ACC-02"
+source_id = "WB-ES"
+source_status = "conditional"
+score_eligible = false
+adapter = "world_bank_json"
+series_code = "IC.GOV.DURS.ZS"
+url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/IC.GOV.DURS.ZS?format=json&date=2020%3A2025&per_page=10000"
+direction = "lower"
+unit = "Porcentaje del tiempo semanal de alta gerencia"
+expected_entities = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+expected_latest_year = { COL = 2023, USA = 2024 }
+expected_latest_value = { COL = 26.16919518, USA = 5.754378796 }
+latest_value_tolerance = "0.000001"
+minimum_observations_per_entity = 1
+reference_year = 2025

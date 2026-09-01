@@ -23,6 +23,7 @@ class PilotSourceTests(unittest.TestCase):
             "SEG-IN-01",
             "ADM-RES-01",
             "ADM-ACC-01",
+            "ADM-ACC-02",
             "ADM-IN-01",
         }
         indicator_ids = {entry["indicator_id"] for entry in self.series}
@@ -58,6 +59,7 @@ class PilotSourceTests(unittest.TestCase):
             "SEG-IN-01": "insumo",
             "ADM-RES-01": "resultado",
             "ADM-ACC-01": "acceso",
+            "ADM-ACC-02": "acceso",
             "ADM-IN-01": "insumo",
         }
         actual_roles = {entry["indicator_id"]: entry["role"] for entry in self.series}
@@ -87,12 +89,12 @@ class PilotSourceTests(unittest.TestCase):
         )
         for fragment in {
             "6 indicadores validados",
-            "2 condicionales",
+            "3 condicionales",
             "2 en reserva",
             "2 que requieren diseño",
         }:
             self.assertIn(fragment, readme)
-        self.assertIn("6 validados, 2 condicionales, 2 en reserva", validation_note)
+        self.assertIn("6 validados, 3 condicionales, 2 en reserva", validation_note)
         self.assertIn("2 que requieren diseño", validation_note)
 
     def test_status_count_matches_review_decision(self) -> None:
@@ -104,7 +106,7 @@ class PilotSourceTests(unittest.TestCase):
             counts,
             {
                 "validated": 6,
-                "conditional": 2,
+                "conditional": 3,
                 "reserve": 2,
                 "design_required": 2,
             },

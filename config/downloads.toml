@@ -7,8 +7,9 @@ countries = ["COL", "USA"]
 # o PDF. Se versionan por separado y nunca se simulan como descargas automáticas.
 manual_controls = "manual_controls.toml"
 
-# Reservas metodológicas o indicadores que todavía requieren diseño.
-deferred_ids = ["EDU-IN-01", "SEG-EQ-01", "ADM-ACC-01"]
+# Reservas metodológicas, indicadores que requieren diseño o subindicadores
+# materializados en una canalización específica sin elegibilidad de puntaje.
+deferred_ids = ["EDU-IN-01", "SEG-EQ-01", "ADM-ACC-01", "ADM-ACC-02"]
 
 [[series]]
 resource_id = "sal-res-01"

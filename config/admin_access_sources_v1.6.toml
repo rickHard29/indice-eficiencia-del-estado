@@ -1,0 +1,24 @@
+version = "1.6"
+validation_date = "2026-09-01"
+countries_frame = "OECD-38"
+
+[[series]]
+indicator_id = "ADM-ACC-02"
+dimension = "administracion"
+role = "acceso"
+direction = "lower"
+status = "conditional"
+source_id = "WB-ES"
+organization = "World Bank"
+dataset = "Enterprise Surveys"
+official_code = "IC.GOV.DURS.ZS"
+unit = "Porcentaje del tiempo semanal de alta gerencia"
+frequency = "irregular por país"
+scope = "empresas_oecd"
+reference_year = 2025
+exact_url = "https://api.worldbank.org/v2/country/AUS%3BAUT%3BBEL%3BCAN%3BCHE%3BCHL%3BCOL%3BCRI%3BCZE%3BDEU%3BDNK%3BESP%3BEST%3BFIN%3BFRA%3BGBR%3BGRC%3BHUN%3BIRL%3BISL%3BISR%3BITA%3BJPN%3BKOR%3BLTU%3BLUX%3BLVA%3BMEX%3BNLD%3BNOR%3BNZL%3BPOL%3BPRT%3BSVK%3BSVN%3BSWE%3BTUR%3BUSA/indicator/IC.GOV.DURS.ZS?format=json&date=2020%3A2025&per_page=10000"
+latest_col_year = 2023
+latest_col_value = 26.16919518
+latest_usa_year = 2024
+latest_usa_value = 5.754378796
+decision_reason = "Subindicador condicional de carga regulatoria empresarial. La población son establecimientos privados y la ventana de última observación es asíncrona; no se usa para puntaje ni para inferir experiencia ciudadana."

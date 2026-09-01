@@ -33,7 +33,7 @@ iee-score
 
 Versión metodológica `0.1-draft`. La estructura es funcional y ya cuenta con una
 [evaluación reproducible de los 12 indicadores propuestos del piloto](docs/source-validation.md):
-6 indicadores validados, 2 condicionales, 2 en reserva y 2 que requieren diseño.
+6 indicadores validados, 3 condicionales, 2 en reserva y 2 que requieren diseño.
 Todavía no se ha calculado ni publicado un puntaje IEE.
 
 La [canalización reproducible de datos](docs/data-pipeline.md) ya descarga y valida
@@ -97,6 +97,10 @@ La v1.0 añade una [sensibilidad temporal de seguridad y justicia](docs/security
 alinea recursos y homicidios en 2019–2021 para recuperar 33 pares observados. Es
 una prueba de cobertura y rezago; conserva el carácter condicional del insumo y no
 habilita eficiencia oficial, ranking ni IEE.
+
+La v1.6 incorpora un [subindicador condicional de carga regulatoria empresarial](docs/administration-access-v1.6.md)
+para los 38 países OCDE. Mide tiempo de alta gerencia en requisitos estatales y
+conserva explícitamente su población empresarial; no puntúa ni habilita el IEE.
 
 ## Principios
 

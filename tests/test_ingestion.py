@@ -522,7 +522,8 @@ class PipelineTests(unittest.TestCase):
 
         self.assertEqual(len(automatic), 7)
         self.assertEqual(len(manifest.manual_controls), 2)
-        self.assertEqual(len(covered), 12)
+        self.assertEqual(len(covered), 13)
+        self.assertIn("ADM-ACC-02", manifest.deferred_ids)
         controls = {spec.indicator_id: spec for spec in manifest.manual_controls}
         pisa_usa = next(
             value for value in controls["EDU-EQ-01"].observations if value.entity == "USA"

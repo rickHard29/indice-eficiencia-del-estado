@@ -21,13 +21,13 @@ registrados son puntos de control, no un resultado del índice.
 | SEG-IN-01 | Gasto en orden público y seguridad por habitante | Reserva | 430,63 (2024) | 1.551,23 (2024) |
 | ADM-RES-01 | Índice de servicios públicos en línea | Validado | 0,7521 (2024) | 0,9136 (2024) |
 | ADM-ACC-01 | Tiempo y finalización de transacciones públicas | Requiere diseño | — | — |
-| ADM-ACC-02 (candidata v1.5) | Carga regulatoria de trámites empresariales | Condicional; requiere definir población | 26,1692 % (2023) | 5,7544 % (2024) |
+| ADM-ACC-02 | Carga regulatoria de trámites empresariales | Condicional; subindicador empresarial v1.6 | 26,1692 % (2023) | 5,7544 % (2024) |
 | ADM-EPI-01 (candidata v1.2) | Participación electrónica | Rechazada v1.2 como acceso | 0,7397 (2024) | 0,9452 (2024) |
 | ADM-SAT-01 (candidata v1.3) | Satisfacción con último servicio gubernamental | Rechazada v1.3 por cobertura | — | — |
 | ADM-ID-01 (candidata v1.4) | Identidad oficial como prerrequisito de acceso | En evaluación metodológica | 98,3836 % (2024) | 89,7975 % (2024) |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
-Resumen del catálogo del piloto: **6 validados, 2 condicionales, 2 en reserva y
+Resumen del catálogo del piloto: **6 validados, 3 condicionales, 2 en reserva y
 2 que requieren diseño**. La candidata SAL-EQ-02 no se materializa en el catálogo
 ni cambia esos conteos.
 Un indicador condicional tiene fuente y cobertura utilizables, pero necesita una
@@ -93,10 +93,11 @@ OCDE con su última observación entre 2020 y 2025; 37 están entre 2023 y 2025.
 Colombia registra 26,1692 % en 2023 y Estados Unidos 5,7544 % en 2024.
 
 Es una candidata más próxima al tiempo efectivo de trámites, pero representa a
-establecimientos privados y no a toda la población. `ADM-ACC-02` queda por ello
-como condicional y no modifica el rol ciudadano aún pendiente ni los puntajes.
-La [ADR 0019](decisions/0019-v15-business-regulatory-burden-screen.md) conserva
-la definición, cobertura y decisión requerida.
+establecimientos privados y no a toda la población. Con la aprobación v1.6,
+`ADM-ACC-02` se adopta como subindicador condicional empresarial: no reemplaza el
+rol ciudadano pendiente, no puntúa y no habilita resultados oficiales. La
+[ADR 0020](decisions/0020-v16-business-access-adoption.md) conserva el contrato
+ejecutable y sus límites.
 
 ## Salud
 
