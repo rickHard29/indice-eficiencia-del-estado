@@ -21,6 +21,7 @@ registrados son puntos de control, no un resultado del índice.
 | SEG-IN-01 | Gasto en orden público y seguridad por habitante | Reserva | 430,63 (2024) | 1.551,23 (2024) |
 | ADM-RES-01 | Índice de servicios públicos en línea | Validado | 0,7521 (2024) | 0,9136 (2024) |
 | ADM-ACC-01 | Tiempo y finalización de transacciones públicas | Requiere diseño | — | — |
+| ADM-ACC-02 (candidata v1.5) | Carga regulatoria de trámites empresariales | Condicional; requiere definir población | 26,1692 % (2023) | 5,7544 % (2024) |
 | ADM-EPI-01 (candidata v1.2) | Participación electrónica | Rechazada v1.2 como acceso | 0,7397 (2024) | 0,9452 (2024) |
 | ADM-SAT-01 (candidata v1.3) | Satisfacción con último servicio gubernamental | Rechazada v1.3 por cobertura | — | — |
 | ADM-ID-01 (candidata v1.4) | Identidad oficial como prerrequisito de acceso | En evaluación metodológica | 98,3836 % (2024) | 89,7975 % (2024) |
@@ -82,6 +83,20 @@ Estados Unidos, y la de uso de identidad digital no cubre Colombia. Sus
 coberturas OCDE son respectivamente cuatro y 28 países. La decisión completa y
 los códigos de API están en la
 [ADR 0018](decisions/0018-v14-administrative-identity-access-screen.md).
+
+### Cribado v1.5: tiempo reportado de cumplimiento regulatorio empresarial
+
+La serie abierta `IC.GOV.DURS.ZS` de *Enterprise Surveys* mide el porcentaje
+del tiempo semanal de alta gerencia dedicado a impuestos, aduanas, regulación
+laboral, licencias, registros, funcionarios y formularios. Cubre los 38 países
+OCDE con su última observación entre 2020 y 2025; 37 están entre 2023 y 2025.
+Colombia registra 26,1692 % en 2023 y Estados Unidos 5,7544 % en 2024.
+
+Es una candidata más próxima al tiempo efectivo de trámites, pero representa a
+establecimientos privados y no a toda la población. `ADM-ACC-02` queda por ello
+como condicional y no modifica el rol ciudadano aún pendiente ni los puntajes.
+La [ADR 0019](decisions/0019-v15-business-regulatory-burden-screen.md) conserva
+la definición, cobertura y decisión requerida.
 
 ## Salud
 
