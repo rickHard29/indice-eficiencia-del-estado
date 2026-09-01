@@ -22,6 +22,7 @@ registrados son puntos de control, no un resultado del índice.
 | ADM-RES-01 | Índice de servicios públicos en línea | Validado | 0,7521 (2024) | 0,9136 (2024) |
 | ADM-ACC-01 | Tiempo y finalización de transacciones públicas | Requiere diseño | — | — |
 | ADM-EPI-01 (candidata v1.2) | Participación electrónica | Rechazada v1.2 como acceso | 0,7397 (2024) | 0,9452 (2024) |
+| ADM-SAT-01 (candidata v1.3) | Satisfacción con último servicio gubernamental | Rechazada v1.3 por cobertura | — | — |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
 Resumen del catálogo del piloto: **6 validados, 2 condicionales, 2 en reserva y
@@ -47,6 +48,23 @@ reponderación. El *Digital Government Index* 2023 de la OCDE también se descar
 como alternativa: es una medida de capacidades y políticas y su edición no
 incluye a Estados Unidos. La decisión completa está en la
 [ADR 0016](decisions/0016-v12-administrative-access-screen.md).
+
+### Cribado v1.3: experiencia de servicio sin cobertura bilateral
+
+El indicador ODS 16.6.2 es metodológicamente pertinente porque pregunta por la
+satisfacción con la última experiencia de servicio y su metadato contempla
+atributos como acceso, oportunidad e información. La descarga oficial del
+subindicador de servicios gubernamentales contiene 37 países, pero no una
+observación para Colombia ni Estados Unidos. La fuente de [datos ODS de la
+ONU](https://unstats.un.org/SDGAPI/v1/sdg/Indicator/Data?indicator=16.6.2&pageSize=1000)
+no permite entonces sostener el piloto bilateral.
+
+La encuesta de confianza de la OCDE, que sí pregunta por satisfacción de usuarios
+recientes de servicios administrativos, confirma el mismo tipo de constructo;
+sin embargo, Estados Unidos no participó en sus rondas 2023 (30 países) ni 2025
+(33 países). `ADM-SAT-01` queda rechazada por cobertura, no por definición. Se
+prohíbe mezclarla con encuestas nacionales no armonizadas. Véase la
+[ADR 0017](decisions/0017-v13-administrative-service-experience-screen.md).
 
 ## Salud
 
