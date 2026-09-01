@@ -23,6 +23,7 @@ registrados son puntos de control, no un resultado del índice.
 | ADM-ACC-01 | Tiempo y finalización de transacciones públicas | Requiere diseño | — | — |
 | ADM-EPI-01 (candidata v1.2) | Participación electrónica | Rechazada v1.2 como acceso | 0,7397 (2024) | 0,9452 (2024) |
 | ADM-SAT-01 (candidata v1.3) | Satisfacción con último servicio gubernamental | Rechazada v1.3 por cobertura | — | — |
+| ADM-ID-01 (candidata v1.4) | Identidad oficial como prerrequisito de acceso | En evaluación metodológica | 98,3836 % (2024) | 89,7975 % (2024) |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
 Resumen del catálogo del piloto: **6 validados, 2 condicionales, 2 en reserva y
@@ -65,6 +66,22 @@ sin embargo, Estados Unidos no participó en sus rondas 2023 (30 países) ni 202
 (33 países). `ADM-SAT-01` queda rechazada por cobertura, no por definición. Se
 prohíbe mezclarla con encuestas nacionales no armonizadas. Véase la
 [ADR 0017](decisions/0017-v13-administrative-service-experience-screen.md).
+
+### Cribado v1.4: identidad como prerrequisito, no como trámite completado
+
+El módulo ID4D--Global Findex 2025 del Banco Mundial es abierto y entrega una
+medida de identidad oficial con cobertura de 34 de los 38 países OCDE, incluidos
+Colombia y Estados Unidos, además de cortes por sexo, ingreso y zona. Es una
+fuente útil para estudiar el requisito de poder acreditar identidad, que habilita
+servicios y beneficios, pero no mide el tiempo ni la finalización de un trámite.
+Por eso `ADM-ID-01` se conserva en evaluación y no cambia `ADM-ACC-01`.
+
+Las dos variables de uso más directas del mismo módulo no resuelven el problema:
+la de acceso reciente a servicios o información gubernamental en línea no cubre
+Estados Unidos, y la de uso de identidad digital no cubre Colombia. Sus
+coberturas OCDE son respectivamente cuatro y 28 países. La decisión completa y
+los códigos de API están en la
+[ADR 0018](decisions/0018-v14-administrative-identity-access-screen.md).
 
 ## Salud
 
