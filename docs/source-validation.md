@@ -17,7 +17,7 @@ registrados son puntos de control, no un resultado del índice.
 | EDU-EQ-01 | Brecha PISA por nivel socioeconómico | Validado | 79 (2022) | 102 (2022) |
 | EDU-IN-01 | Gasto público por estudiante de primaria | Reserva | 1.817,85 (1999) | 15.989,62 (2021) |
 | SEG-RES-01 | Homicidios intencionales por 100.000 habitantes | Validado | 24,91 (2023) | 5,76 (2023) |
-| SEG-EQ-01 | Disparidad territorial en seguridad y justicia | Requiere diseño | — | — |
+| SEG-EQ-01 (candidata v2.2) | Brecha territorial de homicidios regionales, P90–P10 ponderada por población | Pendiente de adopción | 35,5 (2021) | 6,1 (2021) |
 | SEG-IN-01 | Gasto en orden público y seguridad por habitante | Reserva | 430,63 (2024) | 1.551,23 (2024) |
 | ADM-RES-01 | Índice de servicios públicos en línea | Validado | 0,7521 (2024) | 0,9136 (2024) |
 | ADM-ACC-01 | Tiempo y finalización de transacciones públicas | Requiere diseño | — | — |
@@ -237,10 +237,17 @@ móvil de tres años o `log1p` y se conservará la [definición ODS 16.1.1](http
 
 ### Equidad territorial
 
-No se identificó una fuente internacional que armonice una medida subnacional
-equivalente para ambos países. El indicador requiere un protocolo propio de
-agregación desde fuentes territoriales, con definiciones compatibles y ponderación
-por población. No entra al piloto hasta diseñar y probar ese protocolo.
+El conjunto público [Safety -- Regions de la OCDE](https://data-explorer.oecd.org/vis?df%5Bag%5D=OECD.CFE.EDS&df%5Bds%5D=dsDisseminateFinalDMZ&df%5Bid%5D=DSD_REG_SOC%40DF_SAFETY&df%5Bvs%5D=2.2) publica homicidios intencionales
+por 100.000 habitantes en el nivel territorial TL2. Al unirlo con la población
+TL2 del conjunto [Demography -- Regions](https://data-explorer.oecd.org/vis?df%5Bag%5D=OECD.CFE.EDS&df%5Bds%5D=dsDisseminateFinalDMZ&df%5Bid%5D=DSD_REG_DEMO%40DF_DEMO&df%5Bvs%5D=2.4), ambos para 2021, se puede calcular la diferencia entre los percentiles 90 y 10 de la tasa regional, ponderados por población. Colombia registra 35,5 y Estados Unidos 6,1 homicidios por 100.000 habitantes.
+
+La pareja conserva 30 de 38 miembros OCDE, justo el mínimo del piloto. Estonia,
+Islandia, Israel, Letonia, Lituania, Luxemburgo, Nueva Zelanda y Eslovenia se
+excluyen: no tienen tres regiones TL2 observadas con ambas series. Es una
+candidata prometedora, pero las fronteras TL2 y el número de regiones no son
+idénticos entre países. `SEG-EQ-01` no entra al catálogo, puntaje ni frontera
+hasta adoptar explícitamente el protocolo. Véase la
+[ADR 0026](decisions/0026-v22-security-territorial-equity-screen.md).
 
 ### Insumo: gasto en orden público y seguridad
 

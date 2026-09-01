@@ -106,6 +106,10 @@ La v1.9 incorpora una [brecha territorial condicional de identidad oficial](docs
 para 34 países OCDE. Compara la cobertura rural y urbana de personas de 15 años o
 más; mide un requisito de acceso y no habilita puntajes, ranking ni IEE.
 
+La v2.2 identifica una [candidata de equidad territorial en seguridad y justicia](docs/decisions/0026-v22-security-territorial-equity-screen.md): la brecha P90–P10
+de homicidios regionales TL2, ponderada por población, para 30 países OCDE. La
+evidencia queda en revisión; no modifica el catálogo ni habilita puntajes.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.
