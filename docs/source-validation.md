@@ -146,6 +146,9 @@ medición desde funcionarios, no experiencia, tiempo o finalización de personas
 `ADM-ACC-01` permanece en diseño requerido. La [ADR 0024](decisions/0024-v20-citizen-administrative-access-rescreen.md)
 prohíbe sustituirlo por esas aproximaciones y define el próximo paso: un
 protocolo explícito de trámites comparables con fuentes abiertas nacionales.
+La [ADR 0025](decisions/0025-v21-passport-access-protocol.md) aplica ese criterio
+al primer candidato, pasaporte regular, y confirma que las promesas publicadas
+todavía no comparten el mismo inicio y final.
 
 ## Salud
 
