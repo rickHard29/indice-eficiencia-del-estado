@@ -78,7 +78,7 @@ class PilotSourceTests(unittest.TestCase):
 
     def test_derived_indicators_record_all_dependency_urls(self) -> None:
         by_id = {entry["indicator_id"]: entry for entry in self.series}
-        for indicator_id in {"SEG-IN-01", "ADM-EQ-03", "ADM-IN-01"}:
+        for indicator_id in {"SEG-IN-01", "SEG-EQ-01", "ADM-EQ-03", "ADM-IN-01"}:
             urls = by_id[indicator_id]["dependency_urls"]
             self.assertTrue(urls)
             self.assertTrue(all(url.startswith("https://") for url in urls))
@@ -91,13 +91,13 @@ class PilotSourceTests(unittest.TestCase):
         )
         for fragment in {
             "6 indicadores validados",
-            "4 condicionales",
+            "5 condicionales",
             "2 en reserva",
-            "2 que requieren diseño",
+            "1 que requiere diseño",
         }:
             self.assertIn(fragment, readme)
-        self.assertIn("6 validados, 4 condicionales, 2 en reserva", validation_note)
-        self.assertIn("2 que requieren diseño", validation_note)
+        self.assertIn("6 validados, 5 condicionales, 2 en reserva", validation_note)
+        self.assertIn("1 que requiere diseño", validation_note)
 
     def test_status_count_matches_review_decision(self) -> None:
         counts = {
@@ -108,9 +108,9 @@ class PilotSourceTests(unittest.TestCase):
             counts,
             {
                 "validated": 6,
-                "conditional": 4,
+                "conditional": 5,
                 "reserve": 2,
-                "design_required": 2,
+                "design_required": 1,
             },
         )
 

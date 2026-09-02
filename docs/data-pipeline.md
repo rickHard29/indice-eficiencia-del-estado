@@ -29,10 +29,10 @@ adquisición a los 14 indicadores propuestos:
   Online Service Index bilateral y el panel OCDE-38 de OSI 2024. Sus valores se
   incorporan a la salida normalizada desde los archivos de controles, con fuente,
   edición, localizador y estado de calidad. No se presentan como descargas de API.
-- **5 diferidos:** gasto educativo por estudiante, disparidad territorial de
-  violencia, finalización de trámites, carga regulatoria empresarial y brecha
-  territorial de identidad. Los dos últimos tienen canalizaciones específicas y
-  condicionales; no se mezclan con el cálculo general.
+- **5 diferidos del flujo general:** gasto educativo por estudiante, finalización
+  de trámites, carga regulatoria empresarial, brecha territorial de identidad y
+  brecha territorial de homicidios. Los tres últimos tienen canalizaciones
+  específicas y condicionales; no se mezclan con el cálculo general.
 
 Que una serie pueda descargarse no significa que pueda puntuar. `score_eligible`
 separa la adquisición técnica del dictamen metodológico. Los insumos condicionales o

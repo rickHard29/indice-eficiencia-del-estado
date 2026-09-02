@@ -150,16 +150,22 @@ indicator_id = "SEG-EQ-01"
 dimension = "seguridad_justicia"
 role = "equidad"
 direction = "lower"
-status = "design_required"
-source_id = ""
-organization = ""
-dataset = ""
-official_code = ""
-unit = "Por definir"
-frequency = "por definir"
-scope = "bilateral"
-exact_url = ""
-decision_reason = "No se identificó una serie subnacional armonizada que mida disparidad territorial en ambos países."
+status = "conditional"
+source_id = "OECD-REG-SAFETY"
+organization = "OECD"
+dataset = "Safety -- Regions and Demography -- Regions"
+official_code = "P90_w(HOMIC_TL2) - P10_w(HOMIC_TL2)"
+unit = "Brecha P90-P10 ponderada por población, homicidios por 100.000"
+frequency = "anual"
+scope = "ocde_30_regiones_tl2"
+reference_year = 2021
+exact_url = "https://sdmx.oecd.org/public/rest/data/OECD.CFE.EDS,DSD_REG_SOC@DF_SAFETY,/A.TL2...HOMIC...CS_10P5PS?startPeriod=2021&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile"
+dependency_urls = ["https://sdmx.oecd.org/public/rest/data/OECD.CFE.EDS,DSD_REG_DEMO@DF_DEMO,/A.TL2...POP._T._T.PS?startPeriod=2021&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile"]
+latest_col_year = 2021
+latest_col_value = 35.5
+latest_usa_year = 2021
+latest_usa_value = 6.1
+decision_reason = "Subindicador condicional de dispersión territorial de homicidios, con cuantil TL2 ponderado por población. La muestra alcanza exactamente 30 países; no puntúa ni habilita frontera."
 
 [[series]]
 indicator_id = "SEG-IN-01"

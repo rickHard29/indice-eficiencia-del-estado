@@ -17,7 +17,7 @@ registrados son puntos de control, no un resultado del índice.
 | EDU-EQ-01 | Brecha PISA por nivel socioeconómico | Validado | 79 (2022) | 102 (2022) |
 | EDU-IN-01 | Gasto público por estudiante de primaria | Reserva | 1.817,85 (1999) | 15.989,62 (2021) |
 | SEG-RES-01 | Homicidios intencionales por 100.000 habitantes | Validado | 24,91 (2023) | 5,76 (2023) |
-| SEG-EQ-01 (candidata v2.2) | Brecha territorial de homicidios regionales, P90–P10 ponderada por población | Pendiente de adopción | 35,5 (2021) | 6,1 (2021) |
+| SEG-EQ-01 | Brecha territorial de homicidios regionales, P90–P10 ponderada por población | Condicional v2.3 | 35,5 (2021) | 6,1 (2021) |
 | SEG-IN-01 | Gasto en orden público y seguridad por habitante | Reserva | 430,63 (2024) | 1.551,23 (2024) |
 | ADM-RES-01 | Índice de servicios públicos en línea | Validado | 0,7521 (2024) | 0,9136 (2024) |
 | ADM-ACC-01 | Tiempo y finalización de transacciones públicas | Requiere diseño | — | — |
@@ -29,8 +29,8 @@ registrados son puntos de control, no un resultado del índice.
 | ADM-EQ-03 | Brecha territorial de identidad oficial | Condicional v1.9 | 1,367093 p.p. (2024) | 7,452805 p.p. (2024) |
 | ADM-IN-01 | Recursos operativos de servicios públicos generales | Condicional | 1,844 % (2024) | 1,512 % (2024) |
 
-Resumen del catálogo del piloto: **6 validados, 4 condicionales, 2 en reserva y
-2 que requieren diseño**. La candidata SAL-EQ-02 no se materializa en el catálogo
+Resumen del catálogo del piloto: **6 validados, 5 condicionales, 2 en reserva y
+1 que requiere diseño**. La candidata SAL-EQ-02 no se materializa en el catálogo
 ni cambia esos conteos.
 Un indicador condicional tiene fuente y cobertura utilizables, pero necesita una
 decisión de transformación o definición antes de entrar al modelo. Una reserva no
@@ -243,11 +243,13 @@ TL2 del conjunto [Demography -- Regions](https://data-explorer.oecd.org/vis?df%5
 
 La pareja conserva 30 de 38 miembros OCDE, justo el mínimo del piloto. Estonia,
 Islandia, Israel, Letonia, Lituania, Luxemburgo, Nueva Zelanda y Eslovenia se
-excluyen: no tienen tres regiones TL2 observadas con ambas series. Es una
-candidata prometedora, pero las fronteras TL2 y el número de regiones no son
-idénticos entre países. `SEG-EQ-01` no entra al catálogo, puntaje ni frontera
-hasta adoptar explícitamente el protocolo. Véase la
-[ADR 0026](decisions/0026-v22-security-territorial-equity-screen.md).
+excluyen: no tienen tres regiones TL2 observadas con ambas series. Las fronteras
+TL2 y el número de regiones no son idénticos entre países. La v2.3 adopta
+`SEG-EQ-01` como subindicador condicional, con el protocolo de cuantil ponderado,
+máscara explícita y bloqueo de puntajes y frontera. Véanse la
+[ADR 0026](decisions/0026-v22-security-territorial-equity-screen.md), la
+[ADR 0027](decisions/0027-v23-security-territorial-equity-adoption.md) y el
+[contrato v2.3](security-equity-v2.3.md).
 
 ### Insumo: gasto en orden público y seguridad
 

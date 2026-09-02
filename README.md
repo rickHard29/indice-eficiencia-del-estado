@@ -33,7 +33,7 @@ iee-score
 
 Versión metodológica `0.1-draft`. La estructura es funcional y ya cuenta con una
 [evaluación reproducible de los 14 indicadores propuestos del piloto](docs/source-validation.md):
-6 indicadores validados, 4 condicionales, 2 en reserva y 2 que requieren diseño.
+6 indicadores validados, 5 condicionales, 2 en reserva y 1 que requiere diseño.
 Todavía no se ha calculado ni publicado un puntaje IEE.
 
 La [canalización reproducible de datos](docs/data-pipeline.md) ya descarga y valida
@@ -106,9 +106,9 @@ La v1.9 incorpora una [brecha territorial condicional de identidad oficial](docs
 para 34 países OCDE. Compara la cobertura rural y urbana de personas de 15 años o
 más; mide un requisito de acceso y no habilita puntajes, ranking ni IEE.
 
-La v2.2 identifica una [candidata de equidad territorial en seguridad y justicia](docs/decisions/0026-v22-security-territorial-equity-screen.md): la brecha P90–P10
-de homicidios regionales TL2, ponderada por población, para 30 países OCDE. La
-evidencia queda en revisión; no modifica el catálogo ni habilita puntajes.
+La v2.3 incorpora una [brecha territorial condicional en seguridad y justicia](docs/security-equity-v2.3.md): P90–P10 de homicidios regionales TL2, ponderada
+por población, para 30 países OCDE. La serie queda fuera de puntajes, ranking,
+frontera e IEE oficial.
 
 ## Principios
 

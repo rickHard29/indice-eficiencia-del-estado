@@ -179,6 +179,7 @@ _ADAPTERS = {
     "oecd_ratio_csv",
     "oecd_ratio_times_level",
     "oecd_ppp_per_capita",
+    "oecd_regional_weighted_interdecile_gap",
     "oecd_pisa_xlsx",
 }
 _STATUSES = {"validated", "conditional", "reserve"}
@@ -627,6 +628,12 @@ def _parse_download_spec(
         if not spec.comparison_url:
             raise IngestionError(f"falta la serie de comparación en {spec.indicator_id}")
         _validate_https(spec.comparison_url, spec.indicator_id)
+    if adapter == "oecd_regional_weighted_interdecile_gap":
+        if not spec.level_url:
+            raise IngestionError(f"falta la población regional en {spec.indicator_id}")
+        _validate_https(spec.level_url, spec.indicator_id)
+        if spec.reference_year is None:
+            raise IngestionError(f"falta reference_year en {spec.indicator_id}")
     if adapter == "oecd_ratio_times_level":
         if not spec.denominator_url or not spec.category_column or not spec.expected_categories:
             raise IngestionError(f"faltan parámetros de razón en {spec.indicator_id}")
@@ -803,6 +810,9 @@ def _dependency_urls(spec: DownloadSpec) -> tuple[str, ...]:
     if spec.adapter == "world_bank_absolute_gap":
         assert spec.comparison_url is not None
         return (spec.comparison_url,)
+    if spec.adapter == "oecd_regional_weighted_interdecile_gap":
+        assert spec.level_url is not None
+        return (spec.level_url,)
     if spec.adapter == "oecd_ratio_times_level":
         assert spec.denominator_url is not None and spec.level_url is not None
         return (spec.denominator_url, spec.level_url)
@@ -981,6 +991,143 @@ def parse_oecd_sdmx_csv(payload: bytes, spec: DownloadSpec) -> list[Observation]
         for row in rows
     ]
     return validate_observations(observations, spec)
+
+
+def parse_oecd_regional_weighted_interdecile_gap(
+    homicide_payload: bytes,
+    population_payload: bytes,
+    spec: DownloadSpec,
+) -> list[Observation]:
+    """Calcula P90-P10 de homicidios TL2 ponderado por población.
+
+    El cuantil ponderado es la primera tasa cuya población acumulada, ordenada de
+    menor a mayor tasa, alcanza el porcentaje solicitado. Así las regiones muy
+    pequeñas no pesan igual que las zonas mucho más pobladas.
+    """
+
+    if spec.reference_year is None:
+        raise IngestionError(f"falta reference_year en {spec.indicator_id}")
+
+    homicides = _regional_oecd_map(
+        homicide_payload, spec, measure="HOMIC", unit="CS_10P5PS"
+    )
+    populations = _regional_oecd_map(
+        population_payload, spec, measure="POP", unit="PS"
+    )
+    # Algunas extracciones TL2 incluyen territorios técnicos con población cero
+    # (por ejemplo, códigos residuales). No pueden ponderar una tasa y se omiten;
+    # una región con homicidios pero sin población positiva sigue siendo un error.
+    populations = {
+        key: value for key, value in populations.items() if value[0] > 0
+    }
+    missing_populations = sorted(set(homicides) - set(populations))
+    if missing_populations:
+        raise IngestionError(
+            f"poblaciones regionales faltantes para {spec.indicator_id}: "
+            f"{missing_populations}"
+        )
+    populations = {key: populations[key] for key in homicides}
+
+    by_country: dict[str, list[tuple[Decimal, Decimal, str, str, str]]] = defaultdict(list)
+    for (country, region), (rate, rate_status) in homicides.items():
+        population, population_status = populations[(country, region)]
+        if rate < 0 or population <= 0:
+            raise IngestionError(f"tasa o población regional inválida para {country}/{region}")
+        by_country[country].append((rate, population, region, rate_status, population_status))
+
+    observations: list[Observation] = []
+    for country in spec.expected_entities:
+        regions = by_country.get(country, [])
+        if len(regions) < 3:
+            raise IngestionError(
+                f"{country} necesita al menos tres regiones TL2 en {spec.indicator_id}"
+            )
+        p10 = _weighted_regional_quantile(regions, Decimal("0.10"))
+        p90 = _weighted_regional_quantile(regions, Decimal("0.90"))
+        statuses = [status for _rate, _population, _region, *pair in regions for status in pair]
+        observations.append(
+            _make_observation(
+                spec,
+                entity=country,
+                period=spec.reference_year,
+                value=p90 - p10,
+                status=_quality_status(statuses),
+                kind="derived",
+            )
+        )
+    return validate_observations(observations, spec)
+
+
+def _regional_oecd_map(
+    payload: bytes,
+    spec: DownloadSpec,
+    *,
+    measure: str,
+    unit: str,
+) -> dict[tuple[str, str], tuple[Decimal, str]]:
+    """Lee una serie TL2 de la OCDE y conserva solo el universo congelado."""
+
+    try:
+        rows = csv.DictReader(io.StringIO(payload.decode("utf-8-sig")))
+    except UnicodeDecodeError as error:
+        raise IngestionError(f"CSV regional inválido en {spec.indicator_id}: {error}") from error
+    required = {
+        "TERRITORIAL_LEVEL",
+        "REF_AREA",
+        "MEASURE",
+        "AGE",
+        "SEX",
+        "UNIT_MEASURE",
+        "TIME_PERIOD",
+        "OBS_VALUE",
+        "COUNTRY",
+    }
+    if rows.fieldnames is None or not required <= set(rows.fieldnames):
+        raise IngestionError(f"columnas regionales incompletas en {spec.indicator_id}")
+
+    expected = set(spec.expected_entities)
+    values: dict[tuple[str, str], tuple[Decimal, str]] = {}
+    for row in rows:
+        country = row.get("COUNTRY", "")
+        if country not in expected:
+            continue
+        if (
+            row.get("TERRITORIAL_LEVEL") != "TL2"
+            or row.get("MEASURE") != measure
+            or row.get("AGE") != "_T"
+            or row.get("SEX") != "_T"
+            or row.get("UNIT_MEASURE") != unit
+            or _parse_year(row.get("TIME_PERIOD")) != spec.reference_year
+        ):
+            raise IngestionError(f"fila regional incompatible en {spec.indicator_id}: {country}")
+        region = row.get("REF_AREA", "")
+        if not region:
+            raise IngestionError(f"región TL2 ausente en {spec.indicator_id}")
+        key = (country, region)
+        if key in values:
+            raise IngestionError(f"región TL2 duplicada en {spec.indicator_id}: {key}")
+        values[key] = (_scaled_oecd_value(row), row.get("OBS_STATUS", ""))
+    if not values:
+        raise IngestionError(f"sin regiones TL2 utilizables en {spec.indicator_id}")
+    return values
+
+
+def _weighted_regional_quantile(
+    regions: Sequence[tuple[Decimal, Decimal, str, str, str]],
+    quantile: Decimal,
+) -> Decimal:
+    total_population = sum((population for _rate, population, *_rest in regions), Decimal("0"))
+    if total_population <= 0:
+        raise IngestionError("población regional total inválida")
+    threshold = total_population * quantile
+    accumulated = Decimal("0")
+    for rate, population, region, _rate_status, _population_status in sorted(
+        regions, key=lambda item: (item[0], item[2])
+    ):
+        accumulated += population
+        if accumulated >= threshold:
+            return rate
+    raise IngestionError(f"no se alcanzó el cuantil regional para {region}")
 
 
 def parse_oecd_pisa_xlsx(payload: bytes, spec: DownloadSpec) -> list[Observation]:
@@ -1923,6 +2070,24 @@ def _acquire_series(
         return parse_world_bank_percent_times_level(primary.content, level.content, spec), payloads
     if spec.adapter == "oecd_sdmx_csv":
         return parse_oecd_sdmx_csv(primary.content, spec), payloads
+    if spec.adapter == "oecd_regional_weighted_interdecile_gap":
+        assert spec.level_url is not None
+        population = fetcher(
+            spec.level_url,
+            accept=_CSV_ACCEPT,
+            timeout=timeout,
+            max_bytes=max_bytes,
+        )
+        _validate_content_type(population, "csv")
+        payloads.append((spec.resource_id, "population", population))
+        return (
+            parse_oecd_regional_weighted_interdecile_gap(
+                primary.content,
+                population.content,
+                spec,
+            ),
+            payloads,
+        )
     if spec.adapter == "oecd_pisa_xlsx":
         return parse_oecd_pisa_xlsx(primary.content, spec), payloads
     if spec.adapter == "oecd_percent_times_level":
