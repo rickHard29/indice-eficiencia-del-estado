@@ -135,6 +135,9 @@ La [validación canadiense v3.0](docs/security-canada-validation-v3.0.md) confir
 una fuente gratuita y trazable para recuperar el insumo faltante de Canadá. Es
 una candidata aislada: su integración debe conservar los contratos históricos y
 volver a comprobar la muestra antes de cualquier estimación.
+La [materialización v3.1](docs/security-canada-materialization-v3.1.md) ya
+produce las tres observaciones canadienses con recibos y pruebas; todavía no
+cambia la puerta 29/30 hasta combinar ambas procedencias de forma explícita.
 
 ## Principios
 

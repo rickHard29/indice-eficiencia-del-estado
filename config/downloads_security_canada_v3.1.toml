@@ -1,0 +1,32 @@
+version = "3.1"
+schema_version = "iee-observations-v1"
+catalog = "security_canada_sources_v3.1.toml"
+countries = ["CAN"]
+entity_aliases = { Canada = "CAN" }
+
+[[series]]
+resource_id = "seg-in-03-can"
+indicator_id = "SEG-IN-03"
+source_id = "STATCAN-CCOFOG-WDI-PPP"
+source_status = "conditional"
+score_eligible = false
+adapter = "statscan_absolute_times_level"
+series_code = "CCOFOG 703 / NY.GDP.MKTP.CN × NY.GDP.PCAP.PP.KD"
+url = "https://www150.statcan.gc.ca/n1/en/tbl/csv/10100005-eng.zip"
+denominator_url = "https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.CN?format=json&date=2019%3A2021&per_page=100"
+level_url = "https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.PCAP.PP.KD?format=json&date=2019%3A2021&per_page=100"
+direction = "input"
+unit = "Dólares internacionales constantes de 2021 por habitante"
+expected_entities = ["CAN"]
+expected_latest_year = { CAN = 2021 }
+expected_latest_value = { CAN = "1010.478883929813639176074892" }
+latest_value_tolerance = "0.000001"
+minimum_observations_per_entity = 3
+reference_year = 2021
+scale = "1000000"
+
+[series.dimension_filters]
+"Public sector components" = "Consolidated Canadian general government"
+"Canadian Classification of Functions of Government (CCOFOG)" = "Public order and safety [703]"
+UOM = "Dollars"
+SCALAR_FACTOR = "millions"

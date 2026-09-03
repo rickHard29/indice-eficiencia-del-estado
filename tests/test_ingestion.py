@@ -29,6 +29,7 @@ from iee.ingestion import (
     parse_oecd_ratio_csv,
     parse_oecd_ratio_times_level,
     parse_oecd_sdmx_csv,
+    parse_statcan_absolute_times_level,
     parse_world_bank_json,
     parse_world_bank_absolute_gap,
     parse_world_bank_percent_times_level,
@@ -78,6 +79,37 @@ def pisa_xlsx_fixture() -> bytes:
             </sheetData></worksheet>""",
         )
     return payload.getvalue()
+
+
+def statcan_zip_fixture() -> bytes:
+    payload = io.BytesIO()
+    rows = (
+        "\ufeffREF_DATE,GEO,Public sector components,Canadian Classification of Functions of Government (CCOFOG),UOM,SCALAR_FACTOR,VALUE\n"
+        "2019,Canada,Consolidated Canadian general government,Public order and safety [703],Dollars,millions,40517\n"
+        "2020,Canada,Consolidated Canadian general government,Public order and safety [703],Dollars,millions,40543\n"
+        "2021,Canada,Consolidated Canadian general government,Public order and safety [703],Dollars,millions,44958\n"
+        "2021,Canada,Other component,Public order and safety [703],Dollars,millions,1\n"
+    )
+    with zipfile.ZipFile(payload, "w") as archive:
+        archive.writestr("10100005.csv", rows)
+        archive.writestr("10100005_MetaData.csv", "metadata")
+    return payload.getvalue()
+
+
+CAN_NOMINAL_GDP_JSON = (
+    b'[{"page":1,"pages":1,"per_page":100,"total":3},['
+    b'{"countryiso3code":"CAN","date":"2019","value":2313568000000},'
+    b'{"countryiso3code":"CAN","date":"2020","value":2220529000000},'
+    b'{"countryiso3code":"CAN","date":"2021","value":2535813000000}]]'
+)
+
+
+CAN_PPP_LEVEL_JSON = (
+    b'[{"page":1,"pages":1,"per_page":100,"total":3},['
+    b'{"countryiso3code":"CAN","date":"2019","value":57524.4561},'
+    b'{"countryiso3code":"CAN","date":"2020","value":54092.8576890836},'
+    b'{"countryiso3code":"CAN","date":"2021","value":56995.0952020711}]]'
+)
 
 
 def make_spec(**overrides: object) -> DownloadSpec:
@@ -174,6 +206,60 @@ class IngestionParsingTests(unittest.TestCase):
         self.assertEqual(observations[0].entity, "COL")
         self.assertEqual(observations[0].value, Decimal("25.4"))
         self.assertEqual(observations[-1].value, Decimal("5.76340794"))
+
+    def test_statcan_ccofog_absolute_value_converts_to_constant_ppp(self) -> None:
+        spec = make_spec(
+            resource_id="seg-in-03-can",
+            indicator_id="SEG-IN-03",
+            source_id="STATCAN-CCOFOG-WDI-PPP",
+            source_status="conditional",
+            score_eligible=False,
+            adapter="statscan_absolute_times_level",
+            series_code="CCOFOG 703 / NY.GDP.MKTP.CN × NY.GDP.PCAP.PP.KD",
+            direction="input",
+            unit="Dólares internacionales constantes de 2021 por habitante",
+            expected_entities=("CAN",),
+            expected_latest_year={"CAN": 2021},
+            expected_latest_value={"CAN": Decimal("1010.478883929813639176074892")},
+            minimum_observations_per_entity=3,
+            denominator_url="https://example.test/gdp",
+            level_url="https://example.test/ppp",
+            scale=Decimal("1000000"),
+            dimension_filters={
+                "Public sector components": "Consolidated Canadian general government",
+                "Canadian Classification of Functions of Government (CCOFOG)": "Public order and safety [703]",
+                "UOM": "Dollars",
+                "SCALAR_FACTOR": "millions",
+            },
+            entity_aliases={"Canada": "CAN"},
+        )
+
+        observations = parse_statcan_absolute_times_level(
+            statcan_zip_fixture(),
+            CAN_NOMINAL_GDP_JSON,
+            CAN_PPP_LEVEL_JSON,
+            spec,
+        )
+
+        self.assertEqual(
+            [(row.entity, row.period) for row in observations],
+            [("CAN", 2019), ("CAN", 2020), ("CAN", 2021)],
+        )
+        self.assertEqual(
+            observations[-1].value,
+            Decimal("1010.478883929813639176074892"),
+        )
+        self.assertEqual(observations[-1].observation_kind, "derived")
+
+    def test_statcan_manifest_keeps_canada_as_an_isolated_complement(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        manifest = load_download_manifest(
+            root / "config" / "downloads_security_canada_v3.1.toml"
+        )
+
+        self.assertEqual(manifest.countries, ("CAN",))
+        self.assertEqual(manifest.series[0].indicator_id, "SEG-IN-03")
+        self.assertEqual(manifest.series[0].expected_latest_year, {"CAN": 2021})
 
     def test_pisa_xlsx_preserves_sampling_caution_and_skips_missing_values(self) -> None:
         spec = make_spec(

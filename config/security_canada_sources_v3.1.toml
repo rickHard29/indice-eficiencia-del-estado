@@ -1,0 +1,25 @@
+version = "3.1"
+validation_date = "2026-09-03"
+countries_frame = "CAN-complemento-SEG-EQ-02"
+
+[[series]]
+indicator_id = "SEG-IN-03"
+dimension = "seguridad_justicia"
+role = "insumo"
+direction = "input"
+status = "conditional"
+source_id = "STATCAN-CCOFOG-WDI-PPP"
+organization = "Statistics Canada / World Bank"
+dataset = "Table 10-10-0005-01 CCOFOG and WDI GDP series"
+official_code = "CCOFOG 703 / NY.GDP.MKTP.CN × NY.GDP.PCAP.PP.KD"
+unit = "Dólares internacionales constantes de 2021 por habitante"
+frequency = "anual"
+scope = "Canadá; complemento condicionado para sensibilidad de seguridad"
+reference_year = 2021
+exact_url = "https://www150.statcan.gc.ca/n1/en/tbl/csv/10100005-eng.zip"
+dependency_urls = [
+  "https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.MKTP.CN?format=json&date=2019%3A2021&per_page=100",
+  "https://api.worldbank.org/v2/country/CAN/indicator/NY.GDP.PCAP.PP.KD?format=json&date=2019%3A2021&per_page=100",
+]
+checkpoints = { CAN = { year = 2021, value = "1010.478883929813639176074892" } }
+decision_reason = "Complemento canadiense aislado: conserva el gasto CCOFOG 703 del gobierno general consolidado y convierte su proporción del PIB nominal CAD a PPA constante por habitante. No reemplaza SEG-IN-02."

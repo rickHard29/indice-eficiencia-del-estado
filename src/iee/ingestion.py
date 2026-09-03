@@ -182,6 +182,7 @@ _ADAPTERS = {
     "oecd_ppp_per_capita",
     "oecd_regional_weighted_interdecile_gap",
     "oecd_pisa_xlsx",
+    "statscan_absolute_times_level",
 }
 _STATUSES = {"validated", "conditional", "reserve"}
 _DIRECTIONS = {"higher", "lower", "input"}
@@ -625,6 +626,7 @@ def _parse_download_spec(
         "world_bank_percent_times_level",
         "oecd_percent_times_level",
         "oecd_ratio_times_level",
+        "statscan_absolute_times_level",
     }:
         if not spec.level_url:
             raise IngestionError(f"falta la serie de nivel en {spec.indicator_id}")
@@ -648,6 +650,10 @@ def _parse_download_spec(
     if adapter == "oecd_ratio_times_level":
         if not spec.denominator_url or not spec.category_column or not spec.expected_categories:
             raise IngestionError(f"faltan parámetros de razón en {spec.indicator_id}")
+        _validate_https(spec.denominator_url, spec.indicator_id)
+    if adapter == "statscan_absolute_times_level":
+        if not spec.denominator_url:
+            raise IngestionError(f"falta el denominador nominal en {spec.indicator_id}")
         _validate_https(spec.denominator_url, spec.indicator_id)
     if adapter == "oecd_pisa_xlsx":
         if (
@@ -729,7 +735,7 @@ def _validate_against_catalog(
                 f"{spec.indicator_id}: reference_year difiere del catálogo"
             )
         expected_catalog_years, expected_catalog_values = _catalog_checkpoints(
-            spec.indicator_id, catalog_entry
+            spec.indicator_id, catalog_entry, spec.expected_entities
         )
         if dict(spec.expected_latest_year) != expected_catalog_years:
             raise IngestionError(
@@ -827,13 +833,33 @@ def _dependency_urls(spec: DownloadSpec) -> tuple[str, ...]:
     if spec.adapter == "oecd_ratio_times_level":
         assert spec.denominator_url is not None and spec.level_url is not None
         return (spec.denominator_url, spec.level_url)
+    if spec.adapter == "statscan_absolute_times_level":
+        assert spec.denominator_url is not None and spec.level_url is not None
+        return (spec.denominator_url, spec.level_url)
     return ()
 
 
 def _catalog_checkpoints(
     indicator_id: str,
     catalog_entry: Mapping[str, Any],
+    expected_entities: Sequence[str] = ("COL", "USA"),
 ) -> tuple[dict[str, int], dict[str, Decimal]]:
+    raw_checkpoints = catalog_entry.get("checkpoints")
+    if raw_checkpoints is not None:
+        try:
+            checkpoints = {str(entity): value for entity, value in raw_checkpoints.items()}
+            if set(checkpoints) != set(expected_entities):
+                raise ValueError("entidades distintas a la muestra")
+            years = {entity: int(checkpoints[entity]["year"]) for entity in expected_entities}
+            values = {
+                entity: _parse_decimal(checkpoints[entity]["value"], f"checkpoint {entity}")
+                for entity in expected_entities
+            }
+            return years, values
+        except (AttributeError, KeyError, TypeError, ValueError) as error:
+            raise IngestionError(
+                f"{indicator_id}: checkpoints inválidos en el catálogo: {error}"
+            ) from error
     try:
         years = {
             "COL": int(catalog_entry["latest_col_year"]),
@@ -947,6 +973,69 @@ def parse_world_bank_percent_times_level(
                 period=key[1],
                 value=percentage / Decimal("100") * level,
                 status=_quality_status([percentage_status, level_status]),
+                kind="derived",
+            )
+        )
+    return validate_observations(observations, spec)
+
+
+def parse_statcan_absolute_times_level(
+    primary_payload: bytes,
+    denominator_payload: bytes,
+    level_payload: bytes,
+    spec: DownloadSpec,
+) -> list[Observation]:
+    """Convierte gasto CCOFOG canadiense a PPA constante por habitante."""
+
+    try:
+        with zipfile.ZipFile(io.BytesIO(primary_payload)) as archive:
+            csv_names = [
+                name for name in archive.namelist()
+                if name.endswith(".csv") and "metadata" not in name.lower()
+            ]
+            if len(csv_names) != 1:
+                raise IngestionError("archivo Statistics Canada sin CSV de datos único")
+            text = archive.read(csv_names[0]).decode("utf-8-sig")
+    except (OSError, UnicodeDecodeError, zipfile.BadZipFile) as error:
+        raise IngestionError(f"archivo Statistics Canada inválido: {error}") from error
+
+    filters = dict(spec.dimension_filters or {})
+    if not filters:
+        raise IngestionError(f"faltan filtros Statistics Canada en {spec.indicator_id}")
+    amounts: dict[tuple[str, int], Decimal] = {}
+    for row in csv.DictReader(io.StringIO(text)):
+        if any(row.get(column) != expected for column, expected in filters.items()):
+            continue
+        entity = spec.entity_aliases.get(row.get("GEO", ""), row.get("GEO", ""))
+        if entity not in spec.expected_entities:
+            continue
+        key = (entity, _parse_year(row.get("REF_DATE")))
+        if key in amounts:
+            raise IngestionError(f"observación Statistics Canada duplicada: {key}")
+        amounts[key] = _parse_decimal(row.get("VALUE"), f"Statistics Canada {key}") * spec.scale
+
+    nominal_gdp = _world_bank_value_map(denominator_payload, spec.expected_entities)
+    ppp_levels = _world_bank_value_map(level_payload, spec.expected_entities)
+    missing_amounts = sorted(set(nominal_gdp) - set(amounts))
+    missing_levels = sorted(set(nominal_gdp) - set(ppp_levels))
+    if missing_amounts:
+        raise IngestionError(f"faltan gastos Statistics Canada para {missing_amounts}")
+    if missing_levels:
+        raise IngestionError(f"faltan niveles PPA para {missing_levels}")
+
+    observations: list[Observation] = []
+    for key, (gdp, gdp_status) in nominal_gdp.items():
+        amount = amounts[key]
+        level, level_status = ppp_levels[key]
+        if amount < 0 or gdp <= 0 or level <= 0:
+            raise IngestionError(f"gasto, PIB o nivel inválido para {key}")
+        observations.append(
+            _make_observation(
+                spec,
+                entity=key[0],
+                period=key[1],
+                value=amount / gdp * level,
+                status=_quality_status([gdp_status, level_status]),
                 kind="derived",
             )
         )
@@ -2038,9 +2127,13 @@ def _acquire_series(
         if spec.adapter
         in {"world_bank_json", "world_bank_absolute_gap", "world_bank_percent_times_level"}
         else (
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            if spec.adapter == "oecd_pisa_xlsx"
-            else _CSV_ACCEPT
+            "application/zip"
+            if spec.adapter == "statscan_absolute_times_level"
+            else (
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                if spec.adapter == "oecd_pisa_xlsx"
+                else _CSV_ACCEPT
+            )
         )
     )
     primary = fetcher(spec.url, accept=primary_accept, timeout=timeout, max_bytes=max_bytes)
@@ -2050,6 +2143,8 @@ def _acquire_series(
             "json"
             if spec.adapter
             in {"world_bank_json", "world_bank_absolute_gap", "world_bank_percent_times_level"}
+            else "zip"
+            if spec.adapter == "statscan_absolute_times_level"
             else "xlsx"
             if spec.adapter == "oecd_pisa_xlsx"
             else "csv"
@@ -2182,6 +2277,26 @@ def _acquire_series(
             ),
             payloads,
         )
+    if spec.adapter == "statscan_absolute_times_level":
+        assert spec.denominator_url is not None and spec.level_url is not None
+        denominator = fetcher(
+            spec.denominator_url, accept=_JSON_ACCEPT, timeout=timeout, max_bytes=max_bytes
+        )
+        level = fetcher(spec.level_url, accept=_JSON_ACCEPT, timeout=timeout, max_bytes=max_bytes)
+        _validate_content_type(denominator, "json")
+        _validate_content_type(level, "json")
+        payloads.extend(
+            [
+                (spec.resource_id, "nominal_gdp", denominator),
+                (spec.resource_id, "ppp_level", level),
+            ]
+        )
+        return (
+            parse_statcan_absolute_times_level(
+                primary.content, denominator.content, level.content, spec
+            ),
+            payloads,
+        )
     raise IngestionError(f"adaptador no implementado: {spec.adapter}")
 
 
@@ -2191,6 +2306,11 @@ def _validate_content_type(payload: FetchedPayload, expected: str) -> None:
         valid = "json" in content_type or payload.content.lstrip().startswith((b"[", b"{"))
     elif expected == "csv":
         valid = "csv" in content_type and not payload.content.lstrip().startswith(b"<")
+    elif expected == "zip":
+        valid = (
+            ("zip" in content_type or "octet-stream" in content_type)
+            and payload.content.startswith(b"PK")
+        )
     else:
         valid = "spreadsheetml" in content_type and payload.content.startswith(b"PK")
     if not valid:
