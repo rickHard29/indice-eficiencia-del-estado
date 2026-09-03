@@ -1,0 +1,6 @@
+version = "0.3"
+schema_version = "iee-cohort-recovery-v1"
+status = "experimental-not-for-publication"
+cohort_receipt = "../data/processed/experimental_cohort_v0.3.json"
+target_minimum_countries = 30
+max_first_wave = 6

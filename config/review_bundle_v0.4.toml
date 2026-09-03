@@ -1,0 +1,38 @@
+version = "0.4"
+schema_version = "iee-review-bundle-v1"
+status = "review-ready-not-approved"
+
+[[artifacts]]
+id = "launch_protocol"
+label = "Protocolo de lanzamiento IEE v1"
+path = "../docs/iee-v1-launch-protocol.md"
+
+[[artifacts]]
+id = "experimental_release"
+label = "Paquete experimental v0.2"
+path = "../docs/experimental-release-v0.2.md"
+
+[[artifacts]]
+id = "common_cohort"
+label = "Control de cohorte común v0.3"
+path = "../docs/experimental-common-cohort-v0.3.md"
+
+[[artifacts]]
+id = "recovery_priorities"
+label = "Prioridades de recuperación v0.3"
+path = "../docs/cohort-recovery-priorities-v0.3.md"
+
+[[artifacts]]
+id = "methodology_draft"
+label = "Borrador metodológico para revisión"
+path = "../docs/methodology-v1-review-draft.md"
+
+[[artifacts]]
+id = "review_questions"
+label = "Preguntas de revisión"
+path = "../docs/methodology-review-questions-v1.md"
+
+[[artifacts]]
+id = "implementation_roadmap"
+label = "Ruta de implementación v0.4"
+path = "../docs/implementation-roadmap-v0.4.md"

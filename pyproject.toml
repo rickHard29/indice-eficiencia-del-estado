@@ -21,6 +21,8 @@ iee-context-sensitivity = "iee.context_sensitivity:main"
 iee-security-integration = "iee.security_integration:main"
 iee-experimental-release = "iee.experimental_release:main"
 iee-experimental-cohort = "iee.experimental_cohort_cli:main"
+iee-cohort-recovery = "iee.cohort_recovery_cli:main"
+iee-review-bundle = "iee.review_bundle_cli:main"
 
 [project.optional-dependencies]
 dev = [

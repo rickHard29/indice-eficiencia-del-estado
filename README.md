@@ -149,6 +149,12 @@ es un corte de evidencia reproducible, no una agregación, puntaje ni ranking.
 El [control de cohorte común v0.3](docs/experimental-common-cohort-v0.3.md)
 confirma que la intersección actual es 24 de 38 países y bloquea cualquier
 comparación agregada hasta recuperar el mínimo predeclarado de 30.
+Las [prioridades de recuperación v0.3](docs/cohort-recovery-priorities-v0.3.md)
+ordenan la primera ola de seis países por componentes faltantes, sin imputar
+datos ni seleccionar países según su desempeño.
+La [ruta de implementación v0.4](docs/implementation-roadmap-v0.4.md) mide 8 de
+10 componentes técnicos listos (80%), separando este avance de las puertas que
+aún bloquean una comparación agregada y cualquier ranking.
 
 ## Principios
 
