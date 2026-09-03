@@ -1,0 +1,32 @@
+version = "0.2"
+schema_version = "iee-experimental-readiness-v1"
+status = "experimental-not-for-publication"
+countries_in_frame = 38
+minimum_countries = 30
+
+[[evidence]]
+id = "educacion"
+label = "Educación — sensibilidad de recurso v0.9"
+kind = "frontier_gate_csv"
+gate = "../data/processed/v09_education_frontier_gates.csv"
+expected_dimension = "educacion"
+
+[[evidence]]
+id = "salud"
+label = "Salud — sensibilidad de recurso v0.8"
+kind = "frontier_gate_csv"
+gate = "../data/processed/v08_health_frontier_gates.csv"
+expected_dimension = "salud"
+
+[[evidence]]
+id = "administracion"
+label = "Administración pública — sensibilidad v1.1"
+kind = "frontier_gate_csv"
+gate = "../data/processed/v11_administration_frontier_gates.csv"
+expected_dimension = "administracion"
+
+[[evidence]]
+id = "seguridad_justicia"
+label = "Seguridad y justicia — roles multifuente v3.2"
+kind = "role_coverage_gate_json"
+gate = "../data/processed/v32_security_role_gate.json"

@@ -142,6 +142,11 @@ La [sensibilidad v3.2](docs/security-coverage-sensitivity-v3.2.md) realiza esa
 combinación con procedencia por país y alcanza 30 países completos para seguridad;
 permanece experimental y no habilita fronteras, rankings ni IEE oficial.
 
+El [paquete de preparación experimental v0.2](docs/experimental-release-v0.2.md)
+reúne las cuatro puertas experimentales que ya superan 30 países dentro del
+universo OCDE-38. Conserva los contratos separados y publica hashes de sus puertas:
+es un corte de evidencia reproducible, no una agregación, puntaje ni ranking.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.

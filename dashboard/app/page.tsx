@@ -10,16 +10,16 @@ import {
 } from 'lucide-react';
 
 const dimensions = [
-  { name: 'Educación', detail: 'Roles y recursos en prueba', tone: 'amber', progress: 56 },
-  { name: 'Salud', detail: 'Recursos directos contrastados', tone: 'teal', progress: 61 },
-  { name: 'Administración', detail: 'Acceso y equidad en revisión', tone: 'blue', progress: 58 },
-  { name: 'Seguridad y justicia', detail: '30 países en sensibilidad multifuente', tone: 'violet', progress: 54 },
+  { name: 'Educación', detail: 'Sensibilidad de recurso v0.9', tone: 'amber', complete: 35 },
+  { name: 'Salud', detail: 'Sensibilidad de recurso v0.8', tone: 'teal', complete: 34 },
+  { name: 'Administración', detail: 'Sensibilidad v1.1', tone: 'blue', complete: 34 },
+  { name: 'Seguridad y justicia', detail: 'Tres roles, sensibilidad multifuente v3.2', tone: 'violet', complete: 30 },
 ];
 
 const milestones = [
   ['Base reproducible', 'Listo', 'Fuentes, pruebas y trazabilidad versionadas.'],
-  ['Cobertura común', 'Listo', 'La sensibilidad de seguridad alcanza 30 países comparables.'],
-  ['Ranking experimental', 'Pendiente', 'Requiere metodología v1 congelada y las demás dimensiones completas.'],
+  ['Cortes por dimensión', 'Listo', 'Las cuatro dimensiones ya superan 30 países en sus propios contratos experimentales.'],
+  ['Cohorte común experimental', 'Pendiente', 'Requiere un contrato único de periodos, exclusiones y normalización antes de agregar.'],
   ['Ranking oficial IEE v1', 'Bloqueado', 'Solo tras revisión independiente y publicación del protocolo.'],
 ];
 
@@ -37,13 +37,13 @@ export default function Home() {
               <p className="mb-4 text-sm tracking-[0.12em] text-[#b5c8b8] uppercase">Proyecto sin fines de lucro</p>
               <h1 className="max-w-3xl font-serif text-5xl leading-[0.96] tracking-tight sm:text-6xl">Índice de Eficiencia del Estado</h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-[#d7e2d7]">
-                Seguimos la construcción pública, verificable y prudente de un índice comparativo. Este sitio muestra evidencia y avance; todavía no publica un ranking oficial.
+                Seguimos la construcción pública, verificable y prudente de un índice comparativo. Este sitio muestra evidencia y avance; todavía no publica puntajes ni un ranking.
               </p>
             </div>
             <div className="rounded-2xl border border-[#547069] bg-[#1d3a34] p-6">
               <p className="text-sm text-[#b5c8b8]">Estado actual</p>
               <p className="mt-2 text-3xl font-semibold">En construcción</p>
-              <p className="mt-3 text-sm leading-6 text-[#d7e2d7]">La siguiente publicación será una metodología v1 y un corte experimental sujeto a revisión.</p>
+              <p className="mt-3 text-sm leading-6 text-[#d7e2d7]">Ya existe evidencia experimental en las cuatro dimensiones. El siguiente paso es definir su contrato común antes de cualquier agregación.</p>
             </div>
           </div>
         </div>
@@ -53,9 +53,9 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-4 md:grid-cols-4">
             {[
-              ['38%', 'Implementación del proyecto', Flag],
-              ['110', 'Pruebas automatizadas superadas', ShieldCheck],
-              ['30 / 30', 'Sensibilidad de seguridad: mínimo común alcanzado', Database],
+              ['4 / 4', 'Dimensiones con corte experimental verificable', Flag],
+              ['115', 'Pruebas automatizadas superadas', ShieldCheck],
+              ['30 / 38', 'Seguridad: cobertura de tres roles multifuente', Database],
               ['0', 'Rankings oficiales publicados', LockKeyhole],
             ].map(([value, label, Icon]) => {
               const CardIcon = Icon as typeof Flag;
@@ -80,7 +80,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="text-sm font-medium">Cobertura por dimensión</p>
-                <p className="text-sm text-[#68736c]">Avance de preparación de evidencia, no puntajes de países.</p>
+                <p className="text-sm text-[#68736c]">Países completos en cada corte propio; no son puntajes de países.</p>
               </div>
             </div>
             <div className="mt-8 space-y-6">
@@ -88,10 +88,10 @@ export default function Home() {
                 <div key={dimension.name}>
                   <div className="mb-2 flex justify-between gap-4 text-sm">
                     <span className="font-medium">{dimension.name}</span>
-                    <span className="text-[#66716a]">{dimension.progress}%</span>
+                    <span className="text-[#66716a]">{dimension.complete} / 38</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-[#eceae4]">
-                    <div className={`bar-${dimension.tone} h-full rounded-full`} style={{ width: `${dimension.progress}%` }} />
+                    <div className={`bar-${dimension.tone} h-full rounded-full`} style={{ width: `${(dimension.complete / 38) * 100}%` }} />
                   </div>
                   <p className="mt-2 text-xs text-[#6e7771]">{dimension.detail}</p>
                 </div>
@@ -121,7 +121,7 @@ export default function Home() {
       <section className="border-y border-[#d8d6cf] bg-[#efede6] px-6 py-12 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-6xl">
           <p className="text-sm font-medium tracking-[0.12em] text-[#557067] uppercase">Ruta de lanzamiento</p>
-          <h2 className="mt-3 max-w-2xl font-serif text-4xl leading-tight">Qué debe ocurrir antes de que exista un ranking.</h2>
+          <h2 className="mt-3 max-w-2xl font-serif text-4xl leading-tight">Qué debe ocurrir antes de que exista una comparación agregada.</h2>
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {milestones.map(([title, state, text]) => (
               <article key={title} className="rounded-2xl border border-[#d4d2ca] bg-[#f9f8f4] p-5">
@@ -146,7 +146,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con el corte v2.9 del proyecto</footer>
+      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con el paquete experimental v0.2</footer>
     </main>
   );
 }
