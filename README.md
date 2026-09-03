@@ -113,6 +113,9 @@ frontera e IEE oficial.
 La v2.5 [integra los tres roles disponibles de seguridad](docs/security-role-integration-v2.5.md)
 en una máscara de cobertura. La intersección alcanza 26 de 38 países, bajo el
 mínimo de 30; por ello no se estima eficiencia ni se habilita frontera, ranking o IEE.
+La [ruta v2.6 de recuperación de cobertura](docs/security-coverage-recovery-v2.6.md)
+separa los faltantes por rol y exige fuentes públicas nuevas sin reemplazar los
+contratos históricos ni rellenar datos.
 
 ## Principios
 
