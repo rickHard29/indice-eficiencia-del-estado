@@ -116,6 +116,9 @@ mínimo de 30; por ello no se estima eficiencia ni se habilita frontera, ranking
 La [ruta v2.6 de recuperación de cobertura](docs/security-coverage-recovery-v2.6.md)
 separa los faltantes por rol y exige fuentes públicas nuevas sin reemplazar los
 contratos históricos ni rellenar datos.
+El [cribado v2.7](docs/security-source-screen-v2.7.md) confirma que la ausencia
+de cuatro países en el COFOG de la OCDE es estructural y deja solo dos candidatas
+en verificación, sin adoptar datos nuevos.
 
 ## Principios
 
