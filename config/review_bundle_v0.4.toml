@@ -23,6 +23,11 @@ label = "Prioridades de recuperación v0.3"
 path = "../docs/cohort-recovery-priorities-v0.3.md"
 
 [[artifacts]]
+id = "source_screen"
+label = "Cribado de fuentes prioritarias v0.5"
+path = "../docs/recovery-source-screen-v0.5.md"
+
+[[artifacts]]
 id = "methodology_draft"
 label = "Borrador metodológico para revisión"
 path = "../docs/methodology-v1-review-draft.md"

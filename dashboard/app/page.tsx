@@ -43,7 +43,7 @@ export default function Home() {
             <div className="rounded-2xl border border-[#547069] bg-[#1d3a34] p-6">
               <p className="text-sm text-[#b5c8b8]">Estado actual</p>
               <p className="mt-2 text-3xl font-semibold">En construcción</p>
-              <p className="mt-3 text-sm leading-6 text-[#d7e2d7]">La implementación técnica alcanza 80%. Ya existe evidencia experimental en las cuatro dimensiones; la comparación agregada sigue bloqueada hasta recuperar la cohorte común y completar la revisión.</p>
+              <p className="mt-3 text-sm leading-6 text-[#d7e2d7]">La implementación técnica alcanza 90%. Ya existe evidencia experimental en las cuatro dimensiones; la comparación agregada sigue bloqueada hasta recuperar la cohorte común y completar la revisión.</p>
             </div>
           </div>
         </div>
@@ -53,7 +53,7 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-4 md:grid-cols-4">
             {[
-              ['80%', 'Implementación técnica planificada', Flag],
+              ['90%', 'Implementación técnica planificada', Flag],
               ['122', 'Pruebas automatizadas superadas', ShieldCheck],
               ['24 / 30', 'Cohorte común actual: mínimo aún no alcanzado', Database],
               ['0', 'Rankings oficiales publicados', LockKeyhole],
@@ -146,7 +146,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con la ruta de implementación v0.4</footer>
+      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con el cribado de fuentes v0.5</footer>
     </main>
   );
 }

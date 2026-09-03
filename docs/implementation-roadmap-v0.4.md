@@ -13,11 +13,11 @@
 | Prioridades reproducibles de recuperación | Listo |
 | Tablero público de trazabilidad | Listo |
 | Paquete metodológico para revisión | Listo |
-| Recuperación y validación de cobertura común | Pendiente |
-| Decisión metodológica, revisión abierta y publicación v1 | Pendiente |
+| Cribado de admisibilidad de las seis fuentes prioritarias | Listo |
+| Cierre sustantivo: recuperación integrada, decisión metodológica, revisión abierta y publicación v1 | Pendiente |
 
-**Implementación técnica: 8 de 10 componentes = 80%.**
+**Implementación técnica: 9 de 10 componentes = 90%.**
 
-El 80% no significa que exista un ranking listo ni que el índice esté validado.
+El 90% no significa que exista un ranking listo ni que el índice esté validado.
 La preparación para una comparación agregada permanece bloqueada por la cohorte
 común de 24/30, los insumos condicionales y la revisión metodológica pendiente.

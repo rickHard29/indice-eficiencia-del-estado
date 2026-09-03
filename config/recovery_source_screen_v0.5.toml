@@ -1,0 +1,45 @@
+version = "0.5"
+schema_version = "iee-recovery-source-screen-v1"
+status = "experimental-not-for-publication"
+
+[[candidates]]
+country = "AUS"
+dimension = "educacion"
+source_url = "https://api.worldbank.org/v2/country/AUS/indicator/SE.XPD.TOTL.GD.ZS?format=json&date=2019%3A2020&per_page=100"
+decision = "not_adopted_incomplete_window"
+rationale = "La fuente publica 2020, pero 2019 es nulo y la ventana 2019-2020 debe ser completa."
+
+[[candidates]]
+country = "BEL"
+dimension = "seguridad_justicia"
+source_url = "https://api.worldbank.org/v2/country/BEL/indicator/VC.IHR.PSRC.P5?format=json&date=2019%3A2021&per_page=100"
+decision = "not_adopted_incomplete_window"
+rationale = "La fuente publica 2021, pero 2019 y 2020 son nulos; no se promedia una ventana incompleta."
+
+[[candidates]]
+country = "CAN"
+dimension = "administracion"
+source_url = "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1010000501"
+decision = "not_adopted_construct_mismatch"
+rationale = "CCOFOG de servicios públicos generales no es equivalente sin validación a D1+P2/GF01, el proxy administrativo vigente."
+
+[[candidates]]
+country = "DEU"
+dimension = "salud"
+source_url = "https://sdmx.oecd.org/public/rest/v1/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_AM,1.0/DEU.A.AVM.DT_10P5HB._T._T._Z._Z.STANDARD._Z._Z._Z._Z?startPeriod=2019&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile"
+decision = "not_adopted_incomplete_window"
+rationale = "La fuente oficial aporta 2019 y 2020, pero no 2021; se conserva la ventana 2019-2021 completa."
+
+[[candidates]]
+country = "GRC"
+dimension = "educacion"
+source_url = "https://api.worldbank.org/v2/country/GRC/indicator/SE.XPD.TOTL.GD.ZS?format=json&date=2019%3A2020&per_page=100"
+decision = "not_adopted_incomplete_window"
+rationale = "La fuente publica 2019, pero 2020 es nulo y la ventana 2019-2020 debe ser completa."
+
+[[candidates]]
+country = "ISL"
+dimension = "seguridad_justicia"
+source_url = "https://sdmx.oecd.org/public/rest/data/OECD.CFE.EDS,DSD_REG_SOC@DF_SAFETY,/A....HOMIC...CS_10P5PS?startPeriod=2021&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile"
+decision = "not_adopted_insufficient_regions"
+rationale = "Islandia tiene dos regiones TL2 observadas; el contrato exige al menos tres parejas tasa-población."
