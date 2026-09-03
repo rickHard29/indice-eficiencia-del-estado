@@ -19,7 +19,7 @@ const dimensions = [
 const milestones = [
   ['Base reproducible', 'Listo', 'Fuentes, pruebas y trazabilidad versionadas.'],
   ['Cortes por dimensión', 'Listo', 'Las cuatro dimensiones ya superan 30 países en sus propios contratos experimentales.'],
-  ['Cohorte común experimental', 'Pendiente', 'Requiere un contrato único de periodos, exclusiones y normalización antes de agregar.'],
+  ['Cohorte común experimental', 'En curso', 'La intersección actual es 24 de 38 países; faltan seis para el mínimo de 30.'],
   ['Ranking oficial IEE v1', 'Bloqueado', 'Solo tras revisión independiente y publicación del protocolo.'],
 ];
 
@@ -55,7 +55,7 @@ export default function Home() {
             {[
               ['4 / 4', 'Dimensiones con corte experimental verificable', Flag],
               ['115', 'Pruebas automatizadas superadas', ShieldCheck],
-              ['30 / 38', 'Seguridad: cobertura de tres roles multifuente', Database],
+              ['24 / 30', 'Cohorte común actual: mínimo aún no alcanzado', Database],
               ['0', 'Rankings oficiales publicados', LockKeyhole],
             ].map(([value, label, Icon]) => {
               const CardIcon = Icon as typeof Flag;
@@ -146,7 +146,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con el paquete experimental v0.2</footer>
+      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con el control de cohorte v0.3</footer>
     </main>
   );
 }

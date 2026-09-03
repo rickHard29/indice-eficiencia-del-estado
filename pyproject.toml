@@ -20,6 +20,7 @@ iee-frontier-estimate = "iee.frontier_estimate:main"
 iee-context-sensitivity = "iee.context_sensitivity:main"
 iee-security-integration = "iee.security_integration:main"
 iee-experimental-release = "iee.experimental_release:main"
+iee-experimental-cohort = "iee.experimental_cohort_cli:main"
 
 [project.optional-dependencies]
 dev = [

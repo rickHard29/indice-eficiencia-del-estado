@@ -146,6 +146,9 @@ El [paquete de preparación experimental v0.2](docs/experimental-release-v0.2.md
 reúne las cuatro puertas experimentales que ya superan 30 países dentro del
 universo OCDE-38. Conserva los contratos separados y publica hashes de sus puertas:
 es un corte de evidencia reproducible, no una agregación, puntaje ni ranking.
+El [control de cohorte común v0.3](docs/experimental-common-cohort-v0.3.md)
+confirma que la intersección actual es 24 de 38 países y bloquea cualquier
+comparación agregada hasta recuperar el mínimo predeclarado de 30.
 
 ## Principios
 

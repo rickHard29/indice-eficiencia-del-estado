@@ -38,7 +38,7 @@ El ranking oficial queda bloqueado hasta cumplir todas las puertas siguientes.
 | Puerta | Evidencia exigida | Estado al 2026-09-03 |
 | --- | --- | --- |
 | Método congelado | Especificación v1, pesos, normalización y reglas de imputación versionadas | Pendiente |
-| Cohorte comparable | Mismo universo y al menos 30 países elegibles por cada componente incluido | En curso: las 4 dimensiones superan 30 en sus cortes propios; falta una cohorte común predeclarada |
+| Cohorte comparable | Mismo universo y al menos 30 países elegibles por cada componente incluido | En curso: las 4 dimensiones superan 30 en sus cortes propios, pero la intersección común es 24/38 |
 | Roles completos | Recursos, resultados, acceso/equidad y contexto documentados para cada dimensión incluida | En curso |
 | Reproducibilidad | Recibos de fuentes, hashes, pruebas y ejecución repetible del corte | En curso: paquete experimental v0.2 reúne las 4 puertas, sin agregarlas |
 | Sensibilidades separadas | Resultados TL2/TL3 y otras alternativas reportados sin alterar el resultado base | Listo para seguridad |
