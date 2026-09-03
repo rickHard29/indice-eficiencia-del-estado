@@ -1,0 +1,36 @@
+version = "2.9"
+schema_version = "iee-observations-v1"
+catalog = "security_equity_sources_v2.9.toml"
+country_universe = "country_universe_v2.9.toml"
+countries = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "NOR", "NZL", "POL",
+  "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+
+[[series]]
+resource_id = "seg-eq-02-homicide-mixed-v29"
+indicator_id = "SEG-EQ-02"
+source_id = "OECD-REG-SAFETY-MIXED"
+source_status = "conditional"
+score_eligible = false
+adapter = "oecd_regional_weighted_interdecile_gap"
+series_code = "P90_w(HOMIC_TL2|TL3) - P10_w(HOMIC_TL2|TL3)"
+url = "https://sdmx.oecd.org/public/rest/data/OECD.CFE.EDS,DSD_REG_SOC@DF_SAFETY,/A....HOMIC...CS_10P5PS?startPeriod=2021&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile"
+level_url = "https://sdmx.oecd.org/public/rest/data/OECD.CFE.EDS,DSD_REG_DEMO@DF_DEMO,/A....POP._T._T.PS?startPeriod=2021&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile"
+direction = "lower"
+unit = "Brecha P90-P10 ponderada por población, homicidios por 100.000"
+expected_entities = [
+  "AUS", "AUT", "BEL", "CAN", "CHE", "CHL", "COL", "CRI",
+  "CZE", "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR",
+  "GRC", "HUN", "IRL", "ITA", "JPN", "KOR", "LTU", "MEX",
+  "NLD", "NOR", "POL", "PRT", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+expected_latest_year = { COL = 2021, USA = 2021 }
+expected_latest_value = { COL = 35.5, USA = 6.1 }
+latest_value_tolerance = "0.000001"
+minimum_observations_per_entity = 1
+reference_year = 2021
+territorial_levels = { EST = "TL3", LTU = "TL3", SVN = "TL3" }

@@ -1,0 +1,27 @@
+version = "2.9"
+validation_date = "2026-09-02"
+countries_frame = "OECD-38"
+
+[[series]]
+indicator_id = "SEG-EQ-02"
+dimension = "seguridad_justicia"
+role = "equidad"
+direction = "lower"
+status = "conditional"
+source_id = "OECD-REG-SAFETY-MIXED"
+organization = "OECD"
+dataset = "Safety -- Regions and Demography -- Regions"
+official_code = "P90_w(HOMIC_TL2|TL3) - P10_w(HOMIC_TL2|TL3)"
+unit = "Brecha P90-P10 ponderada por población, homicidios por 100.000"
+frequency = "anual"
+scope = "ocde_33_sensibilidad_tl2_tl3"
+reference_year = 2021
+exact_url = "https://sdmx.oecd.org/public/rest/data/OECD.CFE.EDS,DSD_REG_SOC@DF_SAFETY,/A....HOMIC...CS_10P5PS?startPeriod=2021&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile"
+dependency_urls = [
+  "https://sdmx.oecd.org/public/rest/data/OECD.CFE.EDS,DSD_REG_DEMO@DF_DEMO,/A....POP._T._T.PS?startPeriod=2021&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile",
+]
+latest_col_year = 2021
+latest_col_value = 35.5
+latest_usa_year = 2021
+latest_usa_value = 6.1
+decision_reason = "Sensibilidad de cobertura: conserva TL2 para 30 países y usa TL3 exclusivamente para Estonia, Lituania y Eslovenia. La mezcla de niveles se identifica por país, no puntúa y no reemplaza SEG-EQ-01."

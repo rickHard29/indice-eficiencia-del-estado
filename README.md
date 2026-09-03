@@ -122,6 +122,9 @@ en verificación, sin adoptar datos nuevos.
 El [cribado TL3 v2.8](docs/security-equity-tl3-screen-v2.8.md) encuentra tres
 países adicionales en la fuente regional OCDE, pero los conserva como sensibilidad
 porque mezclar niveles TL2 y TL3 cambiaría el constructo de equidad territorial.
+La [v2.9 materializa esa sensibilidad](docs/security-equity-sensitivity-v2.9.md)
+para 33 países con una máscara territorial explícita; la intersección de seguridad
+sube a 29, pero mantiene bloqueados la frontera, los rankings y el IEE.
 
 ## Principios
 

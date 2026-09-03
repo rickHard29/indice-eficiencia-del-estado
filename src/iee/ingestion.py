@@ -54,6 +54,7 @@ class DownloadSpec:
     level_url: str | None = None
     dimension_filters: Mapping[str, str] | None = None
     reference_year: int | None = None
+    territorial_levels: Mapping[str, str] = field(default_factory=dict)
     worksheet: str | None = None
     entity_column: str | None = None
     value_column: str | None = None
@@ -564,6 +565,10 @@ def _parse_download_spec(
                 if raw.get("reference_year") is not None
                 else None
             ),
+            territorial_levels={
+                str(country): str(level)
+                for country, level in raw.get("territorial_levels", {}).items()
+            },
             worksheet=_optional_text(raw, "worksheet"),
             entity_column=_optional_text(raw, "entity_column"),
             value_column=_optional_text(raw, "value_column"),
@@ -634,6 +639,12 @@ def _parse_download_spec(
         _validate_https(spec.level_url, spec.indicator_id)
         if spec.reference_year is None:
             raise IngestionError(f"falta reference_year en {spec.indicator_id}")
+        if not set(spec.territorial_levels) <= set(spec.expected_entities):
+            raise IngestionError(
+                f"niveles territoriales fuera de la muestra en {spec.indicator_id}"
+            )
+        if any(level not in {"TL2", "TL3"} for level in spec.territorial_levels.values()):
+            raise IngestionError(f"nivel territorial inválido en {spec.indicator_id}")
     if adapter == "oecd_ratio_times_level":
         if not spec.denominator_url or not spec.category_column or not spec.expected_categories:
             raise IngestionError(f"faltan parámetros de razón en {spec.indicator_id}")
@@ -998,7 +1009,7 @@ def parse_oecd_regional_weighted_interdecile_gap(
     population_payload: bytes,
     spec: DownloadSpec,
 ) -> list[Observation]:
-    """Calcula P90-P10 de homicidios TL2 ponderado por población.
+    """Calcula P90-P10 de homicidios regionales ponderado por población.
 
     El cuantil ponderado es la primera tasa cuya población acumulada, ordenada de
     menor a mayor tasa, alcanza el porcentaje solicitado. Así las regiones muy
@@ -1065,7 +1076,7 @@ def _regional_oecd_map(
     measure: str,
     unit: str,
 ) -> dict[tuple[str, str], tuple[Decimal, str]]:
-    """Lee una serie TL2 de la OCDE y conserva solo el universo congelado."""
+    """Lee una serie regional de la OCDE con nivel fijado por país."""
 
     try:
         rows = csv.DictReader(io.StringIO(payload.decode("utf-8-sig")))
@@ -1091,9 +1102,11 @@ def _regional_oecd_map(
         country = row.get("COUNTRY", "")
         if country not in expected:
             continue
+        territorial_level = spec.territorial_levels.get(country, "TL2")
+        if row.get("TERRITORIAL_LEVEL") != territorial_level:
+            continue
         if (
-            row.get("TERRITORIAL_LEVEL") != "TL2"
-            or row.get("MEASURE") != measure
+            row.get("MEASURE") != measure
             or row.get("AGE") != "_T"
             or row.get("SEX") != "_T"
             or row.get("UNIT_MEASURE") != unit
@@ -1102,13 +1115,13 @@ def _regional_oecd_map(
             raise IngestionError(f"fila regional incompatible en {spec.indicator_id}: {country}")
         region = row.get("REF_AREA", "")
         if not region:
-            raise IngestionError(f"región TL2 ausente en {spec.indicator_id}")
+            raise IngestionError(f"región ausente en {spec.indicator_id}")
         key = (country, region)
         if key in values:
-            raise IngestionError(f"región TL2 duplicada en {spec.indicator_id}: {key}")
+            raise IngestionError(f"región duplicada en {spec.indicator_id}: {key}")
         values[key] = (_scaled_oecd_value(row), row.get("OBS_STATUS", ""))
     if not values:
-        raise IngestionError(f"sin regiones TL2 utilizables en {spec.indicator_id}")
+        raise IngestionError(f"sin regiones utilizables en {spec.indicator_id}")
     return values
 
 
