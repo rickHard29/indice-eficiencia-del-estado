@@ -131,6 +131,11 @@ el tablero de trazabilidad, un corte experimental y un ranking oficial. Ningún
 ranking podrá publicarse hasta cerrar las puertas de método, cobertura comparable,
 roles completos, reproducibilidad, sensibilidades y revisión abierta.
 
+La [validación canadiense v3.0](docs/security-canada-validation-v3.0.md) confirma
+una fuente gratuita y trazable para recuperar el insumo faltante de Canadá. Es
+una candidata aislada: su integración debe conservar los contratos históricos y
+volver a comprobar la muestra antes de cualquier estimación.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.
