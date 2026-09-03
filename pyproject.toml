@@ -18,6 +18,7 @@ iee-score = "iee.score:main"
 iee-frontier-panel = "iee.frontier:main"
 iee-frontier-estimate = "iee.frontier_estimate:main"
 iee-context-sensitivity = "iee.context_sensitivity:main"
+iee-security-integration = "iee.security_integration:main"
 
 [project.optional-dependencies]
 dev = [

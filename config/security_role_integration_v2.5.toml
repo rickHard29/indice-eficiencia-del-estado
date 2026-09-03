@@ -1,0 +1,31 @@
+version = "2.5"
+schema_version = "iee-security-role-panel-v1"
+status = "experimental-not-for-publication"
+country_universe = "country_universe_v0.2.toml"
+result_catalog = "result_sources_v0.3.toml"
+input_catalog = "input_sources_v0.2.toml"
+equity_catalog = "security_equity_sources_v2.3.toml"
+integration_min_countries = 30
+
+[result]
+indicator_id = "SEG-RES-01"
+selection = "mean"
+start_year = 2019
+end_year = 2021
+required_status = "validated"
+score_eligible = true
+
+[equity]
+indicator_id = "SEG-EQ-01"
+selection = "point"
+year = 2021
+required_status = "conditional"
+score_eligible = false
+
+[input]
+indicator_id = "SEG-IN-02"
+selection = "mean"
+start_year = 2019
+end_year = 2021
+required_status = "conditional"
+score_eligible = false

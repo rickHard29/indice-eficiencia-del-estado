@@ -110,6 +110,10 @@ La v2.3 incorpora una [brecha territorial condicional en seguridad y justicia](d
 por población, para 30 países OCDE. La serie queda fuera de puntajes, ranking,
 frontera e IEE oficial.
 
+La v2.5 [integra los tres roles disponibles de seguridad](docs/security-role-integration-v2.5.md)
+en una máscara de cobertura. La intersección alcanza 26 de 38 países, bajo el
+mínimo de 30; por ello no se estima eficiencia ni se habilita frontera, ranking o IEE.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.
