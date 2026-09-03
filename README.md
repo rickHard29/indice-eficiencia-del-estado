@@ -119,6 +119,9 @@ contratos históricos ni rellenar datos.
 El [cribado v2.7](docs/security-source-screen-v2.7.md) confirma que la ausencia
 de cuatro países en el COFOG de la OCDE es estructural y deja solo dos candidatas
 en verificación, sin adoptar datos nuevos.
+El [cribado TL3 v2.8](docs/security-equity-tl3-screen-v2.8.md) encuentra tres
+países adicionales en la fuente regional OCDE, pero los conserva como sensibilidad
+porque mezclar niveles TL2 y TL3 cambiaría el constructo de equidad territorial.
 
 ## Principios
 
