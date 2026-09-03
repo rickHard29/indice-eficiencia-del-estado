@@ -126,6 +126,11 @@ La [v2.9 materializa esa sensibilidad](docs/security-equity-sensitivity-v2.9.md)
 para 33 países con una máscara territorial explícita; la intersección de seguridad
 sube a 29, pero mantiene bloqueados la frontera, los rankings y el IEE.
 
+El [protocolo de lanzamiento del IEE v1](docs/iee-v1-launch-protocol.md) distingue
+el tablero de trazabilidad, un corte experimental y un ranking oficial. Ningún
+ranking podrá publicarse hasta cerrar las puertas de método, cobertura comparable,
+roles completos, reproducibilidad, sensibilidades y revisión abierta.
+
 ## Principios
 
 - Trazabilidad de las fuentes y transformaciones.
