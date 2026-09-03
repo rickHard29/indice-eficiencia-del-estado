@@ -13,13 +13,13 @@ const dimensions = [
   { name: 'Educación', detail: 'Roles y recursos en prueba', tone: 'amber', progress: 56 },
   { name: 'Salud', detail: 'Recursos directos contrastados', tone: 'teal', progress: 61 },
   { name: 'Administración', detail: 'Acceso y equidad en revisión', tone: 'blue', progress: 58 },
-  { name: 'Seguridad y justicia', detail: '29 países en sensibilidad', tone: 'violet', progress: 47 },
+  { name: 'Seguridad y justicia', detail: '30 países en sensibilidad multifuente', tone: 'violet', progress: 54 },
 ];
 
 const milestones = [
   ['Base reproducible', 'Listo', 'Fuentes, pruebas y trazabilidad versionadas.'],
-  ['Cobertura común', 'En curso', 'Seguridad alcanza 29 de los 30 países mínimos.'],
-  ['Ranking experimental', 'Pendiente', 'Requiere metodología v1 congelada.'],
+  ['Cobertura común', 'Listo', 'La sensibilidad de seguridad alcanza 30 países comparables.'],
+  ['Ranking experimental', 'Pendiente', 'Requiere metodología v1 congelada y las demás dimensiones completas.'],
   ['Ranking oficial IEE v1', 'Bloqueado', 'Solo tras revisión independiente y publicación del protocolo.'],
 ];
 
@@ -54,8 +54,8 @@ export default function Home() {
           <div className="grid gap-4 md:grid-cols-4">
             {[
               ['38%', 'Implementación del proyecto', Flag],
-              ['108', 'Pruebas automatizadas superadas', ShieldCheck],
-              ['29 / 30', 'Cobertura de seguridad para el mínimo común', Database],
+              ['110', 'Pruebas automatizadas superadas', ShieldCheck],
+              ['30 / 30', 'Sensibilidad de seguridad: mínimo común alcanzado', Database],
               ['0', 'Rankings oficiales publicados', LockKeyhole],
             ].map(([value, label, Icon]) => {
               const CardIcon = Icon as typeof Flag;

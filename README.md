@@ -138,6 +138,9 @@ volver a comprobar la muestra antes de cualquier estimación.
 La [materialización v3.1](docs/security-canada-materialization-v3.1.md) ya
 produce las tres observaciones canadienses con recibos y pruebas; todavía no
 cambia la puerta 29/30 hasta combinar ambas procedencias de forma explícita.
+La [sensibilidad v3.2](docs/security-coverage-sensitivity-v3.2.md) realiza esa
+combinación con procedencia por país y alcanza 30 países completos para seguridad;
+permanece experimental y no habilita fronteras, rankings ni IEE oficial.
 
 ## Principios
 

@@ -214,7 +214,7 @@ def _parse_role(name: str, raw: Mapping[str, Any]) -> RoleSpec:
 
 
 def _validate_config(config: SecurityRolePanelConfig) -> None:
-    if config.version != "2.5" or config.schema_version != "iee-security-role-panel-v1":
+    if config.version not in {"2.5", "3.2"} or config.schema_version != "iee-security-role-panel-v1":
         raise SecurityRolePanelError("versión o esquema de integración no compatible")
     if config.status != "experimental-not-for-publication":
         raise SecurityRolePanelError("el diagnóstico debe bloquear publicación")
@@ -222,11 +222,19 @@ def _validate_config(config: SecurityRolePanelConfig) -> None:
         raise SecurityRolePanelError("el diagnóstico requiere el universo OCDE-38 único")
     if not 3 <= config.integration_min_countries <= len(config.countries):
         raise SecurityRolePanelError("integration_min_countries inválido")
-    expected = {
-        "result": ("SEG-RES-01", "resultado"),
-        "equity": ("SEG-EQ-01", "equidad"),
-        "input": ("SEG-IN-02", "insumo"),
-    }
+    expected = (
+        {
+            "result": ("SEG-RES-01", "resultado"),
+            "equity": ("SEG-EQ-01", "equidad"),
+            "input": ("SEG-IN-02", "insumo"),
+        }
+        if config.version == "2.5"
+        else {
+            "result": ("SEG-RES-01", "resultado"),
+            "equity": ("SEG-EQ-02", "equidad"),
+            "input": ("SEG-IN-04", "insumo"),
+        }
+    )
     for name, (indicator_id, role) in expected.items():
         spec = config.roles[name]
         if spec.indicator_id != indicator_id:

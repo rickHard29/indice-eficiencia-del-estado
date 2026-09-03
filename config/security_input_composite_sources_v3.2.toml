@@ -1,0 +1,25 @@
+version = "3.2"
+validation_date = "2026-09-03"
+countries_frame = "OECD-35-sensibilidad-seguridad"
+
+[[series]]
+indicator_id = "SEG-IN-04"
+dimension = "seguridad_justicia"
+role = "insumo"
+direction = "input"
+status = "conditional"
+source_id = "OECD-COFOG+STATCAN-WDI-PPP"
+organization = "OECD / Statistics Canada / World Bank"
+dataset = "GF03 OECD plus CCOFOG 703 Canada, converted to constant PPP per capita"
+official_code = "GF03 × NY.GDP.PCAP.PP.KD | CAN: CCOFOG 703 / NY.GDP.MKTP.CN × NY.GDP.PCAP.PP.KD"
+unit = "Dólares internacionales constantes de 2021 por habitante"
+frequency = "anual"
+scope = "OCDE-34 más Canadá; sensibilidad de cobertura"
+reference_year = 2021
+exact_url = "config/security_input_complement_v3.2.toml"
+dependency_urls = []
+latest_col_year = 2021
+latest_col_value = "394.59614692322965"
+latest_usa_year = 2021
+latest_usa_value = "1393.1040236216025"
+decision_reason = "Serie compuesta explícita: registra OECD para 34 países y Statistics Canada para CAN. No reemplaza SEG-IN-02 ni habilita puntajes."

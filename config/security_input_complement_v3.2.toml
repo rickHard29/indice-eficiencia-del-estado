@@ -1,0 +1,21 @@
+version = "3.2"
+schema_version = "iee-security-input-complement-v1"
+status = "experimental-not-for-publication"
+country_universe = "country_universe_v2.9.toml"
+catalog = "security_input_composite_sources_v3.2.toml"
+base_indicator_id = "SEG-IN-02"
+canada_indicator_id = "SEG-IN-03"
+composite_indicator_id = "SEG-IN-04"
+canada_entity = "CAN"
+base_countries = [
+  "AUS", "AUT", "BEL", "CHE", "CHL", "COL", "CRI", "CZE",
+  "DEU", "DNK", "ESP", "EST", "FIN", "FRA", "GBR", "GRC",
+  "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR", "LTU",
+  "LUX", "LVA", "NLD", "NOR", "POL", "PRT", "SVK", "SVN",
+  "SWE", "USA",
+]
+start_year = 2019
+end_year = 2021
+source_id = "OECD-COFOG+STATCAN-WDI-PPP"
+series_code = "GF03 × NY.GDP.PCAP.PP.KD | CAN: CCOFOG 703 / NY.GDP.MKTP.CN × NY.GDP.PCAP.PP.KD"
+unit = "Dólares internacionales constantes de 2021 por habitante"

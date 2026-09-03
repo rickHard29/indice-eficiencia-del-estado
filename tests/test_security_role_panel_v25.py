@@ -19,6 +19,16 @@ HEADER = (
 
 
 class SecurityRolePanelV25Tests(unittest.TestCase):
+    def test_v32_configuration_uses_the_explicit_multisource_sensitivity(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        config = load_security_role_panel_config(
+            root / "config" / "security_role_integration_v3.2.toml"
+        )
+
+        self.assertEqual(config.version, "3.2")
+        self.assertEqual(config.roles["equity"].indicator_id, "SEG-EQ-02")
+        self.assertEqual(config.roles["input"].indicator_id, "SEG-IN-04")
+
     def _prepare(self, root: Path) -> dict[str, Path]:
         countries = [f"C{i:02}" for i in range(38)]
         (root / "universe.toml").write_text(
