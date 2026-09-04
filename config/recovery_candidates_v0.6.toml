@@ -1,0 +1,38 @@
+version = "0.6"
+status = "experimental-not-for-publication"
+
+[[candidates]]
+country = "AUS"
+route = "Gasto educativo ABS 2018-19 y 2019-20; validar conversión y alcance frente a EDU-IN-02."
+source_url = "https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-education-australia/2019-20"
+status = "candidate_for_materialization"
+
+[[candidates]]
+country = "GRC"
+route = "Eurostat COFOG educación 2019-2020; validar conversión a recurso por habitante PPA."
+source_url = "https://ec.europa.eu/eurostat/web/products-eurostat-news/-/ddn-20220228-2"
+status = "candidate_for_materialization"
+
+[[candidates]]
+country = "DEU"
+route = "Eurostat mortalidad evitable hasta 2021; validar igualdad de definición con SAL-RES-01."
+source_url = "https://ec.europa.eu/eurostat/documents/15234730/19397895/KS-05-24-071-EN-N.pdf"
+status = "candidate_for_materialization"
+
+[[candidates]]
+country = "BEL"
+route = "Policía/Eurostat registra delitos y no sustituye víctimas UNODC."
+source_url = "https://ec.europa.eu/eurostat/statistics-explained/SEPDF/cache/53026.pdf"
+status = "blocked"
+
+[[candidates]]
+country = "CAN"
+route = "CCOFOG general exige equivalencia demostrada con el proxy ADM-IN-02."
+source_url = "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1010000501"
+status = "blocked"
+
+[[candidates]]
+country = "ISL"
+route = "Dos regiones TL2 no cumplen el mínimo territorial vigente de tres."
+source_url = "https://sdmx.oecd.org/public/rest/data/OECD.CFE.EDS,DSD_REG_SOC@DF_SAFETY,/A....HOMIC...CS_10P5PS?startPeriod=2021&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile"
+status = "blocked"

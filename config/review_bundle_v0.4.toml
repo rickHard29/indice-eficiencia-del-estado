@@ -28,6 +28,11 @@ label = "Cribado de fuentes prioritarias v0.5"
 path = "../docs/recovery-source-screen-v0.5.md"
 
 [[artifacts]]
+id = "recovery_candidates"
+label = "Rutas candidatas de recuperación v0.6"
+path = "../docs/recovery-candidates-v0.6.md"
+
+[[artifacts]]
 id = "methodology_draft"
 label = "Borrador metodológico para revisión"
 path = "../docs/methodology-v1-review-draft.md"

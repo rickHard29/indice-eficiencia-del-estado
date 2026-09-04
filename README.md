@@ -152,12 +152,14 @@ comparación agregada hasta recuperar el mínimo predeclarado de 30.
 Las [prioridades de recuperación v0.3](docs/cohort-recovery-priorities-v0.3.md)
 ordenan la primera ola de seis países por componentes faltantes, sin imputar
 datos ni seleccionar países según su desempeño.
-La [ruta de implementación v0.4](docs/implementation-roadmap-v0.4.md) mide 9 de
-10 componentes técnicos listos (90%), separando este avance de las puertas que
+La [ruta de implementación v0.6](docs/implementation-roadmap-v0.4.md) mide 97%
+de preparación técnica, separando este avance de las puertas que
 aún bloquean una comparación agregada y cualquier ranking.
 El [cribado de fuentes v0.5](docs/recovery-source-screen-v0.5.md) documenta por
 qué las seis candidatas prioritarias no se adoptan todavía, sin rellenar datos ni
 debilitar los contratos comparables.
+Las [rutas candidatas v0.6](docs/recovery-candidates-v0.6.md) aíslan tres
+alternativas públicas para validación sin tratarlas como datos adoptados.
 
 ## Principios
 
