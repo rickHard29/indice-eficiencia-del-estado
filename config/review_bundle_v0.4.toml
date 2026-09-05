@@ -38,6 +38,11 @@ label = "Ranking exploratorio de resultados v0.1"
 path = "../docs/results-ranking-v0.1.md"
 
 [[artifacts]]
+id = "results_ranking_sensitivity_v0_1"
+label = "Sensibilidad del ranking exploratorio de resultados v0.1"
+path = "../docs/results-ranking-sensitivity-v0.1.md"
+
+[[artifacts]]
 id = "recovery_priorities"
 label = "Prioridades de recuperación v0.3"
 path = "../docs/cohort-recovery-priorities-v0.3.md"

@@ -29,6 +29,7 @@ iee-recovery-resolution = "iee.recovery_resolution_cli:main"
 iee-current-cohort-release = "iee.current_cohort_release_cli:main"
 iee-outcomes-core-cohort = "iee.outcomes_core_cohort_cli:main"
 iee-results-ranking = "iee.results_ranking_cli:main"
+iee-results-ranking-sensitivity = "iee.results_ranking_sensitivity_cli:main"
 
 [project.optional-dependencies]
 dev = [
