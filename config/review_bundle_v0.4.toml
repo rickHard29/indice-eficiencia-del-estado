@@ -48,6 +48,11 @@ label = "Ruta de reconstrucción sanitaria neozelandesa"
 path = "../docs/decisions/0041-new-zealand-health-reconstruction-route.md"
 
 [[artifacts]]
+id = "new_zealand_health_access_resolution"
+label = "Resolución de acceso sanitario neozelandés"
+path = "../docs/decisions/0042-new-zealand-health-source-access-resolution.md"
+
+[[artifacts]]
 id = "recovery_roadmap_v0_9"
 label = "Ruta de recuperación verificable v0.9"
 path = "../docs/recovery-roadmap-v0.9.md"

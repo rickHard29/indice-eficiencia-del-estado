@@ -26,13 +26,15 @@ desde conteos, causas ICD-10 y denominadores, sin copiar la tasa publicada.
 | Hito | Evidencia de cierre | Estado inicial |
 | --- | --- | --- |
 | 1. Priorizar y cualificar rutas | Contratos, fuentes y criterios de admisibilidad documentados | Hecho |
-| 2. Congelar evidencia neozelandesa | Archivos crudos, fecha, URL, licencia y SHA-256 registrados | Pendiente |
+| 2. Resolver disponibilidad neozelandesa | Archivos crudos congelados **o** bloqueo de acceso documentado | Hecho: la descarga completa ya no es pública |
 | 3. Materializar candidato sanitario | Transformación por ICD/edad, pesos OCDE 2015 y salida determinista | Pendiente |
 | 4. Ejecutar puertas de validación | Pruebas de alcance, ventana, denominador, estándar y comparación externa | Pendiente |
 | 5. Sincronizar revisión pública | Paquete de revisión y tablero actualizados con estado y procedencia | Pendiente |
 
-**Avance de la ruta v0.9: 1 de 5 hitos (20%).** El primer hito cuenta solamente
-la definición reproducible de la ruta, no la recuperación de ningún dato.
+**Avance de la ruta v0.9: 2 de 5 hitos (40%).** El segundo hito resolvió el
+acceso, pero no recuperó ningún dato: la interfaz oficial ya no ofrece los
+archivos completos por descarga pública y el proyecto no usará una extracción
+individual potencialmente pagada.
 
 ## Puertas obligatorias para adoptar una observación
 

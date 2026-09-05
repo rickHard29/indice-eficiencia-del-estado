@@ -167,7 +167,10 @@ de mortalidad evitable.
 La [resolución noruega de salud](docs/decisions/0040-norway-health-source-resolution.md)
 aplica el mismo control a la ventana completa publicada por Eurostat.
 La [ruta sanitaria de Nueva Zelanda](docs/decisions/0041-new-zealand-health-reconstruction-route.md)
-delimita una reconstrucción gratuita y reproducible, todavía pendiente de validar.
+queda bloqueada: la interfaz actual no ofrece los archivos completos necesarios
+por descarga pública.
+La [resolución de acceso sanitario neozelandés](docs/decisions/0042-new-zealand-health-source-access-resolution.md)
+conserva esa decisión y evita depender de extracciones potencialmente pagadas.
 La [ruta de recuperación verificable v0.9](docs/recovery-roadmap-v0.9.md)
 convierte esa y las demás ausencias prioritarias en hitos auditables; su avance
 no se confunde con una posición, una puntuación ni un ranking oficial.
