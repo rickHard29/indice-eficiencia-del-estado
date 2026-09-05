@@ -26,6 +26,7 @@ iee-review-bundle = "iee.review_bundle_cli:main"
 iee-recovery-source-screen = "iee.recovery_source_screen_cli:main"
 iee-recovery-candidates = "iee.recovery_candidates_cli:main"
 iee-recovery-resolution = "iee.recovery_resolution_cli:main"
+iee-current-cohort-release = "iee.current_cohort_release_cli:main"
 
 [project.optional-dependencies]
 dev = [

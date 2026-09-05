@@ -18,6 +18,11 @@ label = "Control de cohorte común v0.3"
 path = "../docs/experimental-common-cohort-v0.3.md"
 
 [[artifacts]]
+id = "current_cohort_release"
+label = "Cierre de la cohorte común actual v1.0"
+path = "../docs/current-cohort-release-v1.md"
+
+[[artifacts]]
 id = "recovery_priorities"
 label = "Prioridades de recuperación v0.3"
 path = "../docs/cohort-recovery-priorities-v0.3.md"

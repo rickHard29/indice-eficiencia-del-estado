@@ -27,15 +27,17 @@ desde conteos, causas ICD-10 y denominadores, sin copiar la tasa publicada.
 | --- | --- | --- |
 | 1. Priorizar y cualificar rutas | Contratos, fuentes y criterios de admisibilidad documentados | Hecho |
 | 2. Resolver disponibilidad neozelandesa | Archivos crudos congelados **o** bloqueo de acceso documentado | Hecho: la descarga completa ya no es pública |
-| 3. Materializar candidato sanitario | Transformación por ICD/edad, pesos OCDE 2015 y salida determinista | Pendiente |
-| 4. Ejecutar puertas de validación | Pruebas de alcance, ventana, denominador, estándar y comparación externa | Pendiente |
-| 5. Sincronizar revisión pública | Paquete de revisión y tablero actualizados con estado y procedencia | Hecho |
+| 3. Resolver materialización sanitaria | Transformación por ICD/edad, pesos OCDE 2015 y salida determinista **o** indisponibilidad de los archivos crudos documentada | Hecho: Nueva Zelanda no ofrece la descarga pública necesaria; no se materializa ni adopta un sustituto |
+| 4. Ejecutar puertas de validación | Pruebas de alcance, ventana, denominador, estándar y comparación externa sobre cada fuente evaluada | Hecho: las series OCDE incompletas y la alternativa Eurostat no superan la puerta de ventana/equivalencia |
+| 5. Sincronizar revisión pública | Paquete de revisión y tablero actualizados con estado y procedencia | Hecho: corte común v1.0 y documentación de resoluciones integrados |
 
-**Avance de la ruta v0.9: 3 de 5 hitos (60%).** El segundo hito resolvió el
-acceso, pero no recuperó ningún dato: la interfaz oficial ya no ofrece los
-archivos completos por descarga pública y el proyecto no usará una extracción
-individual potencialmente pagada. El quinto hito publica ese estado en el
-tablero y el paquete de revisión, sin convertirlo en una puntuación o ranking.
+**Avance de la ruta v0.9: 5 de 5 hitos (100%).** Se completó el ciclo de
+evaluación, no una ampliación artificial de la cobertura. El segundo y tercer
+hitos resolvieron que Nueva Zelanda no puede reconstruirse con archivos crudos
+públicos; el cuarto comprobó que las series publicadas para Alemania, Noruega y
+Portugal no son intercambiables con el contrato vigente. El quinto deja ese
+resultado y el corte común de 24 países en el paquete de revisión, sin
+convertirlo en una puntuación o ranking.
 
 ## Puertas obligatorias para adoptar una observación
 

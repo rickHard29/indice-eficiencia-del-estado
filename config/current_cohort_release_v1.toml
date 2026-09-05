@@ -1,0 +1,10 @@
+version = "1.0"
+schema_version = "iee-current-cohort-release-v1"
+status = "experimental-not-for-publication"
+cohort_receipt = "../data/processed/experimental_cohort_v0.3.json"
+review_bundle = "../data/processed/review_bundle_v0.4.json"
+expected_countries = [
+  "AUT", "CHE", "CHL", "COL", "CRI", "CZE", "DNK", "ESP",
+  "EST", "FIN", "FRA", "GBR", "HUN", "IRL", "ITA", "JPN",
+  "KOR", "LTU", "NLD", "POL", "SVK", "SVN", "SWE", "USA",
+]
