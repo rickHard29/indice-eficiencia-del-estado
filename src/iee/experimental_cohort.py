@@ -73,14 +73,20 @@ def load_experimental_cohort_config(path: str | Path) -> ExperimentalCohortConfi
     except (KeyError, OSError, TypeError, ValueError, tomllib.TOMLDecodeError) as error:
         raise ExperimentalCohortError(f"configuración de cohorte inválida: {error}") from error
 
-    if config.version != "0.3" or config.schema_version != "iee-experimental-cohort-v1":
+    allowed_contracts = {
+        "0.3": "experimental-not-for-publication",
+        "0.4": "experimental-cohort-24-not-for-publication",
+    }
+    if config.version not in allowed_contracts or config.schema_version != "iee-experimental-cohort-v1":
         raise ExperimentalCohortError("versión o esquema de cohorte incompatible")
-    if config.status != "experimental-not-for-publication":
+    if config.status != allowed_contracts[config.version]:
         raise ExperimentalCohortError("la cohorte debe bloquear publicación")
     if len(config.countries) != 38 or len(config.countries) != len(set(config.countries)):
         raise ExperimentalCohortError("el universo OCDE-38 no es válido")
     if not 3 <= config.minimum_countries <= len(config.countries):
         raise ExperimentalCohortError("mínimo de cohorte inválido")
+    if config.version == "0.4" and config.minimum_countries != 24:
+        raise ExperimentalCohortError("la cohorte exploratoria v0.4 debe conservar el mínimo de 24")
     ids = [panel.id for panel in config.panels]
     if len(config.panels) != 4 or len(ids) != len(set(ids)):
         raise ExperimentalCohortError("se requieren cuatro paneles de dimensión únicos")

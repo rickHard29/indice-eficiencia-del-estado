@@ -1,0 +1,32 @@
+version = "0.4"
+schema_version = "iee-experimental-cohort-v1"
+status = "experimental-cohort-24-not-for-publication"
+country_universe = "country_universe_v2.9.toml"
+minimum_countries = 24
+
+[[panels]]
+id = "educacion"
+label = "Educación — sensibilidad de recurso v0.9"
+path = "../data/processed/v09_education_frontier_panel.csv"
+membership_column = "sample_member"
+expected_dimension = "educacion"
+
+[[panels]]
+id = "salud"
+label = "Salud — sensibilidad de recurso v0.8"
+path = "../data/processed/v08_health_frontier_panel.csv"
+membership_column = "sample_member"
+expected_dimension = "salud"
+
+[[panels]]
+id = "administracion"
+label = "Administración pública — sensibilidad v1.1"
+path = "../data/processed/v11_administration_frontier_panel.csv"
+membership_column = "sample_member"
+expected_dimension = "administracion"
+
+[[panels]]
+id = "seguridad_justicia"
+label = "Seguridad y justicia — roles multifuente v3.2"
+path = "../data/processed/v32_security_role_panel.csv"
+membership_column = "all_roles_complete"

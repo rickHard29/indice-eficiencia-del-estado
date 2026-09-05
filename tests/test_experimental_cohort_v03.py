@@ -45,6 +45,22 @@ class ExperimentalCohortV03Tests(unittest.TestCase):
         self.assertEqual(config.minimum_countries, 30)
         self.assertEqual(len(config.panels), 4)
 
+    def test_v04_creates_a_separate_24_country_exploratory_gate(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        with TemporaryDirectory() as temporary:
+            result = run_experimental_cohort(
+                root / "config/experimental_cohort_v0.4.toml",
+                output_path=Path(temporary) / "cohort-v04.json",
+                calculated_at="2026-09-05T21:00:00+00:00",
+            )
+
+        self.assertEqual(result["manifest_version"], "0.4")
+        self.assertEqual(result["minimum_countries"], 24)
+        self.assertEqual(result["common_cohort"]["complete_countries"], 24)
+        self.assertTrue(result["common_cohort"]["experimental_aggregate_eligible"])
+        self.assertIsNone(result["aggregate"]["official_iee_score"])
+        self.assertIsNone(result["aggregate"]["ranking"])
+
     def _write_fixture(self, root: Path, duplicate: bool = False) -> Path:
         countries = ["A", "B", "C", "D", "E", "F", *[f"X{number:02}" for number in range(1, 33)]]
         (root / "universe.toml").write_text(
