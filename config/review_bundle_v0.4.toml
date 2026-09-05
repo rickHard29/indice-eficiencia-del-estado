@@ -33,6 +33,11 @@ label = "Resolución de fuente administrativa canadiense"
 path = "../docs/decisions/0038-canada-administration-source-resolution.md"
 
 [[artifacts]]
+id = "portugal_health_resolution"
+label = "Resolución de fuente sanitaria portuguesa"
+path = "../docs/decisions/0039-portugal-health-source-resolution.md"
+
+[[artifacts]]
 id = "recovery_candidates"
 label = "Rutas candidatas de recuperación v0.6"
 path = "../docs/recovery-candidates-v0.6.md"

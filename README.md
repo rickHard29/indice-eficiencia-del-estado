@@ -161,6 +161,9 @@ debilitar los contratos comparables.
 La [resolución canadiense del insumo administrativo](docs/decisions/0038-canada-administration-source-resolution.md)
 documenta por qué el gasto CCOFOG agregado no puede sustituir los recursos
 operativos exigidos por el contrato.
+La [resolución portuguesa de salud](docs/decisions/0039-portugal-health-source-resolution.md)
+mantiene la misma exigencia de equivalencia antes de sustituir la serie oficial
+de mortalidad evitable.
 Las [rutas candidatas v0.6](docs/recovery-candidates-v0.6.md) aíslan tres
 alternativas públicas para validación sin tratarlas como datos adoptados.
 La [resolución de recuperación v0.7](docs/recovery-resolution-v0.7.md) cierra
