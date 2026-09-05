@@ -66,6 +66,17 @@ Solo después de esa prueba se decidirá si existe un contrato `SAL-RES-02` com�
 No se usarán los valores europeos exclusivamente para Alemania, Noruega o
 Portugal.
 
+## Actualización de cribado v1.1
+
+El cribado uniforme posterior encontró cobertura 38/38 para esperanza de vida
+al nacer del Banco Mundial en 2019–2021, pero la medida es longevidad general y
+no mortalidad evitable. La correlación observada con el recurso vigente no
+autoriza un reemplazo conceptual. El candidato educativo de OCDE de 2019 cubre
+Australia y Grecia, pero pierde Costa Rica y Suiza; por tanto no mejora la
+cohorte. La alternativa de seguridad por sexo añade Israel y Letonia, pero mide
+otra forma de equidad. El detalle reproducible y las decisiones están en
+[cribado de completitud v1.1](cohort-completion-feasibility-v1.1.md).
+
 ## Referencias públicas
 
 - [Lista conjunta OCDE-Eurostat de causas prevenibles y tratables](https://www.oecd.org/content/dam/oecd/en/data/datasets/oecd-health-statistics/avoidable-mortality-2019-joint-oecd-eurostat-list-preventable-treatable-causes-of-death.pdf)
