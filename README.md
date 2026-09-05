@@ -164,6 +164,8 @@ operativos exigidos por el contrato.
 La [resolución portuguesa de salud](docs/decisions/0039-portugal-health-source-resolution.md)
 mantiene la misma exigencia de equivalencia antes de sustituir la serie oficial
 de mortalidad evitable.
+La [resolución noruega de salud](docs/decisions/0040-norway-health-source-resolution.md)
+aplica el mismo control a la ventana completa publicada por Eurostat.
 Las [rutas candidatas v0.6](docs/recovery-candidates-v0.6.md) aíslan tres
 alternativas públicas para validación sin tratarlas como datos adoptados.
 La [resolución de recuperación v0.7](docs/recovery-resolution-v0.7.md) cierra

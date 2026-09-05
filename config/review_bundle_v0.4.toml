@@ -38,6 +38,11 @@ label = "Resolución de fuente sanitaria portuguesa"
 path = "../docs/decisions/0039-portugal-health-source-resolution.md"
 
 [[artifacts]]
+id = "norway_health_resolution"
+label = "Resolución de fuente sanitaria noruega"
+path = "../docs/decisions/0040-norway-health-source-resolution.md"
+
+[[artifacts]]
 id = "recovery_candidates"
 label = "Rutas candidatas de recuperación v0.6"
 path = "../docs/recovery-candidates-v0.6.md"
