@@ -33,6 +33,11 @@ label = "Rutas candidatas de recuperación v0.6"
 path = "../docs/recovery-candidates-v0.6.md"
 
 [[artifacts]]
+id = "recovery_resolution"
+label = "Resolución de recuperación v0.7"
+path = "../docs/recovery-resolution-v0.7.md"
+
+[[artifacts]]
 id = "methodology_draft"
 label = "Borrador metodológico para revisión"
 path = "../docs/methodology-v1-review-draft.md"

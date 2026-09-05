@@ -1,0 +1,36 @@
+version = "0.7"
+schema_version = "iee-recovery-resolution-v1"
+status = "technical-cycle-complete-not-for-publication"
+common_cohort_before = 24
+common_cohort_after = 24
+minimum_common_cohort = 30
+
+[[resolutions]]
+country = "AUS"
+dimension = "educacion"
+decision = "not_adopted_fiscal_scope_mismatch"
+source_urls = [
+  "https://www.abs.gov.au/statistics/economy/government/government-finance-statistics-education-australia/2019-20",
+  "https://www.abs.gov.au/methodologies/government-finance-statistics-education-australia-methodology/2019-20",
+]
+evidence = "ABS publica 105129 millones AUD para 2018-19 y 114146 millones AUD para 2019-20, ejercicios fiscales y gasto operativo de gobierno general; EDU-IN-02 requiere años calendario y la definición UIS/WDI como porcentaje del PIB."
+
+[[resolutions]]
+country = "GRC"
+dimension = "educacion"
+decision = "not_adopted_definition_discontinuity"
+source_urls = [
+  "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10a_exp?geo=EL&unit=PC_GDP&cofog99=GF09&sector=S13&na_item=TE&time=2019&time=2020",
+  "https://api.worldbank.org/v2/country/GRC/indicator/NY.GDP.PCAP.PP.KD?format=json&date=2019%3A2020&per_page=100",
+]
+evidence = "Eurostat COFOG GF09 registra 3.9% del PIB en 2019 y 4.4% en 2020. El dato EDU-IN-02 existente para 2019 equivale a 3.5506% del mismo PIB PPA, una diferencia de 9.84%; no hay puente que demuestre equivalencia."
+
+[[resolutions]]
+country = "DEU"
+dimension = "salud"
+decision = "not_adopted_definition_mismatch"
+source_urls = [
+  "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/sdg_03_42?geo=DE&sex=T&icd10=TOTAL&time=2019&time=2020&time=2021",
+  "https://sdmx.oecd.org/public/rest/v1/data/OECD.ELS.HD,DSD_HEALTH_STAT@DF_AM,1.0/DEU.A.AVM.DT_10P5HB._T._T._Z._Z.STANDARD._Z._Z._Z._Z?startPeriod=2019&endPeriod=2021&dimensionAtObservation=AllDimensions&format=csvfile",
+]
+evidence = "Eurostat informa mortalidad evitable total 231.41, 238.07 y 252.54 en 2019-2021; la serie OCDE vigente informa 188 y 195 en 2019-2020 y no 2021. La brecha confirma que no son intercambiables sin una concordancia oficial."
