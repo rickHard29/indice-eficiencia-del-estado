@@ -22,6 +22,13 @@ exploratoria de resultados observados; no estima eficiencia estatal.
 El recibo `data/processed/results_ranking_v0.1.json` fija los hashes de los
 cuatro paneles fuente, cada valor, cada posición normalizada y el puntaje.
 
+## Archivos públicos reutilizables
+
+La publicación incluye [puntajes exploratorios por país](publication/results-ranking-v0.1.csv)
+y [rangos de estabilidad](publication/results-ranking-stability-v0.1.csv). Ambos
+archivos indican en cada fila que se trata de un ranking exploratorio de
+resultados y no del IEE oficial.
+
 ## Límites explícitos
 
 Este ranking no incluye recursos, acceso ni equidad; tampoco aplica una frontera

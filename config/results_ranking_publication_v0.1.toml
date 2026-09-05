@@ -1,0 +1,5 @@
+version = "0.1"
+schema_version = "iee-results-ranking-publication-v1"
+status = "experimental-results-ranking-not-iee"
+ranking_input = "../data/processed/results_ranking_v0.1.json"
+sensitivity_input = "../data/processed/results_ranking_sensitivity_v0.1.json"
