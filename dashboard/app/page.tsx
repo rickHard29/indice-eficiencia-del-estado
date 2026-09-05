@@ -17,9 +17,10 @@ const dimensions = [
 ];
 
 const milestones = [
-  ['Paquete de revisión', 'Listo', 'Siete artefactos trazables preparados para revisión metodológica independiente.'],
+  ['Paquete de revisión', 'Listo', 'Dieciocho artefactos trazables preparados para revisión metodológica independiente.'],
   ['Cortes por dimensión', 'Listo', 'Las cuatro dimensiones ya superan 30 países en sus propios contratos experimentales.'],
   ['Cohorte común experimental', 'En curso', 'La intersección actual es 24 de 38 países; faltan seis para el mínimo de 30.'],
+  ['Recuperación verificable v0.9', 'En curso', '2 de 5 hitos resueltos. La ruta sanitaria de Nueva Zelanda se cerró sin datos: la descarga completa ya no es pública y el proyecto no usará una extracción potencialmente pagada.'],
   ['Ranking oficial IEE v1', 'Bloqueado', 'Solo tras revisión independiente y publicación del protocolo.'],
 ];
 
@@ -43,7 +44,7 @@ export default function Home() {
             <div className="rounded-2xl border border-[#547069] bg-[#1d3a34] p-6">
               <p className="text-sm text-[#b5c8b8]">Estado actual</p>
               <p className="mt-2 text-3xl font-semibold">En construcción</p>
-              <p className="mt-3 text-sm leading-6 text-[#d7e2d7]">El ciclo técnico v0.7 está completo. Las rutas públicas se resolvieron sin aceptar atajos; la comparación agregada sigue bloqueada hasta contar con evidencia comparable y una cohorte común suficiente.</p>
+              <p className="mt-3 text-sm leading-6 text-[#d7e2d7]">El ciclo técnico v0.7 está completo. La ruta v0.9 avanza con evidencia verificable: 2 de 5 hitos resueltos, sin aceptar atajos ni depender de fuentes potencialmente pagadas.</p>
             </div>
           </div>
         </div>
@@ -54,7 +55,7 @@ export default function Home() {
           <div className="grid gap-4 md:grid-cols-4">
             {[
               ['100%', 'Ciclo técnico v0.7 completado', Flag],
-              ['128', 'Pruebas automatizadas superadas', ShieldCheck],
+              ['40%', 'Ruta v0.9: progreso verificable', ShieldCheck],
               ['24 / 30', 'Cohorte común actual: mínimo aún no alcanzado', Database],
               ['0', 'Rankings oficiales publicados', LockKeyhole],
             ].map(([value, label, Icon]) => {
@@ -146,7 +147,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con el cribado de fuentes v0.5</footer>
+      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con la ruta de recuperación verificable v0.9</footer>
     </main>
   );
 }
