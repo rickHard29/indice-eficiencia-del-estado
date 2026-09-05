@@ -1,0 +1,53 @@
+name: Revisión metodológica
+description: Propón o cuestiona una decisión metodológica del IEE v1.
+title: "[Método] "
+labels: ["methodology-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Esta revisión no crea ni modifica un ranking. Identifica una decisión, su fundamento y sus consecuencias para comparabilidad.
+  - type: dropdown
+    id: decision
+    attributes:
+      label: Decisión a revisar
+      options:
+        - Ventana temporal y rezagos
+        - Cohorte común y exclusiones
+        - Normalización y valores extremos
+        - Acceso, equidad o contexto
+        - Pesos entre dimensiones
+        - Umbrales y sensibilidades
+        - Regla de publicación
+    validations:
+      required: true
+  - type: textarea
+    id: recommendation
+    attributes:
+      label: Recomendación concreta
+      description: Explica la regla propuesta o el problema detectado.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Fundamento verificable
+      description: Incluye enlaces a estándares, documentación oficial o literatura.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impacto esperado
+      description: Describe el efecto sobre comparabilidad, cobertura y reproducibilidad.
+    validations:
+      required: true
+  - type: checkboxes
+    id: declarations
+    attributes:
+      label: Declaraciones
+      options:
+        - label: No usé posiciones, resultados agregados ni preferencias por país para formular esta recomendación.
+          required: true
+        - label: Declaré arriba cualquier conflicto de interés relevante.
+          required: true

@@ -1,0 +1,54 @@
+name: Propuesta de evidencia
+description: Propón una fuente pública para cerrar una brecha documentada.
+title: "[Evidencia] "
+labels: ["evidence-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Una fuente propuesta no se adopta automáticamente. Debe superar los controles de definición, ventana, unidad, cobertura y reproducibilidad.
+  - type: input
+    id: gap
+    attributes:
+      label: Brecha que busca resolver
+      placeholder: "País, dimensión y componente"
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Fuente oficial y enlace directo
+    validations:
+      required: true
+  - type: textarea
+    id: definition
+    attributes:
+      label: Definición y unidad
+      description: Indica universo, denominador, unidad y transformación necesaria.
+    validations:
+      required: true
+  - type: textarea
+    id: coverage
+    attributes:
+      label: Cobertura y ventana temporal
+      description: Indica países, años observados y cualquier valor faltante o provisional.
+    validations:
+      required: true
+  - type: textarea
+    id: comparability
+    attributes:
+      label: Comparabilidad con el contrato IEE
+      description: Explica por qué coincide con el contrato existente o qué puente oficial demuestra equivalencia.
+    validations:
+      required: true
+  - type: checkboxes
+    id: declarations
+    attributes:
+      label: Declaraciones
+      options:
+        - label: La fuente es pública, reproducible y no requiere pago para verificarla.
+          required: true
+        - label: No propongo imputar valores ni mezclar definiciones sin documentar un puente.
+          required: true
+        - label: Declaré arriba cualquier conflicto de interés relevante.
+          required: true

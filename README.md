@@ -162,6 +162,9 @@ Las [rutas candidatas v0.6](docs/recovery-candidates-v0.6.md) aíslan tres
 alternativas públicas para validación sin tratarlas como datos adoptados.
 La [resolución de recuperación v0.7](docs/recovery-resolution-v0.7.md) cierra
 esas rutas con evidencia y mantiene intactas la cohorte y la prohibición de ranking.
+La [entrega para revisión abierta v0.8](docs/review-handoff-v0.8.md) y las
+plantillas del repositorio permiten revisar método y evidencia sin costo ni acceso
+a datos privados.
 
 ## Principios
 
