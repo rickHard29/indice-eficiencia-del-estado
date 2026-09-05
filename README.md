@@ -158,6 +158,9 @@ aún bloquean una comparación agregada y cualquier ranking.
 El [cribado de fuentes v0.5](docs/recovery-source-screen-v0.5.md) documenta por
 qué las seis candidatas prioritarias no se adoptan todavía, sin rellenar datos ni
 debilitar los contratos comparables.
+La [resolución canadiense del insumo administrativo](docs/decisions/0038-canada-administration-source-resolution.md)
+documenta por qué el gasto CCOFOG agregado no puede sustituir los recursos
+operativos exigidos por el contrato.
 Las [rutas candidatas v0.6](docs/recovery-candidates-v0.6.md) aíslan tres
 alternativas públicas para validación sin tratarlas como datos adoptados.
 La [resolución de recuperación v0.7](docs/recovery-resolution-v0.7.md) cierra

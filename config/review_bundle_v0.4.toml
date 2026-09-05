@@ -28,6 +28,11 @@ label = "Cribado de fuentes prioritarias v0.5"
 path = "../docs/recovery-source-screen-v0.5.md"
 
 [[artifacts]]
+id = "canada_administration_resolution"
+label = "Resolución de fuente administrativa canadiense"
+path = "../docs/decisions/0038-canada-administration-source-resolution.md"
+
+[[artifacts]]
 id = "recovery_candidates"
 label = "Rutas candidatas de recuperación v0.6"
 path = "../docs/recovery-candidates-v0.6.md"

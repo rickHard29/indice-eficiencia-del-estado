@@ -19,9 +19,9 @@ rationale = "La fuente publica 2021, pero 2019 y 2020 son nulos; no se promedia 
 [[candidates]]
 country = "CAN"
 dimension = "administracion"
-source_url = "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1010000501"
+source_url = "https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1010002401"
 decision = "not_adopted_construct_mismatch"
-rationale = "CCOFOG de servicios públicos generales no es equivalente sin validación a D1+P2/GF01, el proxy administrativo vigente."
+rationale = "Statistics Canada publica gasto por función CCOFOG y, por separado, componentes económicos; la tabla pública no cruza ambas dimensiones. No permite aislar D1+P2 dentro de GF01, el proxy administrativo vigente."
 
 [[candidates]]
 country = "DEU"
