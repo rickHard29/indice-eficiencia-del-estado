@@ -28,6 +28,11 @@ label = "Núcleo común de resultados v1.0"
 path = "../docs/outcomes-core-cohort-v1.md"
 
 [[artifacts]]
+id = "cohort_completion_methods"
+label = "Ruta de completitud de cohorte v1.0"
+path = "../docs/cohort-completion-methods-v1.md"
+
+[[artifacts]]
 id = "recovery_priorities"
 label = "Prioridades de recuperación v0.3"
 path = "../docs/cohort-recovery-priorities-v0.3.md"
