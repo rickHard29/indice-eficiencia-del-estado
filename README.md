@@ -166,6 +166,8 @@ mantiene la misma exigencia de equivalencia antes de sustituir la serie oficial
 de mortalidad evitable.
 La [resolución noruega de salud](docs/decisions/0040-norway-health-source-resolution.md)
 aplica el mismo control a la ventana completa publicada por Eurostat.
+La [ruta sanitaria de Nueva Zelanda](docs/decisions/0041-new-zealand-health-reconstruction-route.md)
+delimita una reconstrucción gratuita y reproducible, todavía pendiente de validar.
 Las [rutas candidatas v0.6](docs/recovery-candidates-v0.6.md) aíslan tres
 alternativas públicas para validación sin tratarlas como datos adoptados.
 La [resolución de recuperación v0.7](docs/recovery-resolution-v0.7.md) cierra

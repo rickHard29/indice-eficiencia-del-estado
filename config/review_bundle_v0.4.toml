@@ -43,6 +43,11 @@ label = "Resolución de fuente sanitaria noruega"
 path = "../docs/decisions/0040-norway-health-source-resolution.md"
 
 [[artifacts]]
+id = "new_zealand_health_route"
+label = "Ruta de reconstrucción sanitaria neozelandesa"
+path = "../docs/decisions/0041-new-zealand-health-reconstruction-route.md"
+
+[[artifacts]]
 id = "recovery_candidates"
 label = "Rutas candidatas de recuperación v0.6"
 path = "../docs/recovery-candidates-v0.6.md"
