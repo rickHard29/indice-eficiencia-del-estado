@@ -165,6 +165,8 @@ esas rutas con evidencia y mantiene intactas la cohorte y la prohibición de ran
 La [entrega para revisión abierta v0.8](docs/review-handoff-v0.8.md) y las
 plantillas del repositorio permiten revisar método y evidencia sin costo ni acceso
 a datos privados.
+El [registro de decisiones metodológicas](docs/methodology-decision-register-v1.md)
+indica exactamente qué evidencia falta antes de congelar el método v1.
 
 ## Principios
 

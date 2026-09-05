@@ -43,6 +43,11 @@ label = "Entrega para revisión abierta v0.8"
 path = "../docs/review-handoff-v0.8.md"
 
 [[artifacts]]
+id = "methodology_decision_register"
+label = "Registro de decisiones metodológicas v1"
+path = "../docs/methodology-decision-register-v1.md"
+
+[[artifacts]]
 id = "methodology_draft"
 label = "Borrador metodológico para revisión"
 path = "../docs/methodology-v1-review-draft.md"
