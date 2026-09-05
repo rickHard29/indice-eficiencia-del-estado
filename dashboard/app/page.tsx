@@ -17,8 +17,9 @@ const dimensions = [
 ];
 
 const milestones = [
-  ['Paquete de revisión', 'Listo', 'Diecinueve artefactos trazables preparados para revisión metodológica independiente.'],
+  ['Paquete de revisión', 'Listo', 'Veinte artefactos trazables preparados para revisión metodológica independiente.'],
   ['Cortes por dimensión', 'Listo', 'Las cuatro dimensiones ya superan 30 países en sus propios contratos experimentales.'],
+  ['Núcleo de resultados comparables', 'Listo', '33 países tienen los cuatro resultados validados. No incluye recursos, acceso ni equidad; no es IEE ni ranking.'],
   ['Cohorte común experimental', 'Listo', 'El corte vigente de 24 países quedó cerrado y es reproducible. El mínimo de 30 aún no se alcanza.'],
   ['Recuperación verificable v0.9', 'Listo', '5 de 5 hitos de evaluación resueltos. Las rutas que no superaron comparabilidad o acceso se cerraron sin sustituir datos.'],
   ['Ranking oficial IEE v1', 'Bloqueado', 'Solo tras revisión independiente y publicación del protocolo.'],
@@ -44,7 +45,7 @@ export default function Home() {
             <div className="rounded-2xl border border-[#547069] bg-[#1d3a34] p-6">
               <p className="text-sm text-[#b5c8b8]">Estado actual</p>
               <p className="mt-2 text-3xl font-semibold">En construcción</p>
-              <p className="mt-3 text-sm leading-6 text-[#d7e2d7]">El ciclo técnico v0.7 y los cinco hitos de evaluación v0.9 están completos. La cohorte vigente quedó cerrada con 24 países comparables, sin aceptar atajos ni depender de fuentes potencialmente pagadas.</p>
+              <p className="mt-3 text-sm leading-6 text-[#d7e2d7]">El ciclo técnico v0.7 y los cinco hitos de evaluación v0.9 están completos. Hay 33 países con resultados comparables y una cohorte IEE completa cerrada de 24, sin aceptar atajos ni depender de fuentes potencialmente pagadas.</p>
             </div>
           </div>
         </div>
@@ -52,11 +53,12 @@ export default function Home() {
 
       <section className="px-6 py-12 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             {[
               ['100%', 'Ciclo técnico v0.7 completado', Flag],
               ['100%', 'Ruta v0.9: ciclo de evaluación completado', ShieldCheck],
-              ['24 / 30', 'Cohorte común cerrada: mínimo aún no alcanzado', Database],
+              ['33 / 30', 'Resultados comparables: cuatro dimensiones, sin IEE', Globe2],
+              ['24 / 30', 'Cohorte IEE completa cerrada: mínimo aún no alcanzado', Database],
               ['0', 'Rankings oficiales publicados', LockKeyhole],
             ].map(([value, label, Icon]) => {
               const CardIcon = Icon as typeof Flag;
@@ -147,7 +149,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con la ruta de recuperación verificable v0.9</footer>
+      <footer className="px-6 pb-8 text-center text-xs text-[#748078]">IEE · Datos y metodología en evolución · Actualizado con el núcleo de resultados comparables v1.0</footer>
     </main>
   );
 }

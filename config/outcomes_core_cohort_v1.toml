@@ -1,0 +1,36 @@
+version = "1.0"
+schema_version = "iee-outcomes-core-cohort-v1"
+status = "outcomes-only-not-efficiency"
+country_universe = "country_universe_v2.9.toml"
+expected_countries = [
+  "AUS", "AUT", "CAN", "CHE", "CHL", "COL", "CRI", "CZE", "DNK", "ESP", "EST",
+  "FIN", "FRA", "GBR", "GRC", "HUN", "IRL", "ISL", "ISR", "ITA", "JPN", "KOR",
+  "LTU", "LUX", "LVA", "MEX", "NLD", "POL", "SVK", "SVN", "SWE", "TUR", "USA",
+]
+
+[[panels]]
+id = "educacion"
+label = "Educación — resultado 2020"
+path = "../data/processed/v09_education_frontier_panel.csv"
+result_value_column = "outcome_value"
+expected_dimension = "educacion"
+
+[[panels]]
+id = "salud"
+label = "Salud — resultado 2019–2021"
+path = "../data/processed/v08_health_frontier_panel.csv"
+result_value_column = "outcome_value"
+expected_dimension = "salud"
+
+[[panels]]
+id = "administracion"
+label = "Administración pública — resultado 2024"
+path = "../data/processed/v11_administration_frontier_panel.csv"
+result_value_column = "outcome_value"
+expected_dimension = "administracion"
+
+[[panels]]
+id = "seguridad_justicia"
+label = "Seguridad y justicia — resultado 2019–2021"
+path = "../data/processed/v32_security_role_panel.csv"
+result_value_column = "result_value"

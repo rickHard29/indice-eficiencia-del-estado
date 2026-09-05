@@ -23,6 +23,11 @@ label = "Cierre de la cohorte común actual v1.0"
 path = "../docs/current-cohort-release-v1.md"
 
 [[artifacts]]
+id = "outcomes_core_cohort"
+label = "Núcleo común de resultados v1.0"
+path = "../docs/outcomes-core-cohort-v1.md"
+
+[[artifacts]]
 id = "recovery_priorities"
 label = "Prioridades de recuperación v0.3"
 path = "../docs/cohort-recovery-priorities-v0.3.md"
